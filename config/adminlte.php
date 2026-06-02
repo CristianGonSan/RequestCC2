@@ -14,8 +14,8 @@ return [
     |
     */
 
-    'title' => 'SolicitudCC',
-    'title_prefix' => '',
+    'title'         => 'SolicitudCC',
+    'title_prefix'  => '',
     'title_postfix' => '',
 
     /*
@@ -30,8 +30,8 @@ return [
     |
     */
 
-    'use_ico_only' => true,
-    'use_full_favicon' => false,
+    'use_ico_only'      => true,
+    'use_full_favicon'  => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>SOLICITUD</b>CC',
-    'logo_img' => '/img/logos/codias-mini.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
-    'logo_img_xl' => null,
+    'logo'              => '<b>SOLICITUD</b>CC',
+    'logo_img'          => '/img/logos/codias-mini.png',
+    'logo_img_class'    => 'brand-image img-circle elevation-3',
+    'logo_img_xl'       => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Codias Logo',
+    'logo_img_alt'      => 'Codias Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -86,11 +86,11 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => '/img/logos/codias-mini.png',
-            'alt' => 'Codias Logo',
-            'class' => '',
-            'width' => 50,
-            'height' => 50,
+            'path'      => '/img/logos/codias-mini.png',
+            'alt'       => 'Codias Logo',
+            'class'     => '',
+            'width'     => 50,
+            'height'    => 50,
         ],
     ],
 
@@ -110,14 +110,14 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
-        'mode' => 'fullscreen',
+        'enabled'   => true,
+        'mode'      => 'fullscreen',
         'img' => [
-            'path' => '/img/logos/codias-mini.png',
-            'alt' => 'Codias Preloader Image',
-            'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'path'      => '/img/logos/codias-mini.png',
+            'alt'       => 'Codias Preloader Image',
+            'effect'    => 'animation__shake',
+            'width'     => 60,
+            'height'    => 60,
         ],
     ],
 
@@ -133,12 +133,12 @@ return [
     |
     */
 
-    'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_enabled'      => true,
+    'usermenu_header'       => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_image'        => false,
+    'usermenu_desc'         => false,
+    'usermenu_profile_url'  => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -152,12 +152,12 @@ return [
     |
     */
 
-    'layout_topnav' => null,
-    'layout_boxed' => null,
-    'layout_fixed_sidebar' => true,
-    'layout_fixed_navbar' => true,
-    'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_topnav'         => null,
+    'layout_boxed'          => null,
+    'layout_fixed_sidebar'  => true,
+    'layout_fixed_navbar'   => true,
+    'layout_fixed_footer'   => null,
+    'layout_dark_mode'      => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -171,12 +171,12 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
-    'classes_auth_header' => '',
-    'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
-    'classes_auth_btn' => 'btn-flat btn-primary',
+    'classes_auth_card'     => 'card-outline card-primary',
+    'classes_auth_header'   => '',
+    'classes_auth_body'     => '',
+    'classes_auth_footer'   => '',
+    'classes_auth_icon'     => '',
+    'classes_auth_btn'      => 'btn-flat btn-primary',
 
     /*
     |--------------------------------------------------------------------------
@@ -190,17 +190,17 @@ return [
     |
     */
 
-    'classes_body' => '',
-    'classes_brand' => '',
-    'classes_brand_text' => '',
-    'classes_content_wrapper' => '',
-    'classes_content_header' => '',
-    'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
-    'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
-    'classes_topnav_nav' => 'navbar-expand',
-    'classes_topnav_container' => 'container',
+    'classes_body'              => '',
+    'classes_brand'             => '',
+    'classes_brand_text'        => '',
+    'classes_content_wrapper'   => '',
+    'classes_content_header'    => 'container',
+    'classes_content'           => 'container',
+    'classes_sidebar'           => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar_nav'       => '',
+    'classes_topnav'            => 'navbar-white navbar-light',
+    'classes_topnav_nav'        => 'navbar-expand',
+    'classes_topnav_container'  => 'container',
 
     /*
     |--------------------------------------------------------------------------
@@ -214,15 +214,15 @@ return [
     |
     */
 
-    'sidebar_mini' => 'lg',
-    'sidebar_collapse' => false,
-    'sidebar_collapse_auto_size' => false,
-    'sidebar_collapse_remember' => false,
+    'sidebar_mini'                  => 'lg',
+    'sidebar_collapse'              => false,
+    'sidebar_collapse_auto_size'    => false,
+    'sidebar_collapse_remember'     => true,
     'sidebar_collapse_remember_no_transition' => true,
-    'sidebar_scrollbar_theme' => 'os-theme-light',
-    'sidebar_scrollbar_auto_hide' => 'l',
-    'sidebar_nav_accordion' => true,
-    'sidebar_nav_animation_speed' => 300,
+    'sidebar_scrollbar_theme'       => 'os-theme-light',
+    'sidebar_scrollbar_auto_hide'   => 'l',
+    'sidebar_nav_accordion'         => true,
+    'sidebar_nav_animation_speed'   => 300,
 
     /*
     |--------------------------------------------------------------------------
@@ -236,12 +236,12 @@ return [
     |
     */
 
-    'right_sidebar' => false,
-    'right_sidebar_icon' => 'fas fa-cogs',
-    'right_sidebar_theme' => 'dark',
-    'right_sidebar_slide' => true,
-    'right_sidebar_push' => true,
-    'right_sidebar_scrollbar_theme' => 'os-theme-light',
+    'right_sidebar'                     => false,
+    'right_sidebar_icon'                => 'fas fa-cogs',
+    'right_sidebar_theme'               => 'dark',
+    'right_sidebar_slide'               => true,
+    'right_sidebar_push'                => true,
+    'right_sidebar_scrollbar_theme'     => 'os-theme-light',
     'right_sidebar_scrollbar_auto_hide' => 'l',
 
     /*
@@ -256,14 +256,14 @@ return [
     |
     */
 
-    'use_route_url' => false,
-    'dashboard_url' => 'dashboard',
-    'logout_url' => 'logout',
-    'login_url' => 'login',
-    'register_url' => null,
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
-    'profile_url' => false,
+    'use_route_url'         => false,
+    'dashboard_url'         => 'dashboard',
+    'logout_url'            => 'logout',
+    'login_url'             => 'login',
+    'register_url'          => null,
+    'password_reset_url'    => 'password/reset',
+    'password_email_url'    => 'password/email',
+    'profile_url'           => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -277,9 +277,9 @@ return [
     |
     */
 
-    'enabled_laravel_mix' => false,
-    'laravel_mix_css_path' => 'css/app.css',
-    'laravel_mix_js_path' => 'js/app.js',
+    'enabled_laravel_mix'   => false,
+    'laravel_mix_css_path'  => 'css/app.css',
+    'laravel_mix_js_path'   => 'js/app.js',
 
     /*
     |--------------------------------------------------------------------------
@@ -497,7 +497,7 @@ return [
 
     'plugins' => [
         'iCheck' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'css',
@@ -521,16 +521,6 @@ return [
                 ]
             ]
         ],
-        'BsCustomFileInput' => [
-            'active' => false,
-            'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/bs-custom-file-input/bs-custom-file-input.min.js',
-                ],
-            ],
-        ],
         'Select2' => [
             'active' => false,
             'files' => [
@@ -545,6 +535,11 @@ return [
                     'location' => 'vendor/select2/css/select2.min.css',
                 ],
                 [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/select2.css',
+                ],
+                [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/select2/js/select2.full.min.js',
@@ -553,6 +548,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor\select2\js\i18n\es.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js\select2\livewire-integration.js',
                 ],
             ],
         ],
@@ -591,7 +591,7 @@ return [
                 ]
             ]
         ],
-        'Sweetalert2' => [
+        'SweetAlert2' => [
             'active' => true,
             'files' => [
                 [
@@ -599,30 +599,25 @@ return [
                     'asset' => false,
                     'location' => 'https://cdn.jsdelivr.net/npm/sweetalert2@11',
                 ],
-            ],
-        ],
-        'Pace' => [
-            'active' => false,
-            'files' => [
-                [
-                    'type' => 'css',
-                    'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-center-radar.min.css',
-                ],
-                [
-                    'type' => 'js',
-                    'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
-                ],
-            ],
-        ],
-        'darkMode' => [
-            'active' => true,
-            'files' => [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/dark-mode.js',
+                    'location' => '/js/sweetalert2/livewire-integration.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => '/js/sweetalert2/ononline-alert.js'
+                ]
+            ],
+        ],
+        'CustomStyles' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => '/css/custom-styles.css'
                 ]
             ]
         ]

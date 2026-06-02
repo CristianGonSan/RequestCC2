@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
- *
  * @property-read \App\Models\RequestModel|null $request
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|RequestHistory newModelQuery()

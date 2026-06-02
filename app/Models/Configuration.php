@@ -9,8 +9,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 /**
- *
- *
  * @property int $id
  * @property string $key
  * @property array|null $value

@@ -15,8 +15,6 @@ use Illuminate\Support\HigherOrderCollectionProxy;
 use NumberToWords\NumberToWords;
 
 /**
- *
- *
  * @property-read User|null $user
  * @property HigherOrderCollectionProxy|mixed $user_id
  * @method static Builder|RequestModel newModelQuery()
@@ -61,6 +59,11 @@ use NumberToWords\NumberToWords;
  * @property-read Collection<int, \App\Models\FileManagement> $files
  * @property-read int|null $files_count
  * @property-read \App\Models\Type|null $typeModel
+ * @property int $edit_count
+ * @property-read \App\Models\CostCenter|null $costCenterModel
+ * @property-read Collection<int, \App\Models\RequestRecords> $records
+ * @property-read int|null $records_count
+ * @method static Builder<static>|RequestModel whereEditCount($value)
  * @mixin \Eloquent
  */
 class RequestModel extends Model

@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property-read User|null $user
  * @method static Builder|BugReport newModelQuery()
  * @method static Builder|BugReport newQuery()
