@@ -11,34 +11,34 @@ class UserLookup extends Controller
 {
     public function select2(Request $request): JsonResponse
     {
-        $search = $request->input('search');
-
         $query = User::query();
 
-        $query->where('enabled', '=', true);
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%");
-            });
+        if ($request->has('active')) {
+            $request->boolean('active') ? $query->active() : $query->inactive();
         }
 
-        $paginator = $query->orderBy('name')->paginate(15);
+        if ($request->has('term')) {
+            $term = $request->string('term');
+            $query->where(
+                fn ($q) => $q
+                    ->where('name', 'like', "%$term%")
+                    ->orWhere('email', 'like', "%$term%")
+            );
+        }
 
-        $results = collect($paginator->items())->map(fn($item) => [
+        $query->orderBy('name');
+
+        $results = $query->paginate(24, ['id', 'name', 'email']);
+
+        $map = $results->map(fn (User $item): array => [
             'id'    => $item->id,
             'text'  => $item->name,
             'email' => $item->email,
         ]);
 
-        $json = [
-            'results' => $results,
-            'pagination' => [
-                'more' => $paginator->hasMorePages(),
-            ],
-        ];
-
-        return response()->json($json);
+        return response()->json([
+            'results'       => $map,
+            'pagination'    => ['more' => $results->hasMorePages()],
+        ]);
     }
 }

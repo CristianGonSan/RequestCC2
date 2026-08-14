@@ -1,8 +1,9 @@
 @extends('adminlte::page')
 
 @section('plugins.Select2', true)
-@section('plugins.iCheck', true)
 @section('plugins.InputMask', true)
+
+@section('title_prefix', 'Exportar |')
 
 @section('content_header')
     <div class="container">

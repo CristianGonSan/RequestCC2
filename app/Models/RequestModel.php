@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\Requests\Status;
+use App\Enums\Requests\RequestStatus;
+use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,80 +12,78 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HigherOrderCollectionProxy;
 use NumberToWords\NumberToWords;
 
 /**
- * @property-read User|null $user
- * @property HigherOrderCollectionProxy|mixed $user_id
- * @method static Builder|RequestModel newModelQuery()
- * @method static Builder|RequestModel newQuery()
- * @method static Builder|RequestModel query()
  * @property int $id
+ * @property int $user_id
+ * @property int|null $cost_center_id
+ * @property int|null $type_id
  * @property string|null $concept
- * @property string|null $cost_center
+ * @property string|null $cost_center_name
  * @property string|null $payee
- * @property string|null $amount
- * @property int|null $type
+ * @property numeric|null $amount
+ * @property string|null $type_key
  * @property string|null $bank
  * @property string|null $card
  * @property string|null $account
  * @property string|null $branch
  * @property string|null $reference
  * @property string|null $covenant
- * @property int|null $status
+ * @property RequestStatus $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static Builder|RequestModel whereAccount($value)
- * @method static Builder|RequestModel whereAmount($value)
- * @method static Builder|RequestModel whereBank($value)
- * @method static Builder|RequestModel whereBranch($value)
- * @method static Builder|RequestModel whereCard($value)
- * @method static Builder|RequestModel whereConcept($value)
- * @method static Builder|RequestModel whereCostCenter($value)
- * @method static Builder|RequestModel whereCovenant($value)
- * @method static Builder|RequestModel whereCreatedAt($value)
- * @method static Builder|RequestModel whereId($value)
- * @method static Builder|RequestModel wherePayee($value)
- * @method static Builder|RequestModel whereReference($value)
- * @method static Builder|RequestModel whereStatus($value)
- * @method static Builder|RequestModel whereType($value)
- * @method static Builder|RequestModel whereUpdatedAt($value)
- * @method static Builder|RequestModel whereUserId($value)
+ * @property int $is_transfer
+ * @property int $edit_count
+ * @property-read CostCenter|null $costCenter
+ * @property-read Collection<int, FileManagement> $files
+ * @property-read int|null $files_count
  * @property-read Collection<int, Message> $messages
  * @property-read int|null $messages_count
- * @property int $is_transfer
- * @method static Builder|RequestModel whereIsTransfer($value)
- * @property-read \App\Models\CostCenter|null $costCenter
- * @property-read Collection<int, \App\Models\FileManagement> $files
- * @property-read int|null $files_count
- * @property-read \App\Models\Type|null $typeModel
- * @property int $edit_count
- * @property-read \App\Models\CostCenter|null $costCenterModel
- * @property-read Collection<int, \App\Models\RequestRecords> $records
+ * @property-read Collection<int, RequestRecords> $records
  * @property-read int|null $records_count
+ * @property-read Type|null $type
+ * @property-read User $user
+ * @method static Builder<static>|RequestModel newModelQuery()
+ * @method static Builder<static>|RequestModel newQuery()
+ * @method static Builder<static>|RequestModel query()
+ * @method static Builder<static>|RequestModel whereAccount($value)
+ * @method static Builder<static>|RequestModel whereAmount($value)
+ * @method static Builder<static>|RequestModel whereBank($value)
+ * @method static Builder<static>|RequestModel whereBranch($value)
+ * @method static Builder<static>|RequestModel whereCard($value)
+ * @method static Builder<static>|RequestModel whereConcept($value)
+ * @method static Builder<static>|RequestModel whereCostCenterId($value)
+ * @method static Builder<static>|RequestModel whereCostCenterName($value)
+ * @method static Builder<static>|RequestModel whereCovenant($value)
+ * @method static Builder<static>|RequestModel whereCreatedAt($value)
  * @method static Builder<static>|RequestModel whereEditCount($value)
+ * @method static Builder<static>|RequestModel whereId($value)
+ * @method static Builder<static>|RequestModel whereIsTransfer($value)
+ * @method static Builder<static>|RequestModel wherePayee($value)
+ * @method static Builder<static>|RequestModel whereReference($value)
+ * @method static Builder<static>|RequestModel whereStatus($value)
+ * @method static Builder<static>|RequestModel whereTypeId($value)
+ * @method static Builder<static>|RequestModel whereTypeKey($value)
+ * @method static Builder<static>|RequestModel whereUpdatedAt($value)
+ * @method static Builder<static>|RequestModel whereUserId($value)
  * @mixin \Eloquent
  */
 class RequestModel extends Model
 {
-    use HasFactory;
-    use Status;
+    use HasFactory, TruncateText;
 
     protected $table = 'requests';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'user_id',
+        'cost_center_id',
+        'type_id',
         'concept',
-        'cost_center',
+        'cost_center_name',
         'payee',
         'amount',
-        'type',
+        'type_key',
         'bank',
         'card',
         'account',
@@ -93,21 +92,14 @@ class RequestModel extends Model
         'covenant',
         'status',
         'is_transfer',
-        'edit_count'
+        'edit_count',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'amount' => 'decimal:2',
+        'status' => RequestStatus::class,
     ];
 
-    /**
-     * Get the user that owns the request.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -118,50 +110,48 @@ class RequestModel extends Model
         return $this->hasMany(Message::class, 'request_id');
     }
 
-    public function costCenterModel()
+    public function costCenter(): BelongsTo
     {
-        return $this->belongsTo(CostCenter::class, 'cost_center', 'name');
+        return $this->belongsTo(CostCenter::class, 'cost_center_id');
     }
 
-    public function typeModel()
+    public function type(): BelongsTo
     {
-        return $this->belongsTo(Type::class, 'type', 'key');
+        return $this->belongsTo(Type::class, 'type_id');
     }
 
-    public function getTypeName() {
-        return $this->typeModel?->name ?? 'Desconocido';
-    }
-
-    public function getFormattedAmount() {
-        return '$' . number_format($this->amount, 2);
-    }
-
-    public function getPaymentMethod() {
+    public function paymentMethod(): string
+    {
         return $this->is_transfer ? 'Transferencia' : 'Efectivo';
     }
 
-    public function files() {
+    public function files(): HasMany
+    {
         return $this->hasMany(FileManagement::class, 'request_id');
     }
 
-    public function records() {
+    public function records(): HasMany
+    {
         return $this->hasMany(RequestRecords::class, 'request_id');
     }
 
-    public function addEditCount() {
-        $this->edit_count = $this->edit_count + 1;
+    public function addEditCount(): void
+    {
+        $this->edit_count += 1;
     }
 
-    public function changeStatusWithRecord(string $status, User|null $user = null) {
-        $oldStatus = $this->getStatusText();
+    public function changeStatusWithRecord(RequestStatus $status, ?User $user = null): void
+    {
+        $oldStatus = $this->status->label();
         $this->status = $status;
-        $newStatus = $this->getStatusText();
+        $newStatus = $this->status->label();
         $this->save();
 
         RequestRecords::changeStatus($user ?? Auth::user(), $this->id, $oldStatus, $newStatus);
     }
 
-    public function updateWithRecord(array $validated, User|null $user = null) {
+    public function updateWithRecord(array $validated, ?User $user = null): void
+    {
         $oldData = $this->toArray();
         $this->addEditCount();
         $this->update($validated);
@@ -169,12 +159,14 @@ class RequestModel extends Model
         RequestRecords::edited($user ?? Auth::user(), $this, $oldData);
     }
 
-    public function formattedAmount() {
-        return '$' . number_format($this->amount, 2);
+    public function formattedAmount(): string
+    {
+        return '$ '.number_format($this->amount, 2);
     }
 
-    public function amountToWord() {
-        $numberToWords = new NumberToWords();
+    public function amountToWord(): string
+    {
+        $numberToWords = new NumberToWords;
         $numberTransformer = $numberToWords->getNumberTransformer('es');
 
         [$integer, $decimal] = explode('.', (string) $this->amount);
@@ -185,5 +177,20 @@ class RequestModel extends Model
         $text = "$intText pesos con $decText centavos";
 
         return ucfirst($text);
+    }
+
+    public function canDelete(): bool
+    {
+        return $this->status->isPending() && $this->user_id === Auth::id();
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->status->isPending();
+    }
+
+    public function isCurrentUser(): bool
+    {
+        return $this->user_id === auth()->id();
     }
 }

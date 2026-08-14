@@ -1,43 +1,30 @@
 <?php
 
-use App\Http\Controllers\Auth\{
-    ForgotPasswordController,
-    LoginController,
-    ResetPasswordController,
-    VerificationController
-};
-use App\Http\Controllers\{
-    AccountController,
-    DashboardController,
-    ExportController,
-    ReportController
-};
-use App\Http\Controllers\Requests\{
-    AccountingController,
-    ManagementRequestController,
-    ShowFileController,
-    UserRequestController
-};
-use App\Http\Controllers\Admin\{
-    CompanyController,
-    CostCenterController,
-    RoleController,
-    UserController,
-    PermissionController,
-    TypeController
-};
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Catalogs\CompanyController;
+use App\Http\Controllers\Catalogs\CostCenterController;
+use App\Http\Controllers\Catalogs\TypeController;
 use App\Http\Controllers\Configurations\EmailNotificationsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Lookups\CostCenterLookup;
+use App\Http\Controllers\Lookups\TypeLookup;
 use App\Http\Controllers\Lookups\UserLookup;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Requests\AccountingController;
+use App\Http\Controllers\Requests\ManagementRequestController;
+use App\Http\Controllers\Requests\ShowFileController;
+use App\Http\Controllers\Requests\UserRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-})->name('root');
-
-Route::get('/home', function () {
-    return redirect()->route('dashboard');
-})->name('home');
+Route::get('/', fn () => redirect()->route('dashboard'))->name('root');
+Route::get('/home', fn () => redirect()->route('dashboard'))->name('home');
 
 // Inicio de Sesión
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -59,39 +46,33 @@ Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 Route::get('/email/{id}/verify', [VerificationController::class, 'sendEmailVerification'])->name('verification.send');
 
-Route::get('/disabled', function () {
-    return view('auth.disabled');
-})->name('auth.disabled');
+Route::get('disabled', fn () => view('auth.disabled'))->name('auth.disabled');
 
-Route::middleware(['auth', 'enabled'])->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
 
-    Route::prefix('account')->name('account.')->group(function () {
-        Route::get('', [AccountController::class, 'index'])->name('index');
-    });
+    Route::get('account', [AccountController::class, 'show'])
+        ->name('account');
 
-    Route::resource('requests', UserRequestController::class);
-    Route::get('requests/{request}/copy', [UserRequestController::class, 'copy'])->name('requests.copy');
+    Route::resource('requests', UserRequestController::class)->only(['index', 'create', 'show', 'edit']);
 
     Route::prefix('management')->name('management.')->group(function () {
-        Route::resource('requests', ManagementRequestController::class)->except(['destroy'])->middleware('permission:Gestionar Solicitudes');
+        Route::resource('requests', ManagementRequestController::class)->except(['destroy'])->middleware('permission:manage_requests');
     });
 
-    Route::prefix('accounting/requests')->name('accounting.requests.')->middleware('permission:Gestionar Contabilidad')
+    Route::prefix('accounting/requests')->name('accounting.requests.')->middleware('permission:manage_accounting')
         ->group(function () {
             Route::get('', [AccountingController::class, 'index'])->name('index');
             Route::get('{requests}', [AccountingController::class, 'show'])->name('show');
         });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Usuarios');
-        Route::resource('roles', RoleController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Roles');
-        Route::resource('permissions', PermissionController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Permisos');
-        Route::resource('types', TypeController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Tipos');
-        Route::resource('companies', CompanyController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Empresas');
-        Route::resource('cost-centers', CostCenterController::class)->only(['index', 'create', 'store', 'show'])->middleware('permission:Gestionar Centro de Costos');
-    });
+    Route::resource('users', UserController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_users');
+    Route::resource('roles', RoleController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_roles');
 
-    Route::prefix('export')->middleware('permission:Exportar')->name('export.')->group(function () {
+    Route::resource('types', TypeController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_types');
+    Route::resource('companies', CompanyController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_companies');
+    Route::resource('cost-centers', CostCenterController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_cost_centers');
+
+    Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
         Route::get('', [ExportController::class, 'index'])->name('requests.index');
         Route::get('download', [ExportController::class, 'export'])->name('requests.download');
 
@@ -104,14 +85,13 @@ Route::middleware(['auth', 'enabled'])->group(function () {
         });
     });
 
-
-    Route::prefix('reports')->middleware('permission:Ver Resumen')->group(function () {
+    Route::prefix('reports')->middleware('permission:view_summary')->group(function () {
         Route::get('', [ReportController::class, 'index'])->name('reports.index');
         Route::get('export', [ReportController::class, 'export'])->name('reports.export');
     });
 
     Route::get('configurations/mail-notifications', [EmailNotificationsController::class, 'index'])
-        ->middleware('permission:Gestionar Configuraciones')
+        ->middleware('permission:manage_configurations')
         ->name('configurations.mailNotifications');
 
     Route::prefix('account')->group(function () {
@@ -121,7 +101,21 @@ Route::middleware(['auth', 'enabled'])->group(function () {
     Route::get('file/{id}/preview', [ShowFileController::class, 'previewFile'])->name('file.preview');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('info', function () {
-        return view('info');
-    })->name('info');
+    Route::get('info', fn () => view('info'))->name('info');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Lookups (Select2)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('lookups')->name('lookups.')->group(function () {
+        Route::get('cost-centers/select2/auth', [CostCenterLookup::class, 'select2ByAuthUser'])
+            ->name('cost-centers.select2.auth');
+
+        Route::get('cost-centers/select2', [CostCenterLookup::class, 'select2'])
+            ->name('cost-centers.select2');
+
+        Route::get('types/select2/auth', [TypeLookup::class, 'select2ByAuthUser'])
+            ->name('types.select2.auth');
+    });
 });

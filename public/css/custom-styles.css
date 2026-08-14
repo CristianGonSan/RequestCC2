@@ -42,3 +42,43 @@ body.dark-mode .form-control:-webkit-autofill:active {
 
     transition: background-color 5000s ease-in-out 0s;
 }
+
+.badge-indigo {
+    color: #fff;
+    background-color: #6610f2;
+}
+
+.badge-purple {
+    color: #fff;
+    background-color: #6f42c1;
+}
+
+.badge-pink {
+    color: #fff;
+    background-color: #d63384;
+}
+
+.badge-teal {
+    color: #fff;
+    background-color: #20c997;
+}
+
+.badge-orange {
+    color: #fff;
+    background-color: #fd7e14;
+}
+
+.badge-cyan {
+    color: #212529;
+    background-color: #0dcaf0;
+}
+
+.badge-transfer {
+    color: #0a2e5c;
+    background-color: #A3C8FF;
+}
+
+.badge-cash {
+    color: #5c2a0a;
+    background-color: #FFB998;
+}

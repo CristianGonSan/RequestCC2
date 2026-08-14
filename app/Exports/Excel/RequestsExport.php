@@ -40,11 +40,11 @@ class RequestsExport extends QueryExport
             ],
             'type' => [
                 'header' => 'Tipo de Movimiento',
-                'format' => fn(RequestModel $item) => $item->typeModel->name
+                'format' => fn(RequestModel $item) => $item->type->name
             ],
             'is_transfer' => [
                 'header' => 'Método de Pago',
-                'format' => fn(RequestModel $item) => $item->getPaymentMethod()
+                'format' => fn(RequestModel $item) => $item->paymentMethod()
             ],
             'bank' => [
                 'header' => 'Banco'
@@ -66,7 +66,7 @@ class RequestsExport extends QueryExport
             ],
             'status' => [
                 'header' => 'Estatus',
-                'format' => fn(RequestModel $item) => $item->getStatusText()
+                'format' => fn(RequestModel $item) => $item->status->label()
             ],
         ], $onlyColumns);
     }

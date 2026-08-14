@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Configuration;
+use App\Enums\Requests\RequestStatus;
 use App\Models\RequestModel;
 use App\Models\Type;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -27,8 +27,10 @@ class ReportController extends Controller
             $startDate = now()->subDays(30);
         }
 
-        $statusOptions = RequestModel::STATUSES_TEXT;
+        $statusOptions = RequestStatus::options();
         $typesOptions = Type::options();
+
+        $table = (new RequestModel)->getTable();
 
         $query = RequestModel::query()
             ->whereDate('created_at', '>=', $startDate)
@@ -36,45 +38,53 @@ class ReportController extends Controller
 
         $requestTotal = $query->count();
 
-        $paid = $query->where('status', RequestModel::STATUS_PAID);
+        $paid = $query->where('status', RequestStatus::Paid);
 
         $requestsPaid = $paid->count();
         $totalAmountPaid = $paid->sum('amount');
 
+        // --- Reporte por tipo (para gráficos, sí se transforma a array) ---
         $requestsByType = RequestModel::select([
-            'type',
+            "{$table}.type_id",
+            'types.name as type_name',
             DB::raw('COUNT(*) as type_count'),
-            DB::raw('SUM(amount) as amount_count')
+            DB::raw("SUM({$table}.amount) as amount_count"),
         ])
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
-            ->where('status', RequestModel::STATUS_PAID)
-            ->groupBy('type')->orderBy('type')
+            ->join('types', 'types.id', '=', "{$table}.type_id")
+            ->whereDate("{$table}.created_at", '>=', $startDate)
+            ->whereDate("{$table}.created_at", '<=', $endDate)
+            ->where("{$table}.status", RequestStatus::Paid)
+            ->groupBy("{$table}.type_id", 'types.name')
+            ->orderBy('types.name')
             ->get();
 
         $requestsByType = [
-            'labels' => $requestsByType->pluck('type')->map(function ($item) use ($typesOptions) {
-                return $typesOptions[$item] ?? 'Desconocido';
-            }),
+            'labels' => $requestsByType->pluck('type_name'),
             'type_count' => $requestsByType->pluck('type_count'),
             'amount_count' => $requestsByType->pluck('amount_count'),
         ];
 
+        // --- Reporte por centro de costo (para TABLA, se deja como colección de filas) ---
         $requestsByCostCenter = RequestModel::select([
-            'cost_center',
+            "{$table}.cost_center_id",
+            'cost_centers.name as cost_center_name',
             DB::raw('COUNT(*) as cost_center_count'),
-            DB::raw('SUM(amount) as amount_count')
+            DB::raw("SUM({$table}.amount) as amount_count"),
         ])
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
-            ->where('status', RequestModel::STATUS_PAID)
-            ->groupBy('cost_center')->orderBy('cost_center')
+            ->join('cost_centers', 'cost_centers.id', '=', "{$table}.cost_center_id")
+            ->whereDate("{$table}.created_at", '>=', $startDate)
+            ->whereDate("{$table}.created_at", '<=', $endDate)
+            ->where("{$table}.status", RequestStatus::Paid)
+            ->groupBy("{$table}.cost_center_id", 'cost_centers.name')
+            ->orderBy('cost_centers.name')
             ->get();
+        // Nota: se deja tal cual (colección), NO se convierte a array de labels/counts.
 
+        // --- Reporte por estado (para gráficos, se transforma a array) ---
         $requestsByStatus = RequestModel::select([
             'status',
             DB::raw('COUNT(*) as status_count'),
-            DB::raw('SUM(amount) as amount_count')
+            DB::raw('SUM(amount) as amount_count'),
         ])
             ->whereDate('created_at', '>=', $startDate)
             ->whereDate('created_at', '<=', $endDate)
@@ -83,7 +93,7 @@ class ReportController extends Controller
 
         $requestsByStatus = [
             'labels' => $requestsByStatus->pluck('status')->map(function ($item) use ($statusOptions) {
-                return $statusOptions[$item];
+                return $statusOptions[$item->value];
             }),
             'status_count' => $requestsByStatus->pluck('status_count')->toArray(),
             'amount_count' => $requestsByStatus->pluck('amount_count')->toArray(),
@@ -97,7 +107,7 @@ class ReportController extends Controller
             'requestsByCostCenter',
             'requestsByStatus',
             'startDate',
-            'endDate'
+            'endDate',
         ]));
     }
 }

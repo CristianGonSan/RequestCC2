@@ -3,57 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Controllers\MailManager;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-
-    public function index()
+    public function index(): View
     {
         return view('admin.users.index');
     }
 
-    public function create()
+    public function show(int $id): View
+    {
+        abort_if(! User::where('id', $id)->exists(), 404);
+
+        return view('admin.users.show', [
+            'userId' => $id,
+        ]);
+    }
+
+    public function create(): View
     {
         return view('admin.users.create');
     }
 
-    public function store(Request $request)
+    public function edit(int $id): View
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed'
+        abort_if(! User::where('id', $id)->exists(), 404);
+
+        return view('admin.users.edit', [
+            'userId' => $id,
         ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        $password = $validated['password'];
-
-        if ($request->boolean('send_email')) {
-            MailManager::sendNewUserNotification($user, $password);
-        }
-
-        if ($request->boolean('redirect_to_show')) {
-            return redirect()->route('admin.users.show', $user->id)
-            ->with('success', 'Usuario creado correctamente.');
-        } else {
-            return redirect()->route('admin.users.index')
-            ->with('success', 'Usuario creado correctamente.');
-        }
-    }
-
-    public function show(string $id)
-    {
-        $user = User::findOrFail($id);
-        return view('admin.users.show', compact('user'));
     }
 }

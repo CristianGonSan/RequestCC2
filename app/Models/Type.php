@@ -2,81 +2,91 @@
 
 namespace App\Models;
 
+use App\Traits\Models\HasActiveState;
+use App\Traits\Models\TruncateText;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property int $id
  * @property string $name
  * @property string|null $description
  * @property string $key
- * @property bool $enabled
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequestModel> $requests
+ * @property bool $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, RequestModel> $requests
  * @property-read int|null $requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
- * @method static \Illuminate\Database\Eloquent\Builder|Type newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Type newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Type query()
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Type whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type inactive()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Type whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Type extends Model
 {
-    use HasFactory;
+    use HasActiveState, HasFactory, TruncateText;
 
     protected $fillable = [
         'name',
         'description',
         'key',
-        'enabled'
+        'is_active',
     ];
 
     protected $casts = [
-        'enabled' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
-    public function users()
+    public function isInUse(): bool
+    {
+        return $this->requests()->exists();
+    }
+
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'type_user');
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
-        return $this->hasMany(RequestModel::class, 'type', 'key');
+        return $this->hasMany(RequestModel::class, 'type_id');
     }
 
-    public static function options($justEnabled = false)
+    public static function options(bool $onlyActive = true): array
     {
-        $typeOptions = [];
-
-        if ($justEnabled) {
-            foreach (Type::select(['key', 'name', 'enabled'])->where('enabled', true)->get() as $type) {
-                $typeOptions[$type->key] = $type->name;
-            }
-        } else {
-            foreach (Type::select(['key', 'name'])->get() as $type) {
-                $typeOptions[$type->key] = $type->name;
-            }
+        if ($onlyActive) {
+            return Type::active()->pluck('name', 'id')->toArray();
         }
 
-        return $typeOptions;
+        return Type::pluck('name', 'id')->toArray();
     }
 
-    public static function getName($key): string
+    public static function optionsByAuth(bool $onlyActive = true): array
     {
-        return Type::where('key', $key)->first()?->name ?? 'Desconocido';
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user->typeOptions($onlyActive);
     }
 
-    public static function getEnabledTypes() {
-        return Type::where('enabled', true)->get();
+    public static function getName(int $id): string
+    {
+        return Type::where('id', $id)->first()?->name ?? 'Desconocido';
     }
 }

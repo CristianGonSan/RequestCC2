@@ -2,90 +2,62 @@
 
 namespace App\Livewire\Configurations\Notifications;
 
-use App\Models\Configuration;
-use App\Models\RequestModel;
-use Illuminate\Support\Facades\Artisan;
+use App\Enums\Requests\RequestStatus;
+use App\Models\Setting;
+use App\Traits\SweetAlert2\Livewire\Toast;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class MailNotifications extends Component
 {
-    private $key = 'emailNotifications';
+    use Toast;
 
-    public $newCreateRequest = '';
-    public $newStatusChange = [];
+    public array $createRequest = [];
+    public array $statusChange = [];
 
-    public $statusOptions;
-
-    public $createRequest = [];
-    public $statusChange = [];
-
-    public function mount()
+    public function mount(): void
     {
-        $value = Configuration::getValue($this->key, [
+        $setting = Setting::dataBag('emailNotifications', [
             'createRequest' => [],
-            'statusChange' => []
+            'statusChange'  => [],
         ]);
 
-        $this->createRequest = $value['createRequest'] ?? [];
-        $this->statusChange = $value['statusChange'] ?? [];
-
-        $this->statusOptions = RequestModel::STATUSES_TEXT;
+        $this->createRequest = $setting->array('createRequest');
+        $this->statusChange  = $setting->array('statusChange');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.configurations.notifications.mail-notifications');
     }
 
-    public function addCreateEmail()
+    public function save(): void
     {
-        if ($this->newCreateRequest) {
-            if (in_array($this->newCreateRequest, $this->createRequest)) {
-                $this->dispatch('duplicateMail');
-            } else {
-                $this->createRequest[] = $this->newCreateRequest;
-                $this->newCreateRequest = '';
-            }
+        $invalidEmails = $this->invalidEmails($this->createRequest);
+
+        foreach (RequestStatus::options() as $key => $name) {
+            $invalidEmails = \array_merge($invalidEmails, $this->invalidEmails($this->statusChange[$key] ?? []));
         }
-    }
 
-    public function removeCreateEmail($index)
-    {
-        unset($this->createRequest[$index]);
-        $this->createRequest = array_values($this->createRequest);
-    }
+        if (!empty($invalidEmails)) {
+            $this->toastError('Correo(s) inválido(s): ' . \implode(', ', \array_unique($invalidEmails)));
 
-    public function addStatusChangeEmail($statusKey)
-    {
-        if ($this->newStatusChange[$statusKey]) {
-            if (in_array($this->newStatusChange[$statusKey], $this->statusChange[$statusKey] ?? [])) {
-                $this->dispatch('duplicateMail');
-            } else {
-                $this->statusChange[$statusKey][] = $this->newStatusChange[$statusKey];
-                $this->newStatusChange[$statusKey] = '';
-            }
+            return;
         }
-    }
 
-    public function removeStatusChangeEmail($statusKey, $index)
-    {
-        unset($this->statusChange[$statusKey][$index]);
-        $this->statusChange[$statusKey] = array_values($this->statusChange[$statusKey]);
-    }
-
-    public function save()
-    {
-        Configuration::setValue($this->key, [
+        Setting::set('emailNotifications', [
             'createRequest' => $this->createRequest,
-            'statusChange' => $this->statusChange
+            'statusChange'  => $this->statusChange,
         ]);
 
-        $this->dispatch('configurationUpdated');
+        $this->toastSuccess('Configuración de notificaciones guardada.');
     }
 
-    public function clearCache()
+    private function invalidEmails(array $emails): array
     {
-        Artisan::call('cache:clear');
-        $this->dispatch('cacheCleaned');
+        return \array_values(\array_filter(
+            $emails,
+            static fn (string $email): bool => \filter_var($email, \FILTER_VALIDATE_EMAIL) === false
+        ));
     }
 }

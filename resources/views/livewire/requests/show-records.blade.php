@@ -1,14 +1,15 @@
 <div>
     <div wire:ignore.self id="card" class="card mb-0">
-        <div class="card-header bg-dark d-flex">
-            Historial
-            <div class="ml-auto">
+        <div class="card-header">
+            <h2 class="card-title">Historial</h2>
+
+            <div class="card-tools">
                 <button id="maximize" class="btn btn-tool" data-card-widget="maximize">
-                    <i class="fas fa-lg fa-expand"></i>
+                    <i class="fas fa-fw fa-expand"></i>
                 </button>
 
-                <button wire:click="refreshRecords()" class="btn btn-tool">
-                    <i wire:loading.class="fa-spin" class="fa-solid fa-arrows-rotate"></i>
+                <button wire:click="$refresh" class="btn btn-tool">
+                    <i wire:loading.class="fa-spin" class="fas fa-fw fa-arrows-rotate"></i>
                 </button>
             </div>
         </div>
@@ -34,8 +35,9 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center p-3">
-                        <p class="text-muted">No hay actividades registradas.</p>
+                    <div class="d-flex flex-column align-items-center justify-content-center text-muted h-100 py-5">
+                        <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                        No hay actividad aún.
                     </div>
                 @endforelse
             </div>

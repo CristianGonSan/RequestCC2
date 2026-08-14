@@ -46,6 +46,6 @@ trait Toast
             ]
         ];
 
-        $this->js('Swal.fire(' . json_encode($config) . ');');
+        $this->dispatch('SwalFire', config: $config);
     }
 }

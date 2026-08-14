@@ -2,141 +2,105 @@
 
 namespace App\Livewire\Requests\Management;
 
+use App\Enums\Requests\RequestStatus;
 use App\Exports\ExportRequests;
-use App\Http\Controllers\MailManager;
+use App\Services\Mails\MailManager;
 use App\Models\RequestModel;
 use App\Models\Type;
-use App\Traits\LivewireTableFiltersHandle;
+use App\Support\DataBag;
+use App\Traits\Livewire\RequestModel\HasRequestModelTable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Session;
 use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\Attributes\On;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RequestsTable extends Component
 {
-    use WithPagination;
-    use LivewireTableFiltersHandle;
+    use HasRequestModelTable;
 
-    public array $typeOptions = [];
-    public array $statusOptions = [];
+    #[Session]
+    public string $searchTerm = '';
+
+    #[Session]
+    public int $perPage = 12;
+
+    #[Session]
+    public int $page = 1;
+
+    #[Session]
+    public string $sortColumn = 'created_at';
+
+    #[Session]
+    public string $sortDirection = 'desc';
+
+    #[Session]
+    public array $filters = [
+        'type'      => null,
+        'status'    => null,
+        'payMethod' => null,
+        'minAmount' => null,
+        'maxAmount' => null,
+        'minDate'   => null,
+        'maxDate'   => null,
+    ];
 
     public function mount(): void
     {
-        $this->loadFilters('managementRT', [
-            'search' => null,
-            'perPage' => 12,
-            'orderBy' => 'created_at',
-            'orderDirection' => 'desc',
-            'type' => null,
-            'status' => null,
-            'payMethod' => -1,
-            'minAmount' => null,
-            'maxAmount' => null,
-            'minDate' => null,
-            'maxDate' => null,
-        ]);
-
-        $this->typeOptions = Type::options();
-        $this->statusOptions = RequestModel::STATUSES_TEXT;
+        $this->setPage($this->page);
     }
 
     public function render(): View
     {
-        $requests = $this->getQuery()->paginate($this->filters['perPage']);
+        $requests = $this->getQuery()->paginate($this->perPage);
 
         return view('livewire.requests.management.requests-table', [
-            'requests' => $requests
+            'requests'      => $requests,
+            'statusOptions' => RequestStatus::options(),
+            'typeOptions'   => Type::options()
         ]);
     }
 
-
-
-    protected function getQuery(): Builder
+    public function acceptRequest(int $id): void
     {
-        $query = RequestModel::query();
-
-        $query->orderBy(
-            $this->filters['orderBy'],
-            $this->filters['orderDirection']
-        );
-
-        if ($this->filters['payMethod'] > -1) {
-            $query->where('is_transfer', $this->filters['payMethod']);
-        }
-
-        if ($this->filters['type']) {
-            $query->where('type', $this->filters['type']);
-        }
-
-        if ($this->filters['status']) {
-            $query->where('status', $this->filters['status']);
-        }
-
-        if ($this->filters['minAmount']) {
-            $query->where('amount', '>=', $this->filters['minAmount']);
-        }
-
-        if ($this->filters['maxAmount']) {
-            $query->where('amount', '<=', $this->filters['maxAmount']);
-        }
-
-        if ($this->filters['minDate']) {
-            $query->whereDate('created_at', '>=', $this->filters['minDate']);
-        }
-
-        if ($this->filters['maxDate']) {
-            $query->whereDate('created_at', '<=', $this->filters['maxDate']);
-        }
-
-        $query->with('user');
-        $query->with('typeModel');
-
-        $search = $this->filters['search'];
-
-        if ($search) {
-            if (str_contains($search, ":id=")) {
-                $data = explode('=', $search);
-                if (!empty($data[1])) {
-                    $query->where('id', $data[1]);
-                }
-            } else {
-                $query->where(function ($query) use ($search) {
-                    $query->where('concept', 'like', '%' . $search . '%')
-                        ->orWhere('cost_center', 'like', '%' . $search . '%')
-                        ->orWhere('type', 'like', '%' . $search . '%')
-                        ->orWhere('payee', 'like', '%' . $search . '%')
-                        ->orWhereHas('user', function ($query) use ($search) {
-                            $query->where('name', 'like', '%' . $search . '%');
-                        });
-                });
-            }
-        }
-
-        return $query;
+        $this->transitionStatus($id, RequestStatus::Accepted);
     }
 
-    #[On('updateStatus')]
-    public function updateStatus(int $id, string $status): void
+    public function rejectRequest(int $id): void
     {
-        /** @var \App\Models\RequestModel $requestModel */
+        $this->transitionStatus($id, RequestStatus::Rejected);
+    }
+
+    public function markAsPending(int $id): void
+    {
+        $this->transitionStatus($id, RequestStatus::Pending);
+    }
+
+    public function markAsPaid(int $id): void
+    {
+        $this->transitionStatus($id, RequestStatus::Paid, false);
+    }
+
+    public function cancelRequest(int $id): void
+    {
+        $this->transitionStatus($id, RequestStatus::Cancelled, false);
+    }
+
+    private function transitionStatus(int $id, RequestStatus $status, bool $allowTransfer = true): void
+    {
         $requestModel = RequestModel::findOrFail($id);
 
-        if ($requestModel->isCancelled()) {
-            abort(403, 'Unauthorized action: request is already cancelled.');
+        if ($requestModel->status->isCancelled()) {
+            $this->toastError('Acción no permitida.');
+
+            return;
         }
 
-        $isTransferWithInvalidStatus = $requestModel->is_transfer && in_array(
-            $status,
-            [
-                RequestModel::STATUS_PAID,
-                RequestModel::STATUS_CANCELED
-            ]
-        );
+        if ($requestModel->is_transfer && ! $allowTransfer) {
+            $this->toastError('Acción no permitida para solicitudes de transferencia.');
 
-        if ($isTransferWithInvalidStatus) {
-            abort(403, 'Unauthorized action for transfer requests.');
+            return;
         }
 
         $requestModel->changeStatusWithRecord($status);
@@ -145,14 +109,113 @@ class RequestsTable extends Component
             MailManager::sendStatusChangeNotification($requestModel);
         }
 
-        $this->dispatch('refreshRecords');
-        $this->dispatch('showFeedback');
+        $this->toastSuccess("Solicitud marcada como {$status->label()}.");
     }
 
-    public function export()
+    private function getQuery(): Builder
     {
-        $results = collect($this->getQuery()->paginate($this->filters['perPage'])->items());
+        $query = RequestModel::query();
+
+        $filtersBag = DataBag::make($this->filters);
+
+        $query->with([
+            'user:id,name',
+            'costCenter:id,name',
+            'type:id,name',
+        ]);
+
+        $query->join('cost_centers', 'requests.cost_center_id', '=', 'cost_centers.id')
+            ->join('users', 'requests.user_id', '=', 'users.id')
+            ->join('types', 'requests.type_id', '=', 'types.id')
+            ->select('requests.*');
+
+        if ($term = $this->searchTerm) {
+            if ($id = $this->getIdFromSearchTerm()) {
+                $query->where('requests.id', $id);
+            } else {
+                $query->where(function (Builder $query) use ($term): void {
+                    $query
+                        ->where('users.name', 'like', "%$term%")
+                        ->orWhere('requests.payee', 'like', "%$term%")
+                        ->orWhere('cost_centers.name', 'like', "%$term%")
+                        ->orWhere('requests.concept', 'like', "%$term%");
+                });
+            }
+        }
+
+        $query->when($filtersBag->filled('payMethod'),
+                fn () => $query->where('requests.is_transfer', $filtersBag->boolean('payMethod'))
+            )
+            ->when($filtersBag->filled('type'),
+                fn () => $query->where('requests.type_id', $filtersBag->string('type'))
+            )
+            ->when($filtersBag->filled('status'),
+                fn () => $query->where('requests.status', $filtersBag->string('status'))
+            )
+            ->when($filtersBag->filled('minAmount'),
+                fn () => $query->where('requests.amount', '>=', $filtersBag->float('minAmount'))
+            )
+            ->when($filtersBag->filled('maxAmount'),
+                fn () => $query->where('requests.amount', '<=', $filtersBag->float('maxAmount'))
+            )
+            ->when($filtersBag->filled('minDate'),
+                fn () => $query->where('requests.created_at', '>=', $filtersBag->string('minDate'))
+            )
+            ->when($filtersBag->filled('maxDate'),
+                fn () => $query->where('requests.created_at', '<=', $filtersBag->string('maxDate'))
+            );
+
+        if ($this->sortColumn === 'status') {
+            $cases = collect(RequestStatus::cases())
+                ->map(fn(RequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
+                ->implode(' ');
+
+            $query->orderByRaw("CASE requests.status $cases END {$this->sortDirection}");
+
+            return $query;
+        }
+
+        $sortable = [
+            'created_at'    => 'requests.created_at',
+            'id'            => 'requests.id',
+            'payee'         => 'requests.payee',
+            'cost_center'   => 'cost_centers.name',
+            'users'         => 'user.name',
+            'amount'        => 'requests.amount',
+            'type'          => 'types.name'
+        ];
+
+        $column = $sortable[$this->sortColumn] ?? 'requests.created_at';
+
+        $query->orderBy($column, $this->sortDirection);
+
+        return $query;
+    }
+
+    public function export(): ?BinaryFileResponse
+    {
+        $items = $this->getQuery()->paginate($this->perPage)->items();
+
+        if (empty($items)) {
+            $this->toastWarning('No hay nada para exportar');
+            return null;
+        }
+
+        $results = collect($items);
         $export = new ExportRequests($results);
+
         return Excel::download($export, 'Solicitudes.xlsx');
+    }
+
+    private function getIdFromSearchTerm(): ?int
+    {
+        if (str_contains($this->searchTerm, ':id=')) {
+            $data = explode('=', $this->searchTerm);
+            if (! empty($data[1])) {
+                return (int) $data[1];
+            }
+        }
+
+        return null;
     }
 }

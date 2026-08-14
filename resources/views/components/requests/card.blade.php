@@ -3,13 +3,13 @@
         <div class="d-flex justify-content-between">
             <div>{{ $request->created_at->format('d-m-Y h:i a') }}</div>
             <div>
-                <strong class="text-{{ $request->getStatusBSClass() }}">
-                    {{ $request->getStatusText() }}
+                <strong class="text-{{ $request->status->bootstrapColorClass() }}">
+                    {{ $request->status->label() }}
                 </strong>
             </div>
         </div>
         <div class="d-flex justify-content-between">
-            <span class="text-muted">{{ $request->user->name }}</span>
+            <span>{{ $request->user->name }}</span>
             <div>{{ $request->getFormattedAmount() }}</div>
         </div>
     </div>
@@ -27,7 +27,7 @@
             </span>
         </div>
         <div>
-            <strong>Tipo:</strong> {{ $request->getTypeName() }}
+            <strong>Tipo:</strong> {{ $request->type->name }}
         </div>
         <div>
             <strong>Concepto:</strong> {{ $request->concept ?? 'Sin datos' }}

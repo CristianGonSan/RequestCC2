@@ -1,18 +1,23 @@
 <div>
-    @include('livewire.partials.requests.table.filters')
+    <x-livewire.table.search-pane>
+        @include('partials.livewire.requests-model.table.filters')
+    </x-livewire.table.search-pane>
 
-    <div class="row">
-        @forelse ($requests as $request)
-            <div class="col-md-4 col-sm-6" wire:key="card-{{ $request->id }}}">
-                <x-requests.card :request="$request" class="card-dark">
-                    <x-slot name=footer>
-                        <div class="btn-group">
-                            <a href="{{ route('accounting.requests.show', $request->id) }}" class="btn btn-outline-info">
-                                Ver #{{ $request->id }}
-                            </a>
-                        </div>
-                    </x-slot>
-                </x-requests.card>
+    <div class="form-row mt-2">
+        @forelse ($requests as $requestModel)
+            <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $requestModel->id }}">
+
+                <div class="card card-dark">
+                    @include('partials.requests.card.card-header')
+                    @include('partials.requests.card.card-body')
+
+                    <div class="card-footer">
+                        <a href="{{ route('accounting.requests.show', $requestModel->id) }}"
+                            class="btn btn-outline-primary">
+                            <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($requestModel->id) }}
+                        </a>
+                    </div>
+                </div>
             </div>
         @empty
             @include('partials.requests.table.empty')

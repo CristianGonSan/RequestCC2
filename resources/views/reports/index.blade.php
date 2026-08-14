@@ -2,7 +2,6 @@
 
 @section('plugins.Chartjs', true)
 @section('plugins.Select2', true)
-@section('plugins.Flatpickr', true)
 
 @section('content_header')
     <nav aria-label="breadcrumb">
@@ -21,19 +20,16 @@
                 <div class="col-md-12">
                     <form action="#" class="row align-items-end">
                         <div class="col-md-5">
-                            <div class="flatpickrStart">
-                                <x-adminlte-input name="start_date" label="Fecha de Inicio" placeholder="fecha de inicio"
-                                    label-class="text-lightblue" enable-old-support data-input>
-                                </x-adminlte-input>
-                            </div>
+                            <x-adminlte-input type="date" name="start_date" label="Fecha de Inicio"
+                                placeholder="fecha de inicio" label-class="text-lightblue" enable-old-support
+                                value="{{ $startDate->format('Y-m-d') }}">
+                            </x-adminlte-input>
                         </div>
 
                         <div class="col-md-5">
-                            <div class="flatpickrEnd">
-                                <x-adminlte-input name="end_date" label="Fecha Final" placeholder="fecha final"
-                                    label-class="text-lightblue" enable-old-support data-input>
-                                </x-adminlte-input>
-                            </div>
+                            <x-adminlte-input type="date" name="end_date" label="Fecha Final" placeholder="fecha final"
+                                label-class="text-lightblue" enable-old-support value="{{ $endDate->format('Y-m-d') }}">
+                            </x-adminlte-input>
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-info btn-block mb-3">
@@ -117,30 +113,46 @@
                             <tbody>
                                 @foreach ($requestsByCostCenter as $cc)
                                     <tr>
-                                        <td>{{ $cc->cost_center }}</td>
+                                        <td>{{ $cc->cost_center_name }}</td>
                                         <td>{{ $cc->cost_center_count }}</td>
-                                        <td>{{ number_format((100 / $requestsPaid) * $cc->cost_center_count, 2) }}%</td>
+                                        <td>{{ $requestsPaid > 0 ? number_format((100 / $requestsPaid) * $cc->cost_center_count, 2) : '0.00' }}%
+                                        </td>
                                         <td>{{ number_format($cc->amount_count, 2) }}</td>
-                                        <td>{{ number_format((100 / $totalAmountPaid) * $cc->amount_count, 2) }}%</td>
+                                        <td>{{ $totalAmountPaid > 0 ? number_format((100 / $totalAmountPaid) * $cc->amount_count, 2) : '0.00' }}%
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
 
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-12">
-            <p>Esta página presenta un resumen basico de las solicitudes realizadas dentro de un rango de fechas específico, el
-                cual puede ajustarse según sea necesario. Las gráficas solo incluyen datos de solicitudes cuyo estado es
-                <strong class="text-primary">PAGADA</strong>.</p>
+            <div class="col-md-12">
+                <p>Esta página presenta un resumen basico de las solicitudes realizadas dentro de un rango de fechas
+                    específico, el
+                    cual puede ajustarse según sea necesario. Las gráficas solo incluyen datos de solicitudes cuyo estado es
+                    <strong class="text-primary">PAGADA</strong>.
+                </p>
+            </div>
         </div>
     </div>
 @endsection
 
 @section('js')
     <script>
+        // Si usas Chart.js v4 vía ES modules (import { Chart } from 'chart.js'),
+        // necesitas registrar los componentes que vas a usar:
+        if (typeof Chart !== 'undefined' && Chart.register) {
+            Chart.register(
+                Chart.ArcElement,
+                Chart.PieController,
+                Chart.Legend,
+                Chart.Tooltip
+            );
+        }
+
         /**
          * Crea un gráfico de tipo "pie".
          *
@@ -171,8 +183,8 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(tooltipItem) {
-                                    return tooltipItem.label + ': ' + tooltipItem.raw;
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw;
                                 }
                             }
                         }
@@ -198,44 +210,6 @@
             createPieChart('amountByStatus', labelsByStatus, amountByStatus, 'X');
         });
 
-        $(".flatpickrStart").flatpickr({
-            defaultDate: @json($startDate->format('Y-m-d')),
-            maxDate: 'today',
-            weekNumbers: true,
-            wrap: true,
-            locale: {
-                weekdays: {
-                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-                },
-                months: {
-                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Оct', 'Nov', 'Dic'],
-                    longhand: ['Enero', 'Febreo', 'Мarzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
-                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                    ],
-                },
-            },
-        });
-
-        $(".flatpickrEnd").flatpickr({
-            defaultDate: @json($endDate->format('Y-m-d')),
-            maxDate: 'today',
-            weekNumbers: true,
-            wrap: true,
-            locale: {
-                weekdays: {
-                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-                },
-                months: {
-                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Оct', 'Nov', 'Dic'],
-                    longhand: ['Enero', 'Febreo', 'Мarzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
-                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                    ],
-                },
-            },
-        });
-
         function getColors(n) {
             let colors = [];
 
@@ -245,7 +219,6 @@
 
             return colors;
         }
-
 
         function getColorFromSeed(seed) {
             let r = Math.floor(seededRandom(seed) * 256);

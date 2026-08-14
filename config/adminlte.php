@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 return [
 
     /*
@@ -198,7 +206,7 @@ return [
     'classes_content'           => 'container',
     'classes_sidebar'           => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav'       => '',
-    'classes_topnav'            => 'navbar-white navbar-light',
+    'classes_topnav'            => 'navbar-dark navbar-light',
     'classes_topnav_nav'        => 'navbar-expand',
     'classes_topnav_container'  => 'container',
 
@@ -295,12 +303,12 @@ return [
 
     'menu' => [
         [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
+            'type'          => 'fullscreen-widget',
+            'topnav_right'  => true,
         ],
         [
-            'type' => 'darkmode-widget',
-            'topnav_right' => true,
+            'type'          => 'darkmode-widget',
+            'topnav_right'  => true,
         ],
 
         // Sidebar items:
@@ -309,26 +317,19 @@ return [
             'text' => 'search',
         ],
         [
-            'text' => 'main_menu',
+            'text'  => 'main_menu',
             'route' => 'dashboard',
-            'icon' => 'fas fa-fw fa-home',
+            'icon'  => 'fas fa-fw fa-home',
         ],
         [
-            'text' => 'new_request',
+            'text'  => 'new_request',
             'route' => 'requests.create',
-            'icon' => 'far fa-fw fa-plus-square',
+            'icon'  => 'far fa-fw fa-plus-square',
         ],
-        /*
         [
-            'text' => 'report_bug',
-            'route' => 'developers.reports.create',
-            'icon' => 'fas fa-fw fa-bug',
-        ],
-        */
-        [
-            'text' => 'info',
+            'text'  => 'info',
             'route' => 'info',
-            'icon' => 'far fa-fw fa-question-circle',
+            'icon'  => 'far fa-fw fa-question-circle',
         ],
         ['header' => 'management'],
         [
@@ -338,128 +339,94 @@ return [
                 [
                     'text' => 'my_requests',
                     'route' => 'requests.index',
+                    'icon' => 'fas fa-fw fa-user-pen',
                 ],
                 [
                     'text' => 'manage',
                     'route' => 'management.requests.index',
-                    'can' => 'Gestionar Solicitudes'
+                    'icon' => 'fas fa-fw fa-list-check',
+                    'can' => 'manage_requests',
                 ],
                 [
                     'text' => 'accounting',
                     'route' => 'accounting.requests.index',
-                    'can' => 'Gestionar Contabilidad'
+                    'icon' => 'fas fa-fw fa-calculator',
+                    'can' => 'manage_accounting',
                 ],
             ],
         ],
         [
-            'text' => 'accessories',
-            'icon' => 'fas fa-fw fa-folder-tree',
+            'text' => 'catalogs',
+            'icon' => 'fas fa-fw fa-layer-group',
             'submenu' => [
                 [
                     'text' => 'types',
-                    'route' => 'admin.types.index',
-                    'can' => 'Gestionar Tipos'
+                    'icon' => 'fas fa-fw fa-clipboard-list',
+                    'route' => 'types.index',
+                    'can' => 'manage_types',
                 ],
                 [
                     'text' => 'companies',
-                    'route' => 'admin.companies.index',
-                    'can' => 'Gestionar Empresas'
+                    'icon' => 'fas fa-fw fa-building',
+                    'route' => 'companies.index',
+                    'can' => 'manage_companies',
                 ],
                 [
                     'text' => 'cost_centers',
-                    'route' => 'admin.cost-centers.index',
-                    'can' => 'Gestionar Centro de Costos'
-                ]
+                    'icon' => 'fas fa-fw fa-coins',
+                    'route' => 'cost-centers.index',
+                    'can' => 'manage_cost_centers',
+                ],
             ],
         ],
         [
             'text' => 'user_management',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-address-card',
             'submenu' => [
                 [
                     'text' => 'users',
-                    'route' => 'admin.users.index',
-                    'can' => 'Gestionar Usuarios'
+                    'icon' => 'fas fa-fw fa-users',
+                    'route' => 'users.index',
+                    'can' => 'manage_users',
                 ],
                 [
                     'text' => 'roles',
-                    'route' => 'admin.roles.index',
-                    'can' => 'Gestionar Roles'
+                    'icon' => 'fas fa-fw fa-user-tag',
+                    'route' => 'roles.index',
+                    'can' => 'manage_roles',
                 ],
-                [
-                    'text' => 'permissions',
-                    'route' => 'admin.permissions.index',
-                    'can' => 'Gestionar Permisos'
-                ],
-            ],
-        ],
-        [
-            'text' => 'direct_creation',
-            'icon' => 'fas fa-sitemap',
-            'submenu' => [
-                [
-                    'text' => 'new.user',
-                    'route' => 'admin.users.create',
-                    'can' => 'Gestionar Usuarios'
-                ],
-                [
-                    'text' => 'new.cost_center',
-                    'route' => 'admin.cost-centers.create',
-                    'can' => 'Gestionar Centro de Costos'
-                ],
-                [
-                    'text' => 'new.company',
-                    'route' => 'admin.companies.create',
-                    'can' => 'Gestionar Empresas'
-                ],
-                [
-                    'text' => 'new.role',
-                    'route' => 'admin.roles.create',
-                    'can' => 'Gestionar Roles'
-                ],
-                [
-                    'text' => 'new.permission',
-                    'route' => 'admin.permissions.create',
-                    'can' => 'Gestionar Permisos'
-                ],
-                [
-                    'text' => 'new.type',
-                    'route' => 'admin.types.create',
-                    'can' => 'Gestionar Tipos'
-                ],
-
             ],
         ],
         [
             'text' => 'summary',
             'route' => 'reports.index',
             'icon' => 'fas fa-fw fa-chart-pie',
-            'can' => 'Ver Resumen'
+            'can' => 'view_summary',
         ],
         [
             'text' => 'export',
             'route' => 'export.requests.index',
             'icon' => 'fas fa-fw fa-file-export',
-            'can' => 'Exportar'
+            'can' => 'export',
         ],
         [
-            'text' => 'account_settings',
-            'icon' => 'fas fa-fw fa-cog',
-            'route' => 'account.index'
+            'text' => 'my_account',
+            'icon' => 'fas fa-fw fa-user-gear',
+            'route' => 'account',
         ],
         [
             'text' => 'config',
-            'icon' => 'fas fa-fw fa-laptop-code',
+            'icon' => 'fas fa-fw fa-cog',
             'submenu' => [
                 [
                     'text' => 'notifications',
+                    'icon' => 'fas fa-fw fa-bell',
                     'route' => 'configurations.mailNotifications',
-                    'can' => 'Gestionar Configuraciones'
-                ]
+                    'can' => 'manage_configurations',
+                ],
             ],
-        ]
+        ],
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -474,13 +441,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*
@@ -503,23 +470,8 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => 'vendor/icheck-bootstrap/icheck-bootstrap.min.css',
-                ]
-            ]
-        ],
-        'Flatpickr' => [
-            'active' => false,
-            'files' => [
-                [
-                    'type' => 'css',
-                    'asset' => false,
-                    'location' => 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
                 ],
-                [
-                    'type' => 'js',
-                    'asset' => false,
-                    'location' => 'https://cdn.jsdelivr.net/npm/flatpickr',
-                ]
-            ]
+            ],
         ],
         'Select2' => [
             'active' => false,
@@ -547,12 +499,12 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor\select2\js\i18n\es.js',
+                    'location' => 'vendor/select2/js/i18n/es.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'js\select2\livewire-integration.js',
+                    'location' => 'js/select2/livewire-integration.js',
                 ],
             ],
         ],
@@ -562,17 +514,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'vendor/chart.js/Chart.bundle.js',
-                ],
-            ],
-        ],
-        'Chartjs4' => [
-            'active' => false,
-            'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => false,
-                    'location' => 'https://cdn.jsdelivr.net/npm/chart.js',
+                    'location' => 'vendor/chartjs/chart.min.js'
                 ],
             ],
         ],
@@ -588,26 +530,26 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/inputmask/jquery.inputmask.js',
-                ]
-            ]
+                ],
+            ],
         ],
         'SweetAlert2' => [
             'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
-                    'location' => 'https://cdn.jsdelivr.net/npm/sweetalert2@11',
+                    'asset' => true,
+                    'location' => 'vendor/sweetalert2/sweetalert2.min.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => '/js/sweetalert2/livewire-integration.js',
+                    'location' => 'js/sweetalert2/livewire-integration.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => '/js/sweetalert2/ononline-alert.js'
+                    'location' => 'js/sweetalert2/ononline-alert.js'
                 ]
             ],
         ],
@@ -617,10 +559,10 @@ return [
                 [
                     'type' => 'css',
                     'asset' => true,
-                    'location' => '/css/custom-styles.css'
-                ]
-            ]
-        ]
+                    'location' => '/css/custom-styles.css',
+                ],
+            ],
+        ],
     ],
 
     /*

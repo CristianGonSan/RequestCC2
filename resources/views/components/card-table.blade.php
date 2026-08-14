@@ -1,5 +1,6 @@
 @props([
     'tableClass' => 'table table-hover table-striped m-0',
+    'tableStyle' => '',
     'pagination' => null,
 ])
 
@@ -11,7 +12,7 @@
     @endif
 
     <div class="card-body table-responsive p-0">
-        <table class="{{ $tableClass }}">
+        <table class="{{ $tableClass }}" style="{{ $tableStyle }}">
             {{ $slot }}
         </table>
     </div>

@@ -2,65 +2,81 @@
 
 namespace App\Models;
 
+use App\Traits\Models\HasActiveState;
+use App\Traits\Models\TruncateText;
+use Cache;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $name
  * @property string|null $description
- * @property bool $enabled
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CostCenter> $costCenters
+ * @property bool $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, CostCenter> $costCenters
  * @property-read int|null $cost_centers_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
- * @method static \Illuminate\Database\Eloquent\Builder|Company newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Company newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Company query()
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Company whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company inactive()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Company whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Company extends Model
 {
-    use HasFactory;
+    use HasActiveState, HasFactory, TruncateText;
 
     protected $table = 'companies';
 
     protected $fillable = [
         'name',
         'description',
-        'enabled'
+        'is_active',
     ];
 
     protected $casts = [
-        'enabled' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
-    public function users()
+    public function isInUse(): bool
+    {
+        return $this->users()->exists() || $this->costCenters()->exists();
+    }
+
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'company_user');
     }
 
-    public function costCenters()
+    public function costCenters(): HasMany
     {
         return $this->hasMany(CostCenter::class);
     }
 
-    public function getCostCenterEnabled() {
-        return $this->costCenters()->where('enabled', true)->get();
-    }
-
-    public static function getEnabledCompaniesWithEnabledCostCenters()
+    public static function options($onlyActive = true): array
     {
-        return Company::where('enabled', true)->with(['costCenters' => function ($query) {
-            $query->where('enabled', true);
-        }])->get();
+        if ($onlyActive) {
+            return Cache::remember('companyOptions.active', 60 * 1000,
+                fn () => Company::active()->pluck('name', 'id')->toArray()
+            );
+        }
+
+        return Cache::remember('companyOptions', 60 * 1000,
+            fn () => Company::pluck('name', 'id')->toArray()
+        );
     }
 }

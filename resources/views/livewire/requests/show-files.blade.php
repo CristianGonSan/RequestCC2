@@ -1,56 +1,86 @@
+@use('App\Enums\Files\FileExtensionSupport')
+
 <div class="card mb-0" style="height: 70vh">
-    <div class="card-header bg-dark d-flex">
-        Archivos
-        <div wire:loading class="ml-auto">
-            <i class="fas fa-spinner fa-spin"> </i>
+    <div class="card-header">
+        <h2 class="card-title">Archivos</h2>
+
+        <div class="card-tools">
+            <button wire:click="$refresh" class="btn btn-tool">
+                <i wire:loading.class="fa-spin" class="fas fa-fw fa-arrows-rotate"></i>
+            </button>
         </div>
     </div>
-    <div class="card-body">
-        @error('file')
-            <div class="mb-3"><span class="text-danger">{{ $message }}</span></div>
-        @enderror
 
-        <p class="text-muted mb-3">
-            Archivos admitidos: pdf, jpeg, png, jpg, docx, doc, xlsx, xls | Máximo 10MB.
-        </p>
+    <div class="card-body p-0" style="overflow: hidden;">
+        <div class="list-group list-group-flush overflow-auto h-100" x-init="$el.scrollTop = $el.scrollHeight;
+        new MutationObserver(() => {
+            $el.scrollTop = $el.scrollHeight;
+        }).observe($el, { childList: true });">
 
-        <div wire:loading wire:target="file" class="mb-3 text-center text-muted">
-            <i class="fas fa-spinner fa-spin mr-1"></i> Subiendo archivo...
-        </div>
+            @php
+                $userId = Auth::id();
+            @endphp
 
-        <div style="height: 100%; overflow-y: auto;">
             @forelse($files as $file)
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded shadow-sm">
-                    <div class="col-md-10 col-10">
-                        <div class="text-truncate font-weight-bold">
-                            {{ $file->user->name }}
-                        </div>
-                        <div class="text-truncate text-muted">
+                @php
+                    /**
+                     * @var FileExtensionSupport $extension
+                     */
+                    $extension = $file->extension_support;
+                @endphp
+
+                <div class="list-group-item list-group-item-action d-flex align-items-center py-2 px-3"
+                    wire:key="file-{{ $file->id }}">
+
+                    <div class="d-flex align-items-center justify-content-center rounded-circle mr-3 flex-shrink-0"
+                        style="width: 40px; height: 40px; background-color: {{ $extension->color() }}1A;">
+                        <i class="fas fa-fw {{ $extension->icon() }}" style="color: {{ $extension->color() }};"></i>
+                    </div>
+
+                    <div class="flex-grow-1" style="min-width: 0;">
+                        <div class="text-truncate font-weight-bold" title="{{ $file->original_name }}">
                             {{ $file->original_name }}
                         </div>
+                        <div class="d-flex align-items-center text-muted small">
+                            <span>{{ $file->human_readable_size }}</span>
+                            <span class="mx-2">&bull;</span>
+                            <span class="text-truncate" style="max-width: 140px;" title="{{ $file->user->name }}">
+                                {{ $file->user->name }}
+                            </span>
+                            <span class="ml-1">{{ $file->created_at?->diffForHumans() }}</span>
+                        </div>
                     </div>
-                    <div class="col-md-2 col-2 text-right">
-                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="dropdown">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a href="{{ route('file.preview', $file->id) }}" class="dropdown-item" title="Visualizar"
-                                target="_blank">
-                                <i class="fas fa-eye mr-1"></i> Visualizar
-                            </a>
-                            <button wire:click="downloadFile({{ $file->id }})" class="dropdown-item">
-                                <i class="fas fa-download mr-1"></i> Descargar
+
+                    <div class="ml-2 flex-shrink-0">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-light" data-toggle="dropdown"
+                                aria-label="Opciones del archivo">
+                                <i class="fas fa-fw fa-ellipsis-v"></i>
                             </button>
-                            @if ($file->user->id === Auth::id())
-                                <button class="dropdown-item text-danger" onclick="deleteFile({{ $file->id }})">
-                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                            <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                                <a href="{{ route('file.preview', $file->id) }}" class="dropdown-item"
+                                    title="Visualizar" target="_blank">
+                                    <i class="fas fa-fw fa-eye mr-2 text-muted"></i> Visualizar
+                                </a>
+                                <button type="button" wire:click="downloadFile({{ $file->id }})"
+                                    class="dropdown-item">
+                                    <i class="fas fa-fw fa-download mr-2 text-muted"></i> Descargar
                                 </button>
-                            @endif
+                                @if ($file->user_id === $userId)
+                                    <div class="dropdown-divider"></div>
+                                    <button type="button" class="dropdown-item text-danger"
+                                        wire:click="deleteFile({{ $file->id }})"
+                                        wire:swal-delete="¿Está seguro de eliminar este archivo?">
+                                        <i class="fas fa-fw fa-trash-alt mr-2"></i> Eliminar
+                                    </button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="text-center text-muted">
+                <div class="d-flex flex-column align-items-center justify-content-center text-muted h-100 py-5">
+                    <i class="fas fa-folder-open fa-2x mb-2"></i>
                     No hay archivos aún.
                 </div>
             @endforelse
@@ -59,65 +89,18 @@
 
     <div class="card-footer">
         <form wire:submit.prevent="save">
-            <div class="input-group">
-                <div class="custom-file">
-                    <input wire:model="file" type="file" class="custom-file-input" id="customFile"
-                        accept=".pdf, .jpeg, .png, .jpg, .docx, .doc, .xlsx, .xls" required>
-                    <label class="custom-file-label" for="customFile">{{ $fileName }}</label>
-                </div>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary btn-sm" type="submit"><i class="fas fa-upload mr-1"></i>Subir</button>
-                </div>
-            </div>
+            <x-livewire.file-upload name="newFile" fgroup-class="mb-1"
+                accept=".pdf, .jpeg, .png, .jpg, .docx, .doc, .xlsx, .xls">
+                {{ $fileName }}
+
+                <x-slot name="appendSlot">
+                    <x-livewire.loading-button type="submit" label="Subir" theme="outline-primary" icon="upload"
+                        wire:target='save' />
+                </x-slot>
+            </x-livewire.file-upload>
         </form>
+        <p class="text-muted small mb-0">
+            Admitidos: pdf, jpeg, png, jpg, docx, doc, xlsx, xls | Máximo 10MB.
+        </p>
     </div>
 </div>
-
-@push('js')
-    <script>
-        Livewire.on('showError', () => {
-            Swal.fire({
-                title: "¡Ups! Algo salió mal...",
-                text: "Parece que el servidor no cooperó. Intenta nuevamente más tarde o contacta con soporte si el problema persiste.",
-                icon: "error",
-                confirmButtonColor: '#d33'
-            });
-        });
-
-        Livewire.on('fileSaved', () => {
-            Swal.fire({
-                title: "Ok",
-                text: "Archivo guardado exitosamente.",
-                icon: "success"
-            });
-        });
-
-        function deleteFile(id) {
-            Swal.fire({
-                title: '¿Está seguro de eliminar este archivo?',
-                text: "¡Esta acción es irreversible! El archivo se eliminará permanentemente.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.dispatch('deleteFile', {
-                        id: id
-                    });
-
-                    Livewire.on('fileDeleted', () => {
-                        Swal.fire({
-                            title: "Archivo eliminado",
-                            text: "El archivo ha sido eliminado correctamente.",
-                            icon: "success",
-                            confirmButtonColor: '#3085d6'
-                        });
-                    });
-                }
-            });
-        }
-    </script>
-@endpush

@@ -12,7 +12,7 @@
 @endphp
 
 <div class="row">
-    <div class="col-md-{{ $hasFilters ? '9' : '10' }} col-sm-8 col-12 mb-1">
+    <div class="col-md-{{ $hasFilters ? '9' : '10' }} col-12 mb-1">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Presiona Enter para buscar..."
                 wire:model="{{ $modelSearch }}" wire:keydown.enter="{{ $actionSearch }}" wire:loading.attr='readonly'
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="col-md-2 col-sm-4 mb-1">
+    <div class="col-md-2 col-{{ $hasFilters ? '6' : '12' }} mb-1">
         <select class="custom-select border-secondary" wire:model="{{ $modelPerPage }}"
             wire:change="{{ $actionSearch }}">
             <option value="12">12 registros</option>
@@ -43,7 +43,7 @@
     </div>
 
     @if ($hasFilters)
-        <div class="col-md-1 col-12 mb-1">
+        <div class="col-md-1 col-{{ $hasFilters ? '6' : '12' }} mb-1">
             <button class="btn btn-outline-secondary btn-block" type="button" data-toggle="collapse"
                 data-target="#collapseFilters_{{ $this->getId() }}" aria-expanded="false"
                 aria-controls="collapseFilters_{{ $this->getid() }}" x-data="{ open: false }" data-toggle="collapse"

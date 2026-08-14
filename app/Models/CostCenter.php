@@ -2,35 +2,42 @@
 
 namespace App\Models;
 
+use App\Traits\Models\HasActiveState;
+use App\Traits\Models\TruncateText;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
  * @property int|null $company_id
  * @property string $name
  * @property string|null $description
- * @property bool $enabled
+ * @property bool $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Company|null $company
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequestModel> $requests
  * @property-read int|null $requests_count
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter query()
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CostCenter whereUpdatedAt($value)
+ * @method static Builder<static>|CostCenter active()
+ * @method static Builder<static>|CostCenter inactive()
+ * @method static Builder<static>|CostCenter newModelQuery()
+ * @method static Builder<static>|CostCenter newQuery()
+ * @method static Builder<static>|CostCenter query()
+ * @method static Builder<static>|CostCenter whereCompanyId($value)
+ * @method static Builder<static>|CostCenter whereCreatedAt($value)
+ * @method static Builder<static>|CostCenter whereDescription($value)
+ * @method static Builder<static>|CostCenter whereId($value)
+ * @method static Builder<static>|CostCenter whereIsActive($value)
+ * @method static Builder<static>|CostCenter whereName($value)
+ * @method static Builder<static>|CostCenter whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class CostCenter extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActiveState, TruncateText;
 
     protected $table = 'cost_centers';
 
@@ -38,20 +45,25 @@ class CostCenter extends Model
         'company_id',
         'name',
         'description',
-        'enabled'
+        'is_active',
     ];
 
     protected $casts = [
-        'enabled' => 'boolean'
+        'is_active' => 'boolean'
     ];
 
-    public function company()
+    public function isInUse(): bool
+    {
+        return $this->requests()->exists();
+    }
+
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
-        return $this->hasMany(RequestModel::class, 'cost_center', 'name');
+        return $this->hasMany(RequestModel::class, 'cost_center_id', 'id');
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use App\Traits\Models\HasActiveState;
 use Eloquent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
@@ -24,89 +25,86 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
- * @property mixed $password
+ * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
- * @property-read int|null $notifications_count
- * @method static UserFactory factory($count = null, $state = [])
- * @method static Builder|User newModelQuery()
- * @method static Builder|User newQuery()
- * @method static Builder|User query()
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereEmail($value)
- * @method static Builder|User whereEmailVerifiedAt($value)
- * @method static Builder|User whereId($value)
- * @method static Builder|User whereName($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereUpdatedAt($value)
- * @property int $enabled
- * @property-read Collection<int, Permission> $permissions
- * @property-read int|null $permissions_count
- * @property-read Collection<int, Role> $roles
- * @property-read int|null $roles_count
- * @method static Builder|User permission($permissions, $without = false)
- * @method static Builder|User role($roles, $guard = null, $without = false)
- * @method static Builder|User whereEnabled($value)
- * @method static Builder|User withoutPermission($permissions)
- * @method static Builder|User withoutRole($roles, $guard = null)
- * @property array|null $allowed_types
- * @property-read Collection<int, BugReport> $bugReports
- * @property-read int|null $bug_reports_count
+ * @property bool $is_active
+ * @property array<array-key, mixed>|null $allowed_types
+ * @property-read Collection<int, Company> $companies
+ * @property-read int|null $companies_count
  * @property-read Collection<int, FileManagement> $files
  * @property-read int|null $files_count
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
  * @property-read Collection<int, RequestModel> $requests
  * @property-read int|null $requests_count
- * @method static Builder|User whereAllowedTypes($value)
- * @property-read Collection<int, \App\Models\Company> $companies
- * @property-read int|null $companies_count
- * @property-read Collection<int, \App\Models\Type> $types
+ * @property-read Collection<int, Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read Collection<int, Type> $types
  * @property-read int|null $types_count
+ * @method static Builder<static>|User active()
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static Builder<static>|User inactive()
+ * @method static Builder<static>|User newModelQuery()
+ * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User permission($permissions, $without = false)
+ * @method static Builder<static>|User query()
+ * @method static Builder<static>|User role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|User whereAllowedTypes($value)
+ * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereEmail($value)
+ * @method static Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static Builder<static>|User whereId($value)
+ * @method static Builder<static>|User whereIsActive($value)
+ * @method static Builder<static>|User whereName($value)
+ * @method static Builder<static>|User wherePassword($value)
+ * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereUpdatedAt($value)
+ * @method static Builder<static>|User withoutPermission($permissions)
+ * @method static Builder<static>|User withoutRole($roles, $guard = null)
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasActiveState, HasFactory, HasRoles, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
-        'password'
+        'password',
+        'is_active',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
-        'allowed_types'
+        'allowed_types',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'allowed_types' => 'array',
-        'enabled' => 'boolean'
+        'password'          => 'hashed',
+        'allowed_types'     => 'array',
+        'is_active'         => 'boolean',
     ];
 
-    /**
-     * Determine if the user is enabled for login.
-     *
-     * @return bool|int
-     */
-    public function isEnabled(): bool|int
+    public function isInUse(): bool
     {
-        return $this->enabled;
+        return $this->requests()->exists();
+    }
+
+    public function typeOptions(bool $onlyActive = true): array
+    {
+        $query = $this->types();
+
+        if ($onlyActive) {
+            $query->where('is_active', true);
+        }
+
+        return $query->pluck('types.name', 'types.id')->toArray();
     }
 
     public function requests(): HasMany
@@ -119,46 +117,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(FileManagement::class);
     }
 
-    public function bugReports(): HasMany
-    {
-        return $this->hasMany(BugReport::class);
-    }
-
-    public function types()
+    public function types(): BelongsToMany
     {
         return $this->belongsToMany(Type::class, 'type_user');
     }
 
-    public function companies()
+    public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user');
     }
-
-    public function getTypesEnabled()
-    {
-        return $this->types()->where('enabled', true)->get();
-    }
-
-    public function getEnabledCompanies()
-    {
-        return $this->companies()->where('enabled', true)->get();
-    }
-
-    /**
-     * Obtiene las empresas habilitadas junto con sus centros de costo habilitados.
-     *
-     * Este método consulta todas las empresas relacionadas con el modelo actual que
-     * tengan el campo 'enabled' establecido en true. Además, realiza una carga anticipada
-     * (eager loading) de los centros de costo asociados, filtrando solo aquellos que
-     * también estén habilitados.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     *         Colección de empresas habilitadas con sus respectivos centros de costo habilitados.
-     */
-    public function getEnabledCompaniesWithEnabledCostCenters()
-    {
-        return $this->companies()->where('enabled', true)->with(['costCenters' => function ($query) {
-            $query->where('enabled', true);
-        }])->get();
-    }
 }
+

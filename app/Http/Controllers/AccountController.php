@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
-    public function index(): Application|Factory|View
-    {
-        return view('account.index');
+    public function show(): View {
+        return view('account.show', [
+            'user' => Auth::user()
+        ]);
     }
 }

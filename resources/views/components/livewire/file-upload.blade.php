@@ -1,6 +1,24 @@
 @props(['name', 'label' => null, 'fgroupClass' => null, 'labelClass' => null, 'accept' => null, 'hint' => null])
 
-<div class="form-group {{ $fgroupClass }}" x-data="attachmentUpload()" x-on:livewire-upload-start="onStart"
+<div class="form-group {{ $fgroupClass }}" x-data="{
+    uploading: false,
+    progress: 0,
+    onStart() {
+        this.uploading = true;
+        this.progress = 0;
+    },
+    onFinish() {
+        this.uploading = false;
+        this.progress = 0;
+    },
+    onError() {
+        this.uploading = false;
+        this.progress = 0;
+    },
+    onProgress(value) {
+        this.progress = value;
+    }
+}" x-on:livewire-upload-start="onStart"
     x-on:livewire-upload-finish="onFinish" x-on:livewire-upload-error="onError"
     x-on:livewire-upload-progress="onProgress($event.detail.progress)">
 
@@ -16,13 +34,19 @@
         </div>
     @endif
 
-    <div class="custom-file" x-show="!uploading">
-        <input type="file" id="{{ $name }}"
-            class="custom-file-input cursor-pointer @error($name) is-invalid @enderror" wire:model="{{ $name }}"
-            @if ($accept) accept="{{ $accept }}" @endif>
-        <label class="custom-file-label" for="{{ $name }}">
-            {{ $slot->isNotEmpty() ? $slot : 'Seleccionar archivo' }}
-        </label>
+    <div @isset($appendSlot) class="input-group" @endisset x-show="!uploading">
+        <div class="custom-file">
+            <input type="file" id="{{ $name }}"
+                class="custom-file-input cursor-pointer @error($name) is-invalid @enderror"
+                wire:model="{{ $name }}" @if ($accept) accept="{{ $accept }}" @endif>
+            <label class="custom-file-label" for="{{ $name }}">
+                {{ $slot->isNotEmpty() ? $slot : 'Seleccionar archivo' }}
+            </label>
+        </div>
+
+        @isset($appendSlot)
+            <div class="input-group-append">{{ $appendSlot }}</div>
+        @endisset
     </div>
 
     <div x-show="uploading" x-cloak>
@@ -43,31 +67,3 @@
         <span class="invalid-feedback d-block">{{ $message }}</span>
     @enderror
 </div>
-
-@once
-    @push('js')
-        <script>
-            function attachmentUpload() {
-                return {
-                    uploading: false,
-                    progress: 0,
-                    onStart() {
-                        this.uploading = true;
-                        this.progress = 0;
-                    },
-                    onFinish() {
-                        this.uploading = false;
-                        this.progress = 0;
-                    },
-                    onError() {
-                        this.uploading = false;
-                        this.progress = 0;
-                    },
-                    onProgress(value) {
-                        this.progress = value;
-                    },
-                };
-            }
-        </script>
-    @endpush
-@endonce

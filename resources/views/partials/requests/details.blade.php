@@ -15,8 +15,8 @@
         {{ $requestModel->created_at->format('d-m-Y h:i:s a') }}
     </div>
     <div class="col-md-12">
-        <strong class="text-{{ $requestModel->getStatusBSClass() }}">
-            {{ $requestModel->getStatusText() }}
+        <strong class="text-{{ $requestModel->status->bootstrapColorClass() }}">
+            {{ $requestModel->status->label() }}
         </strong>
     </div>
     <div class="col-md-6">
@@ -28,7 +28,7 @@
     <div class="col-md-12 mb-3">
         <strong>Modo de Pago:</strong> <span class="badge"
             style="{{ $requestModel->is_transfer ? 'background-color: #A3C8FF' : 'background-color: #FFB998' }}">
-            {{ $requestModel->getPaymentMethod() }}
+            {{ $requestModel->paymentMethod() }}
         </span>
     </div>
     <div class="col-md-12">
@@ -44,13 +44,13 @@
     </div>
 
     <div class="col-md-12 mb-3">
-        <strong>Concepto:</strong> {{ $requestModel->concept ?? 'N/D' }}
+        <strong>Concepto:</strong> {{ $requestModel->concept }}
     </div>
     <div class="col-md-6">
-        <strong>Centro de Costos:</strong> {{ $requestModel->cost_center ?? 'N/D' }}
+        <strong>Centro de Costos:</strong> {{ $requestModel->costCenter->name }}
     </div>
     <div class="col-md-6 mb-3">
-        <strong>Tipo:</strong> {{ $requestModel->getTypeName() }}
+        <strong>Tipo:</strong> {{ $requestModel->type->name }}
     </div>
     <div class="col-md-6">
         <strong>Banco:</strong> {{ $requestModel->bank ?? 'N/D' }}

@@ -40,13 +40,11 @@ class Message extends Model
         'message',
     ];
 
-    // Relación con el modelo Request
     public function request(): BelongsTo
     {
         return $this->belongsTo(RequestModel::class);
     }
 
-    // Relación con el modelo User
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

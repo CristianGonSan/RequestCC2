@@ -2,32 +2,36 @@
 
 namespace App\Livewire\Requests;
 
+use App\Models\RequestModel;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class ShowRecords extends Component
 {
     use WithPagination;
 
-    public $requestModel;
+    public $requestModelId;
 
-    public function mount($requestModel): void
+    public function mount(int $requestModelId): void
     {
-        $this->requestModel = $requestModel;
+        $this->requestModelId = $requestModelId;
     }
 
     public function render()
     {
-        $records = $this->requestModel->records()->orderByDesc('registered_at')->with('user')->paginate();
+        $records = $this->requestModel()->records()
+            ->orderByDesc('registered_at')
+            ->with('user')->paginate();
 
         return view('livewire.requests.show-records', [
-            'records' => $records
+            'records' => $records,
         ]);
     }
 
-    #[On('refreshRecords')]
-    public function refreshRecords() {
-        $this->resetPage();
+    private ?RequestModel $requestModel = null;
+
+    private function requestModel(): RequestModel
+    {
+        return $this->requestModel ??= RequestModel::findOrFail($this->requestModelId);
     }
 }

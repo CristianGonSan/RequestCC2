@@ -2,70 +2,81 @@
 
 namespace App\Livewire\Account;
 
+use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Support\Carbon;
-use Livewire\Component;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
+use Livewire\Component;
 use Str;
 
 class ShowSessions extends Component
 {
-    public $currentPassword;
+    use Toast;
 
-    public function render()
+    public string $current_password;
+
+    public function render(): View
     {
         return view('livewire.account.show-sessions', [
-            'sessions' => $this->getSessions()
+            'sessions' => $this->getSessions(),
         ]);
     }
 
-    public function logoutOtherDevices()
+    public function logoutOtherDevices(): void
     {
         $user = Auth::user();
 
-        if (Hash::check($this->currentPassword, $user->password)) {
-            Auth::logoutOtherDevices($this->currentPassword);
+        if (Hash::check($this->current_password, $user->password)) {
+            Auth::logoutOtherDevices($this->current_password);
             $this->deleteSessions();
 
-            $user->setRememberToken(Str::random(60));
+            $user->setRememberToken(Str::random(64));
             $user->save();
 
-            session()->flash('message', 'Sesiones cerradas con éxito.');
+            $this->toastSuccess('Sesiones Cerradas');
+            $this->resetErrorBag();
+            $this->reset();
         } else {
-            session()->flash('error', 'Contraseña incorrecta');
+            $this->addError('current_password', 'Contraseña incorrecta');
         }
-
-        $this->reset('currentPassword');
     }
 
-    private function getSessions()
+    private function getSessions(): Collection
     {
         $icons = [
-            'mobile' => 'fa-solid fa-mobile-screen-button',
-            'tablet' => 'fa-solid fa-tablet-screen-button',
-            'desktop' => 'fa-solid fa-desktop'
+            'mobile'  => 'fa-solid fa-mobile-screen-button',
+            'tablet'  => 'fa-solid fa-tablet-screen-button',
+            'desktop' => 'fa-solid fa-desktop',
         ];
 
         return DB::table('sessions')
             ->where('user_id', Auth::id())
             ->orderByDesc('last_activity')
             ->get()
-            ->map(function ($session) use ($icons) {
-                return [
-                    'id' => $session->id,
-                    'ip_address' => $session->ip_address,
-                    'user_agent' => $session->user_agent,
-                    'last_activity' => Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
-                    'is_current_device' => $session->id === Session::getId(),
-                    'device_type' => $d = $this->getDeviceType($session->user_agent),
-                    'icon' => $icons[$d]
-                ];
-            });
+            ->map(fn ($session) => [
+                'id'                => $session->id,
+                'ip_address'        => $session->ip_address,
+                'user_agent'        => $session->user_agent,
+                'last_activity'     => Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
+                'is_current_device' => $session->id === Session::getId(),
+                'device_type'       => $type = $this->getDeviceType($session->user_agent),
+                'icon'              => $icons[$type],
+            ]
+            );
     }
 
-    private function getDeviceType($userAgent)
+    private function deleteSessions(): void
+    {
+        DB::table('sessions')
+            ->where('id', '!=', Session::getId())
+            ->delete();
+    }
+
+    private function getDeviceType($userAgent): string
     {
         $mobileKeywords = ['Mobile', 'Android', 'iPhone', 'iPod', 'BlackBerry', 'Windows Phone', 'Opera Mini', 'IEMobile'];
         $tabletKeywords = ['iPad', 'Android', 'Kindle', 'Silk', 'Tablet'];
@@ -83,14 +94,5 @@ class ShowSessions extends Component
         }
 
         return 'desktop';
-    }
-
-    private function getIcon($deviceType) {}
-
-    private function deleteSessions()
-    {
-        DB::table('sessions')
-            ->where('id', '!=', Session::getId())
-            ->delete();
     }
 }

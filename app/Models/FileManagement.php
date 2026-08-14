@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Files\FileExtensionSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,16 +33,19 @@ use Illuminate\Support\Carbon;
  * @method static Builder|FileManagement whereSize($value)
  * @method static Builder|FileManagement whereUpdatedAt($value)
  * @method static Builder|FileManagement whereUserId($value)
+ * @property-read string $extension
+ * @property-read FileExtensionSupport $extension_support
+ * @property-read float $file_size_in_k_b
+ * @property-read float $file_size_in_m_b
+ * @property-read string $human_readable_size
  * @mixin \Eloquent
  */
 class FileManagement extends Model
 {
     use HasFactory;
 
-    // Nombre de la tabla en la base de datos
     protected $table = 'file_management';
 
-    // Campos que se pueden llenar de forma masiva
     protected $fillable = [
         'request_id',
         'user_id',
@@ -51,16 +55,49 @@ class FileManagement extends Model
         'size',
     ];
 
-    // Relación con la tabla 'requests'
     public function request(): BelongsTo
     {
         return $this->belongsTo(RequestModel::class);
     }
 
-    // Relación con la tabla 'users'
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-}
 
+    public function getExtensionAttribute(): string
+    {
+        return pathinfo($this->file_path, PATHINFO_EXTENSION);
+    }
+
+    public function getFileSizeInMBAttribute(): float
+    {
+        return $this->size / (1024 * 1024);
+    }
+
+    public function getFileSizeInKBAttribute(): float
+    {
+        return $this->size / 1024;
+    }
+
+    public function getExtensionSupportAttribute(): FileExtensionSupport
+    {
+        return FileExtensionSupport::fromExtension($this->extension);
+    }
+
+    public function getHumanReadableSizeAttribute(): string
+    {
+        if (\is_null($this->size)) {
+            return '—';
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($this->size, 0);
+        $pow = $bytes > 0 ? floor(log($bytes, 1024)) : 0;
+        $pow = min($pow, \count($units) - 1);
+
+        $bytes /= (1024 ** $pow);
+
+        return round($bytes, $pow > 0 ? 1 : 0).' '.$units[$pow];
+    }
+}

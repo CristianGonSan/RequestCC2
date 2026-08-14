@@ -2,52 +2,60 @@
 
 namespace App\Livewire\Requests;
 
-use App\Http\Controllers\MailManager;
-use App\Models\Message;
+use App\Services\Mails\MailManager;
+use App\Models\RequestModel;
 use Auth;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ShowMessages extends Component
 {
-    public $requestModel;
-    public $newMessage;
+    #[Locked]
+    public int $requestModelId;
 
-    public $messages;
+    public string $newMessage;
 
-    public function mount($requestModel): void
+    public function mount(int $requestModelId): void
     {
-        $this->requestModel = $requestModel;
+        $this->requestModelId = $requestModelId;
     }
 
-    public function render(): View|Factory|Application
+    public function render(): View
     {
-        $this->loadMessages();
-        return view('livewire.requests.show-messages');
-    }
-
-    public function loadMessages()
-    {
-        $this->messages = $this->requestModel->messages()
-            ->with('user')
+        $messages = $this->requestModel()->messages()
+            ->with('user:id,name')
             ->get();
+
+        return view('livewire.requests.show-messages', [
+            'messages' => $messages,
+        ]);
     }
 
     public function sendMessage(): void
     {
-        $messageModel = Message::create([
-            'request_id' => $this->requestModel->id,
-            'user_id' => Auth::id(),
-            'message' => $this->newMessage,
+        $requestModel = $this->requestModel();
+
+        $validated = $this->validate([
+            'newMessage' => ['required', 'string', 'max:255'],
         ]);
 
-        if (Auth::id() != $this->requestModel->user->id) {
-            MailManager::sendNewMessageNotification($messageModel);
+        $newMessage = $requestModel->messages()->create([
+            'user_id' => Auth::id(),
+            'message' => $validated['newMessage'],
+        ]);
+
+        if (Auth::id() != $requestModel->user_id) {
+            MailManager::sendNewMessageNotification($newMessage);
         }
 
-        $this->newMessage = '';
+        $this->reset('newMessage');
+    }
+
+    private ?RequestModel $requestModel = null;
+
+    private function requestModel(): RequestModel
+    {
+        return $this->requestModel ??= RequestModel::findOrFail($this->requestModelId);
     }
 }
-

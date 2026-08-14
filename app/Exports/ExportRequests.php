@@ -71,7 +71,7 @@ class ExportRequests extends BaseExport
             'status' => [
                 'header' => 'Estatus',
                 'format' => function (RequestModel $item) {
-                    return $item->getStatusText();
+                    return $item->status->label();
                 }
             ],
         ], $onlyColumns);

@@ -11,11 +11,21 @@
     {{--
         Copia de x-adminlte-select.
         Se añade un wrapper con wire:ignore para evitar que Livewire modifique el select.
+
+        wire:loading.attr='readonly' + wire:target='save' por defecto:
+        evita que el propio wire:model del select dispare su propio estado
+        de loading al cambiar. Se puede sobreescribir pasando wire:target
+        explícito al consumir el componente (ej. wire:target="save,delete").
     --}}
 
     <div class="w-100" wire:ignore>
         {{-- Select --}}
-        <select id="{{ $id }}" name="{{ $name }}" {{ $attributes->merge(['class' => $makeItemClass()]) }}>
+        <select id="{{ $id }}" name="{{ $name }}"
+            {{ $attributes->merge([
+                'class' => $makeItemClass(),
+                'wire:loading.attr' => 'readonly',
+                'wire:target' => 'save',
+            ]) }}>
             {{ $slot }}
         </select>
     </div>

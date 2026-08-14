@@ -2,132 +2,175 @@
 
 namespace App\Livewire\Requests\Accounting;
 
+use App\Enums\Requests\RequestStatus;
 use App\Exports\ExportRequests;
 use App\Models\RequestModel;
 use App\Models\Type;
-use App\Traits\LivewireTableFiltersHandle;
+use App\Support\DataBag;
+use App\Traits\Livewire\RequestModel\HasRequestModelTable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Session;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RequestsTable extends Component
 {
-    use WithPagination;
-    use LivewireTableFiltersHandle;
+    use HasRequestModelTable;
 
-    public array $typeOptions = [];
+    #[Session]
+    public string $searchTerm = '';
 
-    public array $filteredStatusOptions = [];
-    public array $statusOptions = [];
+    #[Session]
+    public int $perPage = 12;
+
+    #[Session]
+    public int $page = 1;
+
+    #[Session]
+    public string $sortColumn = 'created_at';
+
+    #[Session]
+    public string $sortDirection = 'desc';
+
+    #[Session]
+    public array $filters = [
+        'type'      => null,
+        'status'    => null,
+        'payMethod' => 1,
+        'minAmount' => null,
+        'maxAmount' => null,
+        'minDate'   => null,
+        'maxDate'   => null,
+    ];
+
+    private const EXCLUDED = [
+        RequestStatus::Pending, RequestStatus::Rejected
+    ];
 
     public function mount(): void
     {
-        $this->loadFilters('accountingRT', [
-            'search' => null,
-            'perPage' => 12,
-            'orderBy' => 'created_at',
-            'orderDirection' => 'desc',
-            'type' => null,
-            'status' => null,
-            'payMethod' => -1,
-            'minAmount' => null,
-            'maxAmount' => null,
-            'minDate' => null,
-            'maxDate' => null,
-        ]);
-
-        $this->typeOptions = Type::options();
-
-        $exclude = [RequestModel::STATUS_PENDING, RequestModel::STATUS_REJECTED];
-
-        $this->statusOptions = $this->filteredStatusOptions = array_filter(RequestModel::STATUSES_TEXT, function ($key) use ($exclude) {
-            return !in_array($key, $exclude);
-        }, ARRAY_FILTER_USE_KEY);
+        $this->setPage($this->page);
     }
-
 
     public function render(): View
     {
-        $requests = $this->getQuery()->paginate($this->filters['perPage']);
+        $requests = $this->getQuery()->paginate($this->perPage);
 
         return view('livewire.requests.accounting.requests-table', [
-            'requests' => $requests
+            'requests'      => $requests,
+            'statusOptions' => RequestStatus::exclude(self::EXCLUDED),
+            'typeOptions'   => Type::options(),
         ]);
     }
 
+    public function export(): ?BinaryFileResponse
+    {
+        $items = $this->getQuery()->paginate($this->perPage)->items();
 
-    protected function getQuery(): Builder
+        if (empty($items)) {
+            $this->toastWarning('No hay nada para exportar');
+            return null;
+        }
+
+        $results = collect($items);
+        $export = new ExportRequests($results);
+
+        return Excel::download($export, 'Solicitudes.xlsx');
+    }
+
+    private function getQuery(): Builder
     {
         $query = RequestModel::query();
-        $search = $this->filters['search'];
 
-        $query->orderBy($this->filters['orderBy'], $this->filters['orderDirection']);
+        $filtersBag = DataBag::make($this->filters);
 
-        if ($this->filters['payMethod'] > -1) {
-            $query->where('is_transfer', $this->filters['payMethod']);
-        }
-
-        if ($this->filters['type']) {
-            $query->where('type', $this->filters['type']);
-        }
-
-        $query->whereIn('status', [
-            RequestModel::STATUS_ACCEPTED,
-            RequestModel::STATUS_PAID,
-            RequestModel::STATUS_CANCELED
+        $query->with([
+            'user:id,name',
+            'costCenter:id,name',
+            'type:id,name',
         ]);
 
-        if ($this->filters['status']) {
-            $query->where('status', $this->filters['status']);
-        }
+        $query->join('cost_centers', 'requests.cost_center_id', '=', 'cost_centers.id')
+            ->join('users', 'requests.user_id', '=', 'users.id')
+            ->join('types', 'requests.type_id', '=', 'types.id')
+            ->select('requests.*');
 
-        if ($this->filters['minAmount']) {
-            $query->where('amount', '>=', $this->filters['minAmount']);
-        }
+        $query->whereNotIn('requests.status', self::EXCLUDED);
 
-        if ($this->filters['maxAmount']) {
-            $query->where('amount', '<=', $this->filters['maxAmount']);
-        }
-
-        if ($this->filters['minDate']) {
-            $query->whereDate('created_at', '>=', $this->filters['minDate']);
-        }
-
-        if ($this->filters['maxDate']) {
-            $query->whereDate('created_at', '<=', $this->filters['maxDate']);
-        }
-
-        $query->with('user');
-        $query->with('typeModel');
-
-        if ($search) {
-            if (str_contains($search, ":id=")) {
-                $data = explode('=', $search);
-                if (!empty($data[1])) {
-                    $query->where('id', $data[1]);
-                }
+        if ($term = $this->searchTerm) {
+            if ($id = $this->getIdFromSearchTerm()) {
+                $query->where('requests.id', $id);
             } else {
-                $query->where(function ($query) use ($search) {
-                    $query->where('concept', 'like', '%' . $search . '%')
-                        ->orWhere('cost_center', 'like', '%' . $search . '%')
-                        ->orWhere('type', 'like', '%' . $search . '%')
-                        ->orWhere('payee', 'like', '%' . $search . '%')
-                        ->orWhereHas('user', function ($query) use ($search) {
-                            $query->where('name', 'like', '%' . $search . '%');
-                        });
+                $query->where(function (Builder $query) use ($term): void {
+                    $query
+                        ->where('users.name', 'like', "%$term%")
+                        ->orWhere('requests.payee', 'like', "%$term%")
+                        ->orWhere('cost_centers.name', 'like', "%$term%")
+                        ->orWhere('requests.concept', 'like', "%$term%");
                 });
             }
         }
 
+        $query->when($filtersBag->filled('payMethod'),
+                fn () => $query->where('requests.is_transfer', $filtersBag->boolean('payMethod'))
+            )
+            ->when($filtersBag->filled('type'),
+                fn () => $query->where('requests.type_id', $filtersBag->string('type'))
+            )
+            ->when($filtersBag->filled('status'),
+                fn () => $query->where('requests.status', $filtersBag->string('status'))
+            )
+            ->when($filtersBag->filled('minAmount'),
+                fn () => $query->where('requests.amount', '>=', $filtersBag->float('minAmount'))
+            )
+            ->when($filtersBag->filled('maxAmount'),
+                fn () => $query->where('requests.amount', '<=', $filtersBag->float('maxAmount'))
+            )
+            ->when($filtersBag->filled('minDate'),
+                fn () => $query->where('requests.created_at', '>=', $filtersBag->string('minDate'))
+            )
+            ->when($filtersBag->filled('maxDate'),
+                fn () => $query->where('requests.created_at', '<=', $filtersBag->string('maxDate'))
+            );
+
+        if ($this->sortColumn === 'status') {
+            $cases = collect(RequestStatus::cases())
+                ->map(fn (RequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
+                ->implode(' ');
+
+            $query->orderByRaw("CASE requests.status $cases END {$this->sortDirection}");
+
+            return $query;
+        }
+
+        $sortable = [
+            'created_at'    => 'requests.created_at',
+            'id'            => 'requests.id',
+            'payee'         => 'requests.payee',
+            'cost_center'   => 'cost_centers.name',
+            'users'         => 'user.name',
+            'amount'        => 'requests.amount',
+            'type'          => 'types.name'
+        ];
+
+        $column = $sortable[$this->sortColumn] ?? 'requests.created_at';
+
+        $query->orderBy($column, $this->sortDirection);
+
         return $query;
     }
 
-    public function export()
+    private function getIdFromSearchTerm(): ?int
     {
-        $results = collect($this->getQuery()->paginate($this->filters['perPage'])->items());
-        $export = new ExportRequests($results);
-        return Excel::download($export, 'Solicitudes.xlsx');
+        if (str_contains($this->searchTerm, ':id=')) {
+            $data = explode('=', $this->searchTerm);
+            if (! empty($data[1])) {
+                return (int) $data[1];
+            }
+        }
+
+        return null;
     }
 }

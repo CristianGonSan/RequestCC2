@@ -3,94 +3,92 @@
 namespace App\Livewire\Requests;
 
 use App\Models\FileManagement;
-use Illuminate\Contracts\View\Factory;
+use App\Models\RequestModel;
+use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Livewire\Attributes\On;
 
 class ShowFiles extends Component
 {
-    use WithFileUploads;
+    use Toast, WithFileUploads;
 
-    public $requestModel;
-    public $file;
+    #[Locked]
+    public int $requestModelId;
 
-    public $fileName = 'Seleccionar archivo';
+    public ?TemporaryUploadedFile $newFile = null;
 
-    public $files;
+    public string $fileName = 'Seleccionar archivo';
 
-    public function mount($requestModel): void
+    public function mount(int $requestModelId): void
     {
-        $this->requestModel = $requestModel;
+        $this->requestModelId = $requestModelId;
     }
 
-    public function updatedFile(): void
+    public function render(): View
+    {
+        return view('livewire.requests.show-files', [
+            'files' => $this->requestModel()->files()
+                ->orderBy('id')
+                ->with('user')
+                ->get(),
+        ]);
+    }
+
+    public function updatedNewFile(): void
     {
         $this->validate([
-            'file' => 'required|file|mimes:pdf,jpeg,png,jpg,docx,doc,xlsx,xls|max:10240',
+            'newFile' => ['required', 'file', 'mimes:pdf,jpeg,png,jpg,docx,doc,xlsx,xls', 'max:10240'],
         ]);
 
-        $this->fileName = $this->file?->getClientOriginalName() ?? 'Seleccionar archivo';
+        $this->fileName = $this->newFile?->getClientOriginalName() ?? 'Seleccionar archivo';
     }
 
     public function save(): void
     {
         $this->validate([
-            'file' => 'required|file|mimes:pdf,jpeg,png,jpg,docx,doc,xlsx,xls|max:10240',
+            'newFile' => ['required', 'file', 'mimes:pdf,jpeg,png,jpg,docx,doc,xlsx,xls', 'max:10240'],
         ]);
 
-        $path = 'requests/' . $this->requestModel->created_at->format('Y-m') . '/' . $this->requestModel->id;
-        //$path = 'requests/' . $this->requestModel->id;
-        $file_path = $this->file->store($path, 'local');
+        $requestModel = $this->requestModel();
+
+        $path = 'requests/'.$requestModel->created_at->format('Y-m').'/'.$requestModel->id;
+
+        $file_path = $this->newFile->store($path, 'local');
 
         if (Storage::exists($file_path)) {
-            $fileManagement = new FileManagement();
-            $fileManagement->request_id = $this->requestModel->id;
+            $fileManagement = new FileManagement;
+            $fileManagement->request_id = $requestModel->id;
             $fileManagement->user_id = Auth::id();
             $fileManagement->file_path = $file_path;
-            $fileManagement->original_name = $this->file->getClientOriginalName();
-            $fileManagement->mime_type = $this->file->getMimeType();
-            $fileManagement->size = $this->file->getSize();
+            $fileManagement->original_name = $this->newFile->getClientOriginalName();
+            $fileManagement->mime_type = $this->newFile->getMimeType();
+            $fileManagement->size = $this->newFile->getSize();
             $fileManagement->save();
 
-            $this->reset(['file', 'fileName']);
-            $this->dispatch('fileSaved');
+            $this->reset(['newFile', 'fileName']);
+            $this->toastSuccess('Archivo subido correctamente.');
         } else {
-            $this->dispatch('showError');
+            $this->toastError('Error al subir el archivo.');
         }
-    }
-
-    public function render(): Application|Factory|View
-    {
-        $this->loanFiles();
-        return view('livewire.requests.show-files');
-    }
-
-    public function loanFiles()
-    {
-        $this->files = $this->requestModel->files()
-            ->orderByDesc('id')
-            ->with('user')
-            ->get();
     }
 
     public function downloadFile($fileId): BinaryFileResponse
     {
         $file = FileManagement::findOrFail($fileId);
 
-        if (!Storage::disk('local')->exists($file->file_path)) {
+        if (! Storage::disk('local')->exists($file->file_path)) {
             abort(404, 'Archivo no encontrado.');
         }
 
         return response()->download(Storage::path($file->file_path), $file->original_name);
     }
 
-    #[On('deleteFile')]
     public function deleteFile($id): void
     {
         $file = FileManagement::findOrFail($id);
@@ -104,6 +102,13 @@ class ShowFiles extends Component
         }
 
         $file->delete();
-        $this->dispatch('fileDeleted');
+        $this->toastSuccess('Archivo eliminado correctamente.');
+    }
+
+    private ?RequestModel $requestModel = null;
+
+    private function requestModel(): RequestModel
+    {
+        return $this->requestModel ??= RequestModel::findOrFail($this->requestModelId);
     }
 }

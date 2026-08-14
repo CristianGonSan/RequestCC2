@@ -1,16 +1,26 @@
 @extends('adminlte::page')
 
+@section('plugins.Select2', true)
+
+@section('title_prefix', 'Rol |')
+
 @section('content_header')
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('admin.roles.index') }}">Roles</a></li>
-            <li class="breadcrumb-item active">{{ $role->name }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('roles.index') }}">Roles</a></li>
+            <li class="breadcrumb-item active">#{{ $roleId }}</li>
+            <li class="breadcrumb-item active">Detalles</li>
         </ol>
     </nav>
-    <x-alert></x-alert>
 @endsection
 
 @section('content')
-    <livewire:Admin.Role.ShowRole :role="$role" />
+    <h1 class="h4">Detalles de rol</h1>
+    <livewire:Admin.Roles.RoleShow :roleId="$roleId" />
+
+    <hr class="mt-1">
+
+    <h1 class="h4">Usuarios con este rol</h1>
+    <livewire:Admin.Roles.UsersTable :roleId="$roleId" />
 @endsection

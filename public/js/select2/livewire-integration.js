@@ -7,13 +7,14 @@ class LivewireSelect2Builder {
             language: 'es',
             width: '100%',
             placeholder: 'Seleccionar...',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             dropdownAutoWidth: true,
         };
 
         this.internal = {
             $wire: wireInstance,
-            live: false
+            live: false,
+            wireEventName: 'reset'
         };
 
         this.valueOption = {
@@ -48,13 +49,23 @@ class LivewireSelect2Builder {
         return this;
     }
 
+    placeholder(placeholder) {
+        this.select2Config.placeholder = placeholder;
+        return this;
+    }
+
     appendConfig(config) {
         Object.assign(this.select2Config, config);
         return this;
     }
 
+    wireReset(wireEventName) {
+        this.internal.wireEventName = wireEventName;
+        return this;
+    }
+
     build() {
-        const { $wire, selector, wireModel, live } = this.internal;
+        const { $wire, selector, wireModel, live, wireEventName } = this.internal;
         const { id, text } = this.valueOption;
 
         if (!$wire || !selector) {
@@ -72,6 +83,12 @@ class LivewireSelect2Builder {
         if (wireModel) {
             select2.on('change', function () {
                 $wire.set(wireModel, $(this).val(), live);
+            });
+        }
+
+        if (wireEventName) {
+            Livewire.on(wireEventName, () => {
+                select2.val(null).trigger('change');
             });
         }
 

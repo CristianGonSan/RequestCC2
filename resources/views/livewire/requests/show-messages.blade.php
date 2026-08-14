@@ -2,55 +2,60 @@
     @php
         $userId = Auth::id();
     @endphp
-    <div class="card-header bg-dark d-flex">
-        Mensajes
-        <div wire:loading class="ml-auto">
-            <i class="fas fa-spinner fa-spin"> </i>
+    <div class="card-header">
+        <h2 class="card-title">Mensajes</h2>
+
+        <div class="card-tools">
+            <button wire:click="$refresh" class="btn btn-tool">
+                <i wire:loading.class="fa-spin" class="fas fa-fw fa-arrows-rotate"></i>
+            </button>
         </div>
     </div>
-    <div class="card-body">
-        <div class="direct-chat-messages h-100">
-            @forelse($messages as $message)
+
+    <div class="card-body py-0 d-flex flex-column">
+        <div class="flex-grow-1 overflow-auto pt-1" x-init="$el.scrollTop = $el.scrollHeight;
+        new MutationObserver(() => {
+            $el.scrollTop = $el.scrollHeight;
+        }).observe($el, { childList: true });">
+
+            @forelse ($messages as $message)
                 @if ($message->user_id === $userId)
-                    <div class="direct-chat-msg right" wire:key="message-{{ $message->id }}">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-right">{{ $message->user->name }}</span>
-                            <span
-                                class="direct-chat-timestamp float-left">{{ $message->created_at->format('d-m-Y h:i:s a') }}</span>
-                        </div>
-                        <img class="direct-chat-img" src="{{ asset('img/user.png') }}" alt="message user image">
-                        <div class="direct-chat-text">
-                            {{ $message->message }}
+                    <div class="d-flex justify-content-end mb-2 mr-1" wire:key="message-{{ $message->id }}">
+                        <div class="bg-success text-white rounded-lg p-2" style="max-width: 75%">
+                            <div>{{ $message->message }}</div>
+                            <small class="d-block text-right mt-1" style="opacity: 0.85">
+                                {{ $message->created_at->format('d/m/Y h:i a') }}
+                            </small>
                         </div>
                     </div>
                 @else
-                    <div class="direct-chat-msg" wire:key="message-{{ $message->id }}">
-                        <div class="direct-chat-infos clearfix">
-                            <span class="direct-chat-name float-left">{{ $message->user->name }}</span>
-                            <span
-                                class="direct-chat-timestamp float-right">{{ $message->created_at->format('d-m-Y h:i:s a') }}</span>
-                        </div>
-                        <img class="direct-chat-img" src="{{ asset('img/user.png') }}" alt="message user image">
-                        <div class="direct-chat-text">
-                            {{ $message->message }}
+                    <div class="d-flex justify-content-start mb-2" wire:key="message-{{ $message->id }}">
+                        <div class="bg-light rounded-lg p-2" style="max-width: 75%">
+                            <strong class="d-block text-primary">{{ $message->user->name }}</strong>
+                            <div>{{ $message->message }}</div>
+                            <small class="d-block text-right text-muted mt-1">
+                                {{ $message->created_at->format('d/m/Y h:i a') }}
+                            </small>
                         </div>
                     </div>
                 @endif
             @empty
-                No hay mensajes
+                <div class="d-flex flex-column align-items-center justify-content-center text-muted h-100 py-5">
+                    <i class="fas fa-comment-alt fa-2x mb-2"></i>
+                    No hay mensajes aún.
+                </div>
             @endforelse
         </div>
     </div>
     <div class="card-footer">
         <form wire:submit.prevent="sendMessage">
-            <div class="input-group">
-                <input wire:model.defer="newMessage" type="text" wire:model="newMessage"
-                    placeholder="Ingrese Mensaje ..." class="form-control" required>
-                <span class="input-group-append">
-                    <button wire:loading.attr="disabled" type="submit" class="btn btn-outline-primary"><i
-                            class="fas fa-paper-plane"></i></button>
-                </span>
-            </div>
+            <x-adminlte-input name="newMessage" wire:model="newMessage" placeholder="Ingrese Mensaje ..."
+                fgroup-class="mb-0" maxlength="255" required>
+                <x-slot name="appendSlot">
+                    <x-livewire.loading-button type="submit" theme="outline-primary" icon="paper-plane"
+                        wire:target="sendMessage" />
+                </x-slot>
+            </x-adminlte-input>
         </form>
     </div>
 </div>
