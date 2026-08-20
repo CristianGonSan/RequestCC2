@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Catalogs\Companies;
 
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;

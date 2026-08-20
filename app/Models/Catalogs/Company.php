@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Catalogs;
 
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Carbon;
+
 
 /**
  * @property int $id
@@ -19,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, CostCenter> $costCenters
+ * @property-read Collection<int, \App\Models\Catalogs\CostCenter> $costCenters
  * @property-read int|null $cost_centers_count
  * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
@@ -70,13 +72,9 @@ class Company extends Model
     public static function options($onlyActive = true): array
     {
         if ($onlyActive) {
-            return Cache::remember('companyOptions.active', 60 * 1000,
-                fn () => Company::active()->pluck('name', 'id')->toArray()
-            );
+            return Company::active()->pluck('name', 'id')->toArray();
         }
 
-        return Cache::remember('companyOptions', 60 * 1000,
-            fn () => Company::pluck('name', 'id')->toArray()
-        );
+        return Company::pluck('name', 'id')->toArray();
     }
 }

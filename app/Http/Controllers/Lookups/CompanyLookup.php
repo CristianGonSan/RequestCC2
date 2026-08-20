@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Lookups;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

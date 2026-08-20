@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Catalogs\CostCenters;
 
-use App\Models\Company;
-use App\Models\CostCenter;
+use App\Models\Catalogs\Company;
+use App\Models\Catalogs\CostCenter;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Validation\Rule;
@@ -22,11 +22,8 @@ class CostCenterCreate extends Component
 
     public function render(): View
     {
-        $companies = Company::active()
-            ->pluck('name', 'id');
-
         return view('livewire.catalogs.cost-centers.cost-center-create', [
-            'companies' => $companies,
+            'companies' => Company::options(),
         ]);
     }
 

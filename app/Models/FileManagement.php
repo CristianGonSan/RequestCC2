@@ -87,7 +87,7 @@ class FileManagement extends Model
 
     public function getHumanReadableSizeAttribute(): string
     {
-        if (\is_null($this->size)) {
+        if ($this->size === null) {
             return '—';
         }
 

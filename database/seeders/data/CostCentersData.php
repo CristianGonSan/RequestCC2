@@ -1,6 +1,6 @@
 <?php
 
-$costCenters = [
+return [
     [
         "C1",
         "PERSONAL (LIC EDSON)"

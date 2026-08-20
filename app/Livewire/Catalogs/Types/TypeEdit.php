@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Catalogs\Types;
 
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Validation\Rule;

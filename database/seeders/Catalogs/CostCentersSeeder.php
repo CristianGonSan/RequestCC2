@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Catalogs;
 
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +14,7 @@ class CostCentersSeeder extends Seeder
      */
     public function run(): void
     {
-        require database_path('seeders/data/CostCentersData.php');
+        $costCenters = require database_path('seeders/data/CostCentersData.php');
 
         DB::transaction(function () use ($costCenters) {
             $company = null;

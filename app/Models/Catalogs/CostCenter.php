@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Catalogs;
 
+use App\Models\RequestModel;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+
 
 /**
  * @property int $id
@@ -16,10 +20,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string|null $description
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Company|null $company
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequestModel> $requests
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read \App\Models\Catalogs\Company|null $company
+ * @property-read Collection<int, RequestModel> $requests
  * @property-read int|null $requests_count
  * @method static Builder<static>|CostCenter active()
  * @method static Builder<static>|CostCenter inactive()
@@ -37,7 +41,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CostCenter extends Model
 {
-    use HasFactory, HasActiveState, TruncateText;
+    use HasActiveState, HasFactory, TruncateText;
 
     protected $table = 'cost_centers';
 
@@ -49,7 +53,7 @@ class CostCenter extends Model
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function isInUse(): bool

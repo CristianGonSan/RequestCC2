@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Catalogs;
 
 use App\Http\Controllers\Controller;
-use App\Models\CostCenter;
+use App\Models\Catalogs\CostCenter;
 
 class CostCenterController extends Controller
 {

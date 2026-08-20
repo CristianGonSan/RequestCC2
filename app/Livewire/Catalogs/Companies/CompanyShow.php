@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Catalogs\Companies;
 
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\View\View;

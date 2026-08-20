@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Catalogs\Company;
+use App\Models\Catalogs\Type;
 use App\Traits\Models\HasActiveState;
 use Eloquent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

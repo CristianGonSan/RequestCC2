@@ -5,7 +5,7 @@ namespace App\Livewire\Requests\Accounting;
 use App\Enums\Requests\RequestStatus;
 use App\Exports\ExportRequests;
 use App\Models\RequestModel;
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Support\DataBag;
 use App\Traits\Livewire\RequestModel\HasRequestModelTable;
 use Illuminate\Contracts\View\View;

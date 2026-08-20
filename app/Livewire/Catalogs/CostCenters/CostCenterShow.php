@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Catalogs\CostCenters;
 
-use App\Models\CostCenter;
+use App\Models\Catalogs\CostCenter;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\View\View;

@@ -3,7 +3,7 @@
 namespace App\Livewire\Requests\Users;
 
 use App\Models\RequestModel;
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Services\Mails\MailManager;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;

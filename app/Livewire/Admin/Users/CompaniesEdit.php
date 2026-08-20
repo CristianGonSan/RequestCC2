@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 use App\Models\User;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Livewire\Attributes\Locked;

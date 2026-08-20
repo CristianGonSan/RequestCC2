@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Models\User;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Livewire\Attributes\Locked;
@@ -41,7 +41,7 @@ class TypesEdit extends Component
 
         $this->toastSuccess('Tipos actualizados.');
     }
-    
+
     private ?User $user = null;
 
     private function user(): User

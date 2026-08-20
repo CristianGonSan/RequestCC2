@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Catalogs;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
+use App\Models\Catalogs\Company;
 
 class CompanyController extends Controller
 {

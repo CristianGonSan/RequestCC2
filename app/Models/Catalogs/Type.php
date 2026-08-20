@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Catalogs;
 
+use App\Models\RequestModel;
+use App\Models\User;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,11 +14,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
+
 /**
  * @property int $id
  * @property string $name
  * @property string|null $description
- * @property string $key
+ * @property string|null $key
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

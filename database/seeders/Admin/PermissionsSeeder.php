@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Admin;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Spatie\Permission\Models\Role;
 
 class PermissionsSeeder extends Seeder
@@ -17,17 +16,20 @@ class PermissionsSeeder extends Seeder
     {
         // Crear permisos
         $permissions = [
-            'Gestionar Solicitudes',
-            'Gestionar Contabilidad',
-            'Gestionar Usuarios',
-            'Gestionar Roles',
-            'Gestionar Permisos',
-            'Gestionar Desarrollo',
-            'Gestionar Configuraciones',
-            'Ver Resumen',
-            'Gestionar Centro de Costos',
-            'Gestionar Tipos',
-            'Gestionar Empresas'
+            'manage_requests',
+            'manage_accounting',
+            'manage_users',
+            'manage_roles',
+            'manage_permissions',
+            'manage_types',
+            'manage_companies',
+            'manage_cost_centers',
+            'export',
+            'view_summary',
+            'manage_configurations',
+            'manage_development',
+            'manage_units',
+            'manage_materials',
         ];
 
         foreach ($permissions as $permission) {
@@ -41,6 +43,7 @@ class PermissionsSeeder extends Seeder
             ['name' => 'Administrador'],
             ['name' => 'Administrador']
         );
+
         $role->givePermissionTo(Permission::all());
 
         $user = User::firstOrCreate(

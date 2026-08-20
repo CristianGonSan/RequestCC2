@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Catalogs\Companies;
 
-use App\Models\CostCenter;
+use App\Models\Catalogs\CostCenter;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
@@ -70,9 +70,12 @@ class CostCentersTable extends Component
 
     private function getQuery(): Builder
     {
-        $query = CostCenter::where('cost_centers.company_id', $this->companyId)
-            ->join('companies', 'cost_centers.company_id', '=', 'companies.id')
-            ->with([
+        $query = CostCenter::query();
+
+        $query->where('cost_centers.company_id', $this->companyId)
+            ->join('companies', 'cost_centers.company_id', '=', 'companies.id');
+
+        $query->with([
                 'company:id,name',
             ])
             ->select('cost_centers.*');

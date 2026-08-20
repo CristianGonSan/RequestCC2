@@ -6,7 +6,7 @@ use App\Enums\Requests\RequestStatus;
 use App\Exports\Excel\RequestsExport;
 use Illuminate\Contracts\Database\Query\Builder;
 use App\Models\RequestModel;
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

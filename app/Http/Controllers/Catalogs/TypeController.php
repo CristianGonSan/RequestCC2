@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Catalogs;
 
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
 

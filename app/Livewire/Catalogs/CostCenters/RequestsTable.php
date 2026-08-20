@@ -3,9 +3,9 @@
 namespace App\Livewire\Catalogs\CostCenters;
 
 use App\Enums\Requests\RequestStatus;
-use App\Models\CostCenter;
+use App\Models\Catalogs\CostCenter;
 use App\Models\RequestModel;
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Requests\RequestStatus;
 use App\Models\RequestModel;
-use App\Models\Type;
+use App\Models\Catalogs\Type;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;

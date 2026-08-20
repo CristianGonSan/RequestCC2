@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\Requests\RequestStatus;
+use App\Models\Catalogs\CostCenter;
+use App\Models\Catalogs\Type;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -135,9 +137,9 @@ class RequestModel extends Model
         return $this->hasMany(RequestRecords::class, 'request_id');
     }
 
-    public function addEditCount(): void
+    public function addEditCount(): int
     {
-        $this->edit_count += 1;
+        return $this->edit_count += 1;
     }
 
     public function changeStatusWithRecord(RequestStatus $status, ?User $user = null): void
