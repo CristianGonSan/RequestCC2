@@ -50,6 +50,8 @@ return [
     'catalogs'          => 'Catálogos',
     'access'            => 'Acceso',
     'users_access'      => 'Acceso de Usuarios',
+    'units'              => 'Unidades',
+    'materials'          => 'Materiales',
 
     'new' => [
         'user'          => 'Nuevo Usuario',

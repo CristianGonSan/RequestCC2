@@ -15,4 +15,6 @@ return [
     'view_summary'          => 'Ver Resumen',
     'manage_configurations' => 'Gestionar Configuraciones',
     'manage_development'    => 'Gestionar Desarrollo',
+    'manage_units'          => 'Gestionar Unidades',
+    'manage_materials'      => 'Gestionar Materiales',
 ];

@@ -377,6 +377,18 @@ return [
                     'route' => 'cost-centers.index',
                     'can' => 'manage_cost_centers',
                 ],
+                [
+                    'text' => 'units',
+                    'icon' => 'fas fa-fw fa-ruler',
+                    'route' => 'units.index',
+                    'can' => 'manage_units',
+                ],
+                [
+                    'text' => 'materials',
+                    'icon' => 'fas fa-fw fa-boxes-packing',
+                    'route' => 'materials.index',
+                    'can' => 'manage_materials',
+                ],
             ],
         ],
         [

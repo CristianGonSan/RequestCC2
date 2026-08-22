@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\CostCentersSeeder;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Factories\Catalogs\MaterialFactory;
+use Database\Seeders\Catalogs\UnitSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,8 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(PermissionNamesSeeder::class);
-        //$this->call(TypeSeeder::class);
-        //$this->call(CostCentersSeeder::class);
+        $this->call(UnitSeeder::class);
+        MaterialFactory::new()->count(20)->create();
+
+        // $this->call(PermissionsSeeder::class);
+        // $this->call(PermissionNamesSeeder::class);
+        // $this->call(TypeSeeder::class);
+        // $this->call(CostCentersSeeder::class);
     }
 }

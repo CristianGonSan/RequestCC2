@@ -9,7 +9,9 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Catalogs\CompanyController;
 use App\Http\Controllers\Catalogs\CostCenterController;
+use App\Http\Controllers\Catalogs\MaterialController;
 use App\Http\Controllers\Catalogs\TypeController;
+use App\Http\Controllers\Catalogs\UnitController;
 use App\Http\Controllers\Configurations\EmailNotificationsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
@@ -71,6 +73,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::resource('types', TypeController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_types');
     Route::resource('companies', CompanyController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_companies');
     Route::resource('cost-centers', CostCenterController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_cost_centers');
+    Route::resource('units', UnitController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_units');
+    Route::resource('materials', MaterialController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_materials');
+
 
     Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
         Route::get('', [ExportController::class, 'index'])->name('requests.index');
