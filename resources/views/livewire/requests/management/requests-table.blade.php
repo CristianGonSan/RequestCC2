@@ -1,3 +1,7 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div>
     <x-livewire.table.search-pane>
         @include('partials.livewire.requests-model.table.filters')

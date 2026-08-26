@@ -1,12 +1,13 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div>
     <x-livewire.table.search-pane>
         @include('partials.livewire.requests-model.table.filters', ['addUserOrder' => false])
     </x-livewire.table.search-pane>
 
     <div class="form-row mt-2">
-        @php
-            $userName = auth()->user()->name;
-        @endphp
         @forelse ($requests as $requestModel)
             <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $requestModel->id }}">
 

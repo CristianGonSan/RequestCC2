@@ -1,6 +1,6 @@
 @php
+    /** @var App\Enums\Requests\RequestStatus $status */
     $status = $requestModel->status;
-    $isPending = $status->isPending();
 @endphp
 
 <div>

@@ -1,27 +1,16 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div>
     <form wire:submit="save">
-        <div class="d-block mb-3">
-            <ul class="nav nav-pills" role="tablist">
-                @if ($requestModel->is_transfer)
-                    <li class="nav-item">
-                        <span class="nav-link active" role="tab" aria-selected="true" style="cursor: default;">
-                            <i class="fas fa-fw fa-credit-card"></i>
-                            <span class="d-none d-sm-inline ml-1">Transferencia</span>
-                        </span>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <span class="nav-link active" role="tab" aria-selected="true" style="cursor: default;">
-                            <i class="fas fa-fw fa-money-bill"></i>
-                            <span class="d-none d-sm-inline ml-1">Efectivo</span>
-                        </span>
-                    </li>
-                @endif
-            </ul>
-        </div>
-
         <div class="card">
             <div class="card-body">
+                <i class="fas fa-fw fa-{{ $requestModel->is_transfer ? 'credit-card' : 'money-bill-wave' }} mr-1"></i>
+                <strong>{{ $requestModel->paymentMethod() }}</strong>
+
+                <hr>
+
                 <div class="form-row">
                     <x-adminlte-textarea fgroup-class="col-md-12" name="concept" label="Concepto *" rows="3"
                         placeholder="Inserte el concepto..." wire:model="concept" maxlength="255" required />
@@ -52,20 +41,18 @@
                             placeholder="tarjeta" wire:model="card" x-bind:disabled="!isTransfer"
                             data-inputmask="'mask': '****-****-****-****[-****]', 'placeholder': '_'" />
 
-                        <x-form.input-wire-ignore fgroup-class="col-md-4" name="account" label="Cuenta"
-                            placeholder="cuenta" wire:model="account" x-bind:disabled="!isTransfer"
+                        <x-form.input-wire-ignore fgroup-class="col-md-4" name="account" label="Cuenta" placeholder="cuenta"
+                            wire:model="account" x-bind:disabled="!isTransfer"
                             data-inputmask="'mask': '****-****-****-****[-****]'" />
 
                         <x-adminlte-input fgroup-class="col-md-4" name="branch" label="Sucursal" placeholder="sucursal"
                             wire:model="branch" maxlength="128" x-bind:disabled="!isTransfer" />
 
                         <x-adminlte-input fgroup-class="col-md-4" name="reference" label="Referencia"
-                            placeholder="referencia" wire:model="reference" maxlength="128"
-                            x-bind:disabled="!isTransfer" />
+                            placeholder="referencia" wire:model="reference" maxlength="128" x-bind:disabled="!isTransfer" />
 
-                        <x-adminlte-input fgroup-class="col-md-4" name="covenant" label="Convenio"
-                            placeholder="convenio" wire:model="covenant" maxlength="128"
-                            x-bind:disabled="!isTransfer" />
+                        <x-adminlte-input fgroup-class="col-md-4" name="covenant" label="Convenio" placeholder="convenio"
+                            wire:model="covenant" maxlength="128" x-bind:disabled="!isTransfer" />
                     </div>
                 @endif
             </div>
@@ -78,9 +65,7 @@
             </a>
         </div>
     </form>
-</div>
-
-@push('js')
+</div> @push('js')
     <script>
         document.addEventListener("livewire:initialized", () => {
             let $wire = Livewire.first();
@@ -103,7 +88,7 @@
                         dataType: 'json',
                         delay: 250,
                         cache: true,
-                        data: function(params) {
+                        data: function (params) {
                             return {
                                 term: params.term,
                                 active: true,
@@ -113,12 +98,12 @@
                     templateResult: data => {
                         if (data.loading) return data.text;
                         return $(`
-                        <div class="p-1">
-                            <strong>${data.text}</strong>
-                            <small class="d-block">${data.company}</small>
-                            <small>${data.description}</small>
-                        </div>
-                        `);
+                <div class="p-1">
+                    <strong>${data.text}</strong>
+                    <small class="d-block">${data.company}</small>
+                    <small>${data.description}</small>
+                </div>
+                `);
                     }
                 }).build();
 
@@ -126,15 +111,15 @@
             const card = $('#card');
             const account = $('#account');
 
-            amount.on('change', function() {
+            amount.on('change', function () {
                 $wire.set('amount', $(this).val(), false);
             });
 
-            card.on('change', function() {
+            card.on('change', function () {
                 $wire.set('card', $(this).val(), false);
             });
 
-            account.on('change', function() {
+            account.on('change', function () {
                 $wire.set('account', $(this).val(), false);
             });
 

@@ -1,3 +1,7 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div class="card">
     <div class="card-body">
         <div class="row">

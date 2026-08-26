@@ -1,13 +1,13 @@
 @php
+    /** @var App\Enums\Requests\RequestStatus $status */
     $status = $requestModel->status;
-    $isPending = $status->isPending();
 @endphp
 
 <div>
     @include('partials.requests.card-show')
 
     <div class="my-3">
-        @if ($isPending)
+        @if ($status->isPending())
             <a href="{{ route('management.requests.edit', $requestModel->id) }}" class="btn btn-outline-primary mr-1">
                 <i class="fas fa-fw fa-edit mr-1"></i> Editar
             </a>

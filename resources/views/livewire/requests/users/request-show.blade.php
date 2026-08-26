@@ -1,5 +1,6 @@
 @php
-    $isPending = $requestModel->status->isPending();
+    /** @var App\Enums\Requests\RequestStatus $status */
+    $status = $requestModel->status;
 @endphp
 
 <div>
@@ -10,7 +11,7 @@
             <i class="fas fa-fw fa-copy mr-1"></i> Crear Copia
         </a>
 
-        @if ($isPending)
+        @if ($status->isPending())
             <a href="{{ route('requests.edit', $requestModel->id) }}" class="btn btn-outline-primary mr-1">
                 <i class="fas fa-fw fa-edit mr-1"></i> Editar
             </a>

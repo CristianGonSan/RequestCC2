@@ -1,3 +1,7 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div class="card-header">
     <div class="d-flex justify-content-between">
         <div>{{ $requestModel->created_at->format('d/m/Y h:i a') }}</div>

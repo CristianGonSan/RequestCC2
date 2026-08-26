@@ -1,25 +1,12 @@
 <div>
     <form wire:submit="save" x-data="{ isTransfer: @entangle('is_transfer') }">
-        <div class="d-block mb-3">
-            <ul class="nav nav-pills" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link" :class="{ 'active': !isTransfer }" x-on:click.prevent="isTransfer = false"
-                        href="#" role="tab" :aria-selected="!isTransfer">
-                        <i class="fas fa-fw fa-money-bill"></i>
-                        <span class="d-none d-sm-inline ml-1">Efectivo</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" :class="{ 'active': isTransfer }" x-on:click.prevent="isTransfer = true"
-                        href="#" role="tab" :aria-selected="isTransfer">
-                        <i class="fas fa-fw fa-credit-card"></i>
-                        <span class="d-none d-sm-inline ml-1">Transferencia</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
         <div class="card">
             <div class="card-body">
+                <x-checkbox name="is_transfer" label="Es transferencia" x-model="isTransfer"
+                    title="Indica si es una transferencia" />
+
+                <hr>
+
                 <div class="form-row">
                     <x-adminlte-textarea fgroup-class="col-md-12" name="concept" label="Concepto *" rows="3"
                         placeholder="Inserte el concepto..." wire:model="concept" maxlength="255" required />
@@ -57,8 +44,7 @@
                         wire:model="branch" maxlength="128" x-bind:disabled="!isTransfer" />
 
                     <x-adminlte-input fgroup-class="col-md-4" name="reference" label="Referencia"
-                        placeholder="referencia" wire:model="reference" maxlength="128"
-                        x-bind:disabled="!isTransfer" />
+                        placeholder="referencia" wire:model="reference" maxlength="128" x-bind:disabled="!isTransfer" />
 
                     <x-adminlte-input fgroup-class="col-md-4" name="covenant" label="Convenio" placeholder="convenio"
                         wire:model="covenant" maxlength="128" x-bind:disabled="!isTransfer" />
@@ -104,7 +90,7 @@
                         dataType: 'json',
                         delay: 250,
                         cache: true,
-                        data: function(params) {
+                        data: function (params) {
                             return {
                                 term: params.term,
                                 active: true,
@@ -114,12 +100,12 @@
                     templateResult: data => {
                         if (data.loading) return data.text;
                         return $(`
-                        <div class="p-1">
-                            <strong>${data.text}</strong>
-                            <small class="d-block">${data.company}</small>
-                            <small>${data.description}</small>
-                        </div>
-                        `);
+                                            <div class="p-1">
+                                                <strong>${data.text}</strong>
+                                                <small class="d-block">${data.company}</small>
+                                                <small>${data.description}</small>
+                                            </div>
+                                            `);
                     }
                 }).build();
 
@@ -127,15 +113,15 @@
             const card = $('#card');
             const account = $('#account');
 
-            amount.on('change', function() {
+            amount.on('change', function () {
                 $wire.set('amount', $(this).val(), false);
             });
 
-            card.on('change', function() {
+            card.on('change', function () {
                 $wire.set('card', $(this).val(), false);
             });
 
-            account.on('change', function() {
+            account.on('change', function () {
                 $wire.set('account', $(this).val(), false);
             });
 

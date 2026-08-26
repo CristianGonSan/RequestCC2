@@ -13,22 +13,22 @@ enum RequestStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => 'Pendiente',
-            self::Accepted => 'Aceptada',
-            self::Rejected => 'Rechazada',
+            self::Pending   => 'Pendiente',
+            self::Accepted  => 'Aceptada',
+            self::Rejected  => 'Rechazada',
             self::Cancelled => 'Cancelada',
-            self::Paid => 'Pagada',
+            self::Paid      => 'Pagada',
         };
     }
 
     public function bootstrapColorClass(): string
     {
         return match ($this) {
-            self::Pending => 'warning',
-            self::Accepted => 'success',
-            self::Rejected => 'danger',
+            self::Pending   => 'warning',
+            self::Accepted  => 'success',
+            self::Rejected  => 'danger',
             self::Cancelled => 'secondary',
-            self::Paid => 'info',
+            self::Paid      => 'info',
         };
     }
 

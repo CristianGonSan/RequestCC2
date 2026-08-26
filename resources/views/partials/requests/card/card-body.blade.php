@@ -1,3 +1,7 @@
+@php
+    /** @var App\Models\RequestModel $requestModel */
+@endphp
+
 <div class="card-body py-1" style="height: 180px; overflow-y: auto;">
     <div>
         <span class="badge w-100 {{ $requestModel->is_transfer ? 'badge-transfer' : 'badge-cash' }}">
