@@ -6,14 +6,17 @@ use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $symbol
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit newModelQuery()
@@ -25,6 +28,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereSymbol($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereUpdatedAt($value)
+ *
+ * @property-read Collection<int, Material> $materials
+ * @property-read int|null $materials_count
+ *
  * @mixin \Eloquent
  */
 class Unit extends Model
@@ -36,7 +43,7 @@ class Unit extends Model
     protected $fillable = [
         'name',
         'symbol',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
@@ -55,11 +62,18 @@ class Unit extends Model
 
     public static function options($onlyActive = true): array
     {
+        $query = Unit::query();
+
         if ($onlyActive) {
-            return Unit::active()->pluck('name', 'id')->toArray();
+            $query->active();
         }
 
-        return Unit::pluck('name', 'id')->toArray();
-    }
+        $options = [];
 
+        foreach ($query->get() as $unit) {
+            $options[$unit->id] = "{$unit->name} ({$unit->symbol})";
+        }
+
+        return $options;
+    }
 }

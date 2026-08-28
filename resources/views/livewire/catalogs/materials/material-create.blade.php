@@ -11,9 +11,7 @@
 
                 <x-form.select-wire-ignore fgroup-class="col-md-6" name="base_unit_id" label="Unidad base *" required>
                     <option value="">Selecciona una unidad</option>
-                    @foreach ($units as $unit)
-                        <option value="{{ $unit->id }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
-                    @endforeach
+                    <x-adminlte-options :options="$unitOptions" empty-option="Selecciona la unidad..." />
                 </x-form.select-wire-ignore>
 
                 <x-adminlte-textarea fgroup-class="col-12" name="description" label="Descripción"
