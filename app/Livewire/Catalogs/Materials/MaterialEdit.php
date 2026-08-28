@@ -19,32 +19,34 @@ class MaterialEdit extends Component
     public int $materialId;
 
     public string $name;
+
     public string $code;
+
     public string $description;
+
     public int $base_unit_id;
+
     public string $unitText;
+
     public bool $is_external;
 
     public function mount(int $materialId): void
     {
-        $this->materialId  = $materialId;
-        $material          = $this->material();
+        $this->materialId = $materialId;
+        $material         = $this->material();
 
         $this->base_unit_id = $material->base_unit_id;
-        $this->unitText      = $material->baseUnit->name;
-        $this->name           = $material->name;
-        $this->code            = $material->code ?? '';
-        $this->description   = $material->description;
-        $this->is_external    = $material->is_external;
+        $this->unitText     = $material->baseUnit->name;
+        $this->name         = $material->name;
+        $this->code         = $material->code ?? '';
+        $this->description  = $material->description;
+        $this->is_external  = $material->is_external;
     }
 
     public function render(): View
     {
-        $units = Unit::active()
-            ->get(['id', 'name', 'symbol']);
-
         return view('livewire.catalogs.materials.material-edit', [
-            'units' => $units,
+            'unitOptions' => Unit::options(),
         ]);
     }
 

@@ -15,20 +15,21 @@ class MaterialCreate extends Component
     use FlashToast, Toast;
 
     public string $name = '';
+
     public string $code = '';
+
     public string $description = '';
+
     public ?int $base_unit_id = null;
+
     public bool $is_external = false;
 
     public bool $createAnother = false;
 
     public function render(): View
     {
-        $units = Unit::active()
-            ->get(['id', 'name', 'symbol']);
-
         return view('livewire.catalogs.materials.material-create', [
-            'units' => $units,
+            'unitOptions' => Unit::options(),
         ]);
     }
 
