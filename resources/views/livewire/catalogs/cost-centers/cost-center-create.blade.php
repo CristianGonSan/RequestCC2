@@ -14,7 +14,7 @@
                 </x-form.select-wire-ignore>
 
                 <x-adminlte-textarea fgroup-class="col-12" name="description" label="Descripción"
-                    placeholder="Escribe una descripción" maxlength="255" wire:model="description"  />
+                    placeholder="Escribe una descripción" maxlength="255" wire:model="description" />
 
                 <div class="col-12">
                     <hr>
@@ -45,14 +45,8 @@
             let select2Builder = new LivewireSelect2Builder($wire);
 
             const companySelect = select2Builder.selector('#company_id').wireModel('company_id')
-                .appendConfig({
-                    placeholder: 'Seleccionar empresa',
-                    minimumInputLength: 0
-                }).build();
-
-            Livewire.on('reset', () => {
-                companySelect.val(null).trigger('change');
-            });
+                .placeholder('Seleccionar empresa')
+                .build();
         });
     </script>
 @endpush

@@ -36,14 +36,8 @@
 
             const companySelect = select2Builder.selector('#company_id').wireModel('company_id')
                 .value(@json($company_id), @json($companyText))
-                .appendConfig({
-                    placeholder: 'Seleccionar empresa',
-                    minimumInputLength: 0
-                }).build();
-
-            Livewire.on('reset', () => {
-                companySelect.val(null).trigger('change');
-            });
+                .placeholder('Seleccionar empresa')
+                .build();
         });
     </script>
 @endpush

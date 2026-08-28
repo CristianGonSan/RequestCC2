@@ -74,15 +74,13 @@
 
             const typeSelect = select2Builder.selector('#type_id').wireModel('type_id')
                 .value(@json($type_id), @json($typeText))
-                .appendConfig({
-                    placeholder: 'Selecciona el tipo',
-                    minimumInputLength: 0
-                }).build();
+                .placeholder('Selecciona el tipo')
+                .build();
 
             const costCenterSelect = select2Builder.selector('#cost_center_id').wireModel('cost_center_id')
                 .value(@json($cost_center_id), @json($costCenterText))
+                .placeholder('Selecciona el centro de costos')
                 .appendConfig({
-                    placeholder: 'Selecciona el centro de costos',
                     ajax: {
                         url: "{{ route('lookups.cost-centers.select2.auth') }}",
                         dataType: 'json',
@@ -98,12 +96,12 @@
                     templateResult: data => {
                         if (data.loading) return data.text;
                         return $(`
-                <div class="p-1">
-                    <strong>${data.text}</strong>
-                    <small class="d-block">${data.company}</small>
-                    <small>${data.description}</small>
-                </div>
-                `);
+                                    <div class="p-1">
+                                        <strong>${data.text}</strong>
+                                        <small class="d-block">${data.company}</small>
+                                        <small>${data.description}</small>
+                                    </div>
+                                    `);
                     }
                 }).build();
 

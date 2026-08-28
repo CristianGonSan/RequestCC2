@@ -9,9 +9,9 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('cost-centers.index') }}">Mis solicitudes</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('requests.index') }}">Mis solicitudes</a></li>
             <li class="breadcrumb-item"><a
-                    href="{{ route('cost-centers.show', $requestModel->id) }}">#{{ $requestModel->id }}</a></li>
+                    href="{{ route('requests.show', $requestModel->id) }}">#{{ $requestModel->id }}</a></li>
             <li class="breadcrumb-item active">Editar</li>
         </ol>
     </nav>
