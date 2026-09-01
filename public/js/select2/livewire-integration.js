@@ -64,12 +64,38 @@ class LivewireSelect2Builder {
         return this;
     }
 
+    minInpLength(minimumInputLength = 1) {
+        this.select2Config.minimumInputLength = minimumInputLength;
+        return this;
+    }
+
+    noMinInpLength() {
+        this.select2Config.minimumInputLength = 0;
+        return this;
+    }
+
+    allowClear() {
+        this.select2Config.allowClear = true;
+        return this;
+    }
+
+    noAllowClear() {
+        this.select2Config.allowClear = false;
+        return this;
+    }
+
     build() {
         const { $wire, selector, wireModel, live, wireEventName } = this.internal;
         const { id, text } = this.valueOption;
 
         if (!$wire || !selector) {
             throw new Error('LivewireSelect2Builder: configuración incompleta');
+        }
+
+        if (this.select2Config.minimumInputLength == 0) {
+            if (this.select2Config.ajax != undefined) {
+                this.select2Config.minimumInputLength = 1;
+            }
         }
 
         const select2 = $(selector).select2(this.select2Config);

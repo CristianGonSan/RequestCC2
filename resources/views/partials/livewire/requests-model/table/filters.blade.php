@@ -1,5 +1,6 @@
 @props([
     'addUserOrder' => true,
+    'disabledPayMethod' => false
 ])
 
 <div class="form-row my-1">
@@ -24,7 +25,7 @@
     </x-adminlte-select>
 
     <x-adminlte-select fgroup-class="col-md-2 mb-0" class="custom-select" name="payMethod"
-        wire:model.live="filters.payMethod" label="Método de pago" label-class="text-muted mb-0">
+        wire:model.live="filters.payMethod" label="Método de pago" label-class="text-muted mb-0" :disabled="$disabledPayMethod">
         <option value>Todos</option>
         <option value="0">Efectivo</option>
         <option value="1">Transferencia</option>

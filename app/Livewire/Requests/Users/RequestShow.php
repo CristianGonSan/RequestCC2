@@ -47,6 +47,8 @@ class RequestShow extends Component
 
     private function requestModel(): RequestModel
     {
-        return $this->requestModel ??= RequestModel::with(['costCenter:id,name', 'type:id,name'])->findOrFail($this->requestModelId);
+        return $this->requestModel ??= RequestModel::with([
+            'costCenter:id,name', 'type:id,name',
+        ])->findOrFail($this->requestModelId);
     }
 }

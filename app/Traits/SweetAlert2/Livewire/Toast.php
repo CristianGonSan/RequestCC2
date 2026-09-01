@@ -29,21 +29,21 @@ trait Toast
         $this->dispatchToast($text, $title, 'question');
     }
 
-    protected function dispatchToast(string $text, ?string $title = null, string $icon): void
+    protected function dispatchToast(string $text, ?string $title, string $icon): void
     {
-        $hasTitle = !empty($title);
-        $config = [
-            'title' => $hasTitle ? $title : $text,
-            'text'  => $hasTitle ? $text : null,
-            'icon'  => $icon,
-            'toast' => true,
-            'position' => 'top-end',
-            'timer' => $icon === "error" ? 4000 : 3000,
+        $hasTitle = ! empty($title);
+        $config   = [
+            'title'             => $hasTitle ? $title : $text,
+            'text'              => $hasTitle ? $text : null,
+            'icon'              => $icon,
+            'toast'             => true,
+            'position'          => 'top-end',
+            'timer'             => $icon === 'error' ? 4000 : 3000,
             'showConfirmButton' => false,
-            'timerProgressBar' => true,
-            'customClass' => [
-                'popup' => 'custom-toast-position'
-            ]
+            'timerProgressBar'  => true,
+            'customClass'       => [
+                'popup' => 'custom-toast-position',
+            ],
         ];
 
         $this->dispatch('SwalFire', config: $config);

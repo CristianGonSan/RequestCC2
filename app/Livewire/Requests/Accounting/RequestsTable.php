@@ -114,7 +114,7 @@ class RequestsTable extends Component
         }
 
         $query->when($filtersBag->filled('payMethod'),
-                fn () => $query->where('requests.is_transfer', $filtersBag->boolean('payMethod'))
+                fn () => $query->where('requests.is_transfer', true)
             )
             ->when($filtersBag->filled('type'),
                 fn () => $query->where('requests.type_id', $filtersBag->string('type'))

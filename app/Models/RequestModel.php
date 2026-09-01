@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Requests\RequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
+use App\Traits\Models\CurrencyToWords;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -73,7 +74,7 @@ use NumberToWords\NumberToWords;
  */
 class RequestModel extends Model
 {
-    use HasFactory, TruncateText;
+    use HasFactory, TruncateText, CurrencyToWords;
 
     protected $table = 'requests';
 
@@ -168,17 +169,7 @@ class RequestModel extends Model
 
     public function amountToWord(): string
     {
-        $numberToWords = new NumberToWords;
-        $numberTransformer = $numberToWords->getNumberTransformer('es');
-
-        [$integer, $decimal] = explode('.', (string) $this->amount);
-
-        $intText = $numberTransformer->toWords($integer);
-        $decText = $numberTransformer->toWords($decimal);
-
-        $text = "$intText pesos con $decText centavos";
-
-        return ucfirst($text);
+        return $this->toCurrencyWords('amount');
     }
 
     public function canDelete(): bool

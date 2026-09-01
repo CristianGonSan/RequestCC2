@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit newModelQuery()
@@ -28,10 +27,8 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereSymbol($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereUpdatedAt($value)
- *
  * @property-read Collection<int, Material> $materials
  * @property-read int|null $materials_count
- *
  * @mixin \Eloquent
  */
 class Unit extends Model

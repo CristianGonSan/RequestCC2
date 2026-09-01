@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereUpdatedAt($value)
+ * @property-read \App\Models\Catalogs\Unit $baseUnit
  * @mixin \Eloquent
  */
 class Material extends Model

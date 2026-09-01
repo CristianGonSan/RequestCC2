@@ -4,7 +4,9 @@
 
 <div>
     <x-livewire.table.search-pane>
-        @include('partials.livewire.requests-model.table.filters')
+        @include('partials.livewire.requests-model.table.filters', [
+            'disabledPayMethod' => true
+        ])
     </x-livewire.table.search-pane>
 
     <div class="form-row mt-2">

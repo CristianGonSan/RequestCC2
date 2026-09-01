@@ -70,6 +70,7 @@ class RequestsTable extends Component
         $query->with([
             'costCenter:id,name',
             'type:id,name',
+            'user:id,name'
         ]);
 
         $query->join('cost_centers', 'requests.cost_center_id', '=', 'cost_centers.id')

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Catalogs\Company;
 use App\Models\Catalogs\Type;
+use App\Models\MaterialRequests\MaterialRequest;
 use App\Traits\Models\HasActiveState;
 use Eloquent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -67,6 +68,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User whereUpdatedAt($value)
  * @method static Builder<static>|User withoutPermission($permissions)
  * @method static Builder<static>|User withoutRole($roles, $guard = null)
+ * @property-read Collection<int, MaterialRequest> $materialRequests
+ * @property-read int|null $material_requests_count
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
@@ -114,6 +117,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(RequestModel::class);
     }
 
+    public function materialRequests(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class);
+    }
+
     public function files(): HasMany
     {
         return $this->hasMany(FileManagement::class);
@@ -129,4 +137,3 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Company::class, 'company_user');
     }
 }
-

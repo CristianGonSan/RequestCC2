@@ -1,6 +1,14 @@
 <?php
 
+use App\Http\Controllers\Lookups\MaterialLookup;
+use App\Http\Controllers\MaterialRequests\FulfillmentMaterialRequestController;
+use App\Http\Controllers\MaterialRequests\ManagementMaterialRequestController;
+use App\Http\Controllers\MaterialRequests\UserMaterialRequestController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -12,18 +20,14 @@ use App\Http\Controllers\Catalogs\CostCenterController;
 use App\Http\Controllers\Catalogs\MaterialController;
 use App\Http\Controllers\Catalogs\TypeController;
 use App\Http\Controllers\Catalogs\UnitController;
+use App\Http\Controllers\Common\ShowFileController;
 use App\Http\Controllers\Configurations\EmailNotificationsController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Lookups\CostCenterLookup;
 use App\Http\Controllers\Lookups\TypeLookup;
 use App\Http\Controllers\Lookups\UserLookup;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Requests\AccountingController;
 use App\Http\Controllers\Requests\ManagementRequestController;
-use App\Http\Controllers\Requests\ShowFileController;
 use App\Http\Controllers\Requests\UserRequestController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'))->name('root');
 Route::get('/home', fn () => redirect()->route('dashboard'))->name('home');
@@ -56,9 +60,15 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->name('account');
 
     Route::resource('requests', UserRequestController::class)->only(['index', 'create', 'show', 'edit']);
+    Route::resource('material-requests', UserMaterialRequestController::class)->only(['index', 'create', 'show', 'edit']);
 
     Route::prefix('management')->name('management.')->group(function () {
         Route::resource('requests', ManagementRequestController::class)->except(['destroy'])->middleware('permission:manage_requests');
+        Route::resource('material-requests', ManagementMaterialRequestController::class)->only(['index', 'show']);
+    });
+
+    Route::prefix('fulfillment')->name('fulfillment.')->group(function () {
+        Route::resource('material-requests', FulfillmentMaterialRequestController::class)->only(['index', 'show']);
     });
 
     Route::prefix('accounting/requests')->name('accounting.requests.')->middleware('permission:manage_accounting')
@@ -75,7 +85,6 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::resource('cost-centers', CostCenterController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_cost_centers');
     Route::resource('units', UnitController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_units');
     Route::resource('materials', MaterialController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_materials');
-
 
     Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
         Route::get('', [ExportController::class, 'index'])->name('requests.index');
@@ -122,5 +131,8 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::get('types/select2/auth', [TypeLookup::class, 'select2ByAuthUser'])
             ->name('types.select2.auth');
+
+        Route::get('materials/select2', [MaterialLookup::class, 'select2'])
+            ->name('materials.select2');
     });
 });

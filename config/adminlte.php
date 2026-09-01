@@ -38,8 +38,8 @@ return [
     |
     */
 
-    'use_ico_only'      => true,
-    'use_full_favicon'  => false,
+    'use_ico_only'     => true,
+    'use_full_favicon' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -93,12 +93,12 @@ return [
 
     'auth_logo' => [
         'enabled' => false,
-        'img' => [
-            'path'      => '/img/logos/codias-mini.png',
-            'alt'       => 'Codias Logo',
-            'class'     => '',
-            'width'     => 50,
-            'height'    => 50,
+        'img'     => [
+            'path'   => '/img/logos/codias-mini.png',
+            'alt'    => 'Codias Logo',
+            'class'  => '',
+            'width'  => 50,
+            'height' => 50,
         ],
     ],
 
@@ -118,14 +118,14 @@ return [
     */
 
     'preloader' => [
-        'enabled'   => true,
-        'mode'      => 'fullscreen',
-        'img' => [
-            'path'      => '/img/logos/codias-mini.png',
-            'alt'       => 'Codias Preloader Image',
-            'effect'    => 'animation__shake',
-            'width'     => 60,
-            'height'    => 60,
+        'enabled' => true,
+        'mode'    => 'fullscreen',
+        'img'     => [
+            'path'   => '/img/logos/codias-mini.png',
+            'alt'    => 'Codias Preloader Image',
+            'effect' => 'animation__shake',
+            'width'  => 60,
+            'height' => 60,
         ],
     ],
 
@@ -160,12 +160,12 @@ return [
     |
     */
 
-    'layout_topnav'         => null,
-    'layout_boxed'          => null,
-    'layout_fixed_sidebar'  => true,
-    'layout_fixed_navbar'   => true,
-    'layout_fixed_footer'   => null,
-    'layout_dark_mode'      => null,
+    'layout_topnav'        => null,
+    'layout_boxed'         => null,
+    'layout_fixed_sidebar' => true,
+    'layout_fixed_navbar'  => true,
+    'layout_fixed_footer'  => null,
+    'layout_dark_mode'     => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -179,12 +179,12 @@ return [
     |
     */
 
-    'classes_auth_card'     => 'card-outline card-primary',
-    'classes_auth_header'   => '',
-    'classes_auth_body'     => '',
-    'classes_auth_footer'   => '',
-    'classes_auth_icon'     => '',
-    'classes_auth_btn'      => 'btn-flat btn-primary',
+    'classes_auth_card'   => 'card-outline card-primary',
+    'classes_auth_header' => '',
+    'classes_auth_body'   => '',
+    'classes_auth_footer' => '',
+    'classes_auth_icon'   => '',
+    'classes_auth_btn'    => 'btn-flat btn-primary',
 
     /*
     |--------------------------------------------------------------------------
@@ -198,17 +198,17 @@ return [
     |
     */
 
-    'classes_body'              => '',
-    'classes_brand'             => '',
-    'classes_brand_text'        => '',
-    'classes_content_wrapper'   => '',
-    'classes_content_header'    => 'container',
-    'classes_content'           => 'container',
-    'classes_sidebar'           => 'sidebar-dark-primary elevation-4',
-    'classes_sidebar_nav'       => '',
-    'classes_topnav'            => 'navbar-dark navbar-light',
-    'classes_topnav_nav'        => 'navbar-expand',
-    'classes_topnav_container'  => 'container',
+    'classes_body'             => '',
+    'classes_brand'            => '',
+    'classes_brand_text'       => '',
+    'classes_content_wrapper'  => '',
+    'classes_content_header'   => 'container',
+    'classes_content'          => 'container',
+    'classes_sidebar'          => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar_nav'      => '',
+    'classes_topnav'           => 'navbar-dark navbar-light',
+    'classes_topnav_nav'       => 'navbar-expand',
+    'classes_topnav_container' => 'container',
 
     /*
     |--------------------------------------------------------------------------
@@ -222,15 +222,15 @@ return [
     |
     */
 
-    'sidebar_mini'                  => 'lg',
-    'sidebar_collapse'              => false,
-    'sidebar_collapse_auto_size'    => false,
-    'sidebar_collapse_remember'     => true,
+    'sidebar_mini'                            => 'lg',
+    'sidebar_collapse'                        => false,
+    'sidebar_collapse_auto_size'              => false,
+    'sidebar_collapse_remember'               => true,
     'sidebar_collapse_remember_no_transition' => true,
-    'sidebar_scrollbar_theme'       => 'os-theme-light',
-    'sidebar_scrollbar_auto_hide'   => 'l',
-    'sidebar_nav_accordion'         => true,
-    'sidebar_nav_animation_speed'   => 300,
+    'sidebar_scrollbar_theme'                 => 'os-theme-light',
+    'sidebar_scrollbar_auto_hide'             => 'l',
+    'sidebar_nav_accordion'                   => true,
+    'sidebar_nav_animation_speed'             => 300,
 
     /*
     |--------------------------------------------------------------------------
@@ -264,14 +264,14 @@ return [
     |
     */
 
-    'use_route_url'         => false,
-    'dashboard_url'         => 'dashboard',
-    'logout_url'            => 'logout',
-    'login_url'             => 'login',
-    'register_url'          => null,
-    'password_reset_url'    => 'password/reset',
-    'password_email_url'    => 'password/email',
-    'profile_url'           => false,
+    'use_route_url'      => false,
+    'dashboard_url'      => 'dashboard',
+    'logout_url'         => 'logout',
+    'login_url'          => 'login',
+    'register_url'       => null,
+    'password_reset_url' => 'password/reset',
+    'password_email_url' => 'password/email',
+    'profile_url'        => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -285,9 +285,9 @@ return [
     |
     */
 
-    'enabled_laravel_mix'   => false,
-    'laravel_mix_css_path'  => 'css/app.css',
-    'laravel_mix_js_path'   => 'js/app.js',
+    'enabled_laravel_mix'  => false,
+    'laravel_mix_css_path' => 'css/app.css',
+    'laravel_mix_js_path'  => 'js/app.js',
 
     /*
     |--------------------------------------------------------------------------
@@ -303,138 +303,171 @@ return [
 
     'menu' => [
         [
-            'type'          => 'fullscreen-widget',
-            'topnav_right'  => true,
+            'type'         => 'fullscreen-widget',
+            'topnav_right' => true,
         ],
         [
-            'type'          => 'darkmode-widget',
-            'topnav_right'  => true,
+            'type'         => 'darkmode-widget',
+            'topnav_right' => true,
         ],
 
-        // Sidebar items:
+        // --- Uso general (todos los usuarios) ---
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
         [
-            'text'  => 'main_menu',
+            'text'  => 'dashboard',
             'route' => 'dashboard',
             'icon'  => 'fas fa-fw fa-home',
         ],
         [
-            'text'  => 'new_request',
-            'route' => 'requests.create',
-            'icon'  => 'far fa-fw fa-plus-square',
+            'text'    => 'request',
+            'icon'    => 'fas fa-fw fa-square-plus',
+            'submenu' => [
+                [
+                    'text'  => 'money',
+                    'icon'  => 'fas fa-fw fa-money-bill-wave',
+                    'route' => 'requests.create',
+                ],
+                [
+                    'text'  => 'material',
+                    'icon'  => 'fas fa-fw fa-boxes-packing',
+                    'route' => 'material-requests.create',
+                ],
+            ],
         ],
         [
             'text'  => 'info',
             'route' => 'info',
             'icon'  => 'far fa-fw fa-question-circle',
         ],
-        ['header' => 'management'],
         [
-            'text' => 'requests',
-            'icon' => 'fas fa-fw fa-file-alt',
-            'submenu' => [
-                [
-                    'text' => 'my_requests',
-                    'route' => 'requests.index',
-                    'icon' => 'fas fa-fw fa-user-pen',
-                ],
-                [
-                    'text' => 'manage',
-                    'route' => 'management.requests.index',
-                    'icon' => 'fas fa-fw fa-list-check',
-                    'can' => 'manage_requests',
-                ],
-                [
-                    'text' => 'accounting',
-                    'route' => 'accounting.requests.index',
-                    'icon' => 'fas fa-fw fa-calculator',
-                    'can' => 'manage_accounting',
-                ],
-            ],
-        ],
-        [
-            'text' => 'catalogs',
-            'icon' => 'fas fa-fw fa-layer-group',
-            'submenu' => [
-                [
-                    'text' => 'types',
-                    'icon' => 'fas fa-fw fa-clipboard-list',
-                    'route' => 'types.index',
-                    'can' => 'manage_types',
-                ],
-                [
-                    'text' => 'companies',
-                    'icon' => 'fas fa-fw fa-building',
-                    'route' => 'companies.index',
-                    'can' => 'manage_companies',
-                ],
-                [
-                    'text' => 'cost_centers',
-                    'icon' => 'fas fa-fw fa-coins',
-                    'route' => 'cost-centers.index',
-                    'can' => 'manage_cost_centers',
-                ],
-                [
-                    'text' => 'units',
-                    'icon' => 'fas fa-fw fa-ruler',
-                    'route' => 'units.index',
-                    'can' => 'manage_units',
-                ],
-                [
-                    'text' => 'materials',
-                    'icon' => 'fas fa-fw fa-boxes-packing',
-                    'route' => 'materials.index',
-                    'can' => 'manage_materials',
-                ],
-            ],
-        ],
-        [
-            'text' => 'user_management',
-            'icon' => 'fas fa-fw fa-address-card',
-            'submenu' => [
-                [
-                    'text' => 'users',
-                    'icon' => 'fas fa-fw fa-users',
-                    'route' => 'users.index',
-                    'can' => 'manage_users',
-                ],
-                [
-                    'text' => 'roles',
-                    'icon' => 'fas fa-fw fa-user-tag',
-                    'route' => 'roles.index',
-                    'can' => 'manage_roles',
-                ],
-            ],
-        ],
-        [
-            'text' => 'summary',
-            'route' => 'reports.index',
-            'icon' => 'fas fa-fw fa-chart-pie',
-            'can' => 'view_summary',
-        ],
-        [
-            'text' => 'export',
-            'route' => 'export.requests.index',
-            'icon' => 'fas fa-fw fa-file-export',
-            'can' => 'export',
-        ],
-        [
-            'text' => 'my_account',
-            'icon' => 'fas fa-fw fa-user-gear',
+            'text'  => 'my_account',
+            'icon'  => 'fas fa-fw fa-user-gear',
             'route' => 'account',
         ],
+
+        ['header' => 'section_my_requests'],
         [
-            'text' => 'config',
-            'icon' => 'fas fa-fw fa-cog',
+            'text'  => 'money',
+            'icon'  => 'fas fa-fw fa-money-bill-wave',
+            'route' => 'requests.index',
+        ],
+        [
+            'text'  => 'material',
+            'icon'  => 'fas fa-fw fa-boxes-packing',
+            'route' => 'material-requests.index',
+        ],
+
+        ['header' => 'section_requests_management'],
+        [
+            'text'    => 'money',
+            'icon'    => 'fas fa-fw fa-money-bill-wave',
             'submenu' => [
                 [
-                    'text' => 'notifications',
-                    'icon' => 'fas fa-fw fa-bell',
+                    'text'  => 'manage',
+                    'route' => 'management.requests.index',
+                    'icon'  => 'fas fa-fw fa-list-check',
+                    'can'   => 'manage_requests',
+                ],
+                [
+                    'text'  => 'accounting',
+                    'route' => 'accounting.requests.index',
+                    'icon'  => 'fas fa-fw fa-calculator',
+                    'can'   => 'manage_accounting',
+                ],
+            ],
+        ],
+        [
+            'text'    => 'material',
+            'icon'    => 'fas fa-fw fa-boxes-packing',
+            'submenu' => [
+                [
+                    'text'  => 'manage',
+                    'route' => 'management.material-requests.index',
+                    'icon'  => 'fas fa-fw fa-list-check',
+                    'can'   => 'manage_requests',
+                ],
+                [
+                    'text'  => 'fulfillment',
+                    'route' => 'fulfillment.material-requests.index',
+                    'icon'  => 'fas fa-fw fa-truck-ramp-box',
+                    'can'   => 'manage_requests',
+                ],
+            ],
+        ],
+        ['header' => 'section_catalogs'],
+        [
+            'text'  => 'types',
+            'icon'  => 'fas fa-fw fa-clipboard-list',
+            'route' => 'types.index',
+            'can'   => 'manage_types',
+        ],
+        [
+            'text'  => 'companies',
+            'icon'  => 'fas fa-fw fa-building',
+            'route' => 'companies.index',
+            'can'   => 'manage_companies',
+        ],
+        [
+            'text'  => 'cost_centers',
+            'icon'  => 'fas fa-fw fa-coins',
+            'route' => 'cost-centers.index',
+            'can'   => 'manage_cost_centers',
+        ],
+        [
+            'text'  => 'units',
+            'icon'  => 'fas fa-fw fa-ruler',
+            'route' => 'units.index',
+            'can'   => 'manage_units',
+        ],
+        [
+            'text'  => 'materials',
+            'icon'  => 'fas fa-fw fa-boxes-stacked',
+            'route' => 'materials.index',
+            'can'   => 'manage_materials',
+        ],
+        ['header' => 'section_administration'],
+        [
+            'text'    => 'user_management',
+            'icon'    => 'fas fa-fw fa-address-card',
+            'submenu' => [
+                [
+                    'text'  => 'users',
+                    'icon'  => 'fas fa-fw fa-users',
+                    'route' => 'users.index',
+                    'can'   => 'manage_users',
+                ],
+                [
+                    'text'  => 'roles',
+                    'icon'  => 'fas fa-fw fa-user-tag',
+                    'route' => 'roles.index',
+                    'can'   => 'manage_roles',
+                ],
+            ],
+        ],
+        [
+            'text'  => 'summary',
+            'route' => 'reports.index',
+            'icon'  => 'fas fa-fw fa-chart-pie',
+            'can'   => 'view_summary',
+        ],
+        [
+            'text'  => 'export',
+            'route' => 'export.requests.index',
+            'icon'  => 'fas fa-fw fa-file-export',
+            'can'   => 'export',
+        ],
+        [
+            'text'    => 'config',
+            'icon'    => 'fas fa-fw fa-cog',
+            'submenu' => [
+                [
+                    'text'  => 'notifications',
+                    'icon'  => 'fas fa-fw fa-bell',
                     'route' => 'configurations.mailNotifications',
-                    'can' => 'manage_configurations',
+                    'can'   => 'manage_configurations',
                 ],
             ],
         ],
@@ -477,100 +510,100 @@ return [
     'plugins' => [
         'iCheck' => [
             'active' => true,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'css',
-                    'asset' => true,
+                    'type'     => 'css',
+                    'asset'    => true,
                     'location' => 'vendor/icheck-bootstrap/icheck-bootstrap.min.css',
                 ],
             ],
         ],
         'Select2' => [
             'active' => false,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'css',
-                    'asset' => true,
+                    'type'     => 'css',
+                    'asset'    => true,
                     'location' => 'vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css',
                 ],
                 [
-                    'type' => 'css',
-                    'asset' => true,
+                    'type'     => 'css',
+                    'asset'    => true,
                     'location' => 'vendor/select2/css/select2.min.css',
                 ],
                 [
-                    'type' => 'css',
-                    'asset' => true,
+                    'type'     => 'css',
+                    'asset'    => true,
                     'location' => 'css/select2.css',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'vendor/select2/js/select2.full.min.js',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'vendor/select2/js/i18n/es.js',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'js/select2/livewire-integration.js',
                 ],
             ],
         ],
         'Chartjs' => [
             'active' => false,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/chartjs/chart.min.js'
+                    'type'     => 'js',
+                    'asset'    => true,
+                    'location' => 'vendor/chartjs/chart.min.js',
                 ],
             ],
         ],
         'InputMask' => [
             'active' => false,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'vendor/inputmask/inputmask.js',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'vendor/inputmask/jquery.inputmask.js',
                 ],
             ],
         ],
         'SweetAlert2' => [
             'active' => true,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'vendor/sweetalert2/sweetalert2.min.js',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
+                    'type'     => 'js',
+                    'asset'    => true,
                     'location' => 'js/sweetalert2/livewire-integration.js',
                 ],
                 [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'js/sweetalert2/ononline-alert.js'
-                ]
+                    'type'     => 'js',
+                    'asset'    => true,
+                    'location' => 'js/sweetalert2/ononline-alert.js',
+                ],
             ],
         ],
         'CustomStyles' => [
             'active' => true,
-            'files' => [
+            'files'  => [
                 [
-                    'type' => 'css',
-                    'asset' => true,
+                    'type'     => 'css',
+                    'asset'    => true,
                     'location' => '/css/custom-styles.css',
                 ],
             ],
@@ -592,21 +625,21 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => null,
+            'url'   => null,
             'title' => null,
         ],
         'buttons' => [
-            'close' => true,
-            'close_all' => true,
+            'close'           => true,
+            'close_all'       => true,
             'close_all_other' => true,
-            'scroll_left' => true,
-            'scroll_right' => true,
-            'fullscreen' => true,
+            'scroll_left'     => true,
+            'scroll_right'    => true,
+            'fullscreen'      => true,
         ],
         'options' => [
-            'loading_screen' => 1000,
+            'loading_screen'    => 1000,
             'auto_show_new_tab' => true,
-            'use_navbar_items' => true,
+            'use_navbar_items'  => true,
         ],
     ],
 
