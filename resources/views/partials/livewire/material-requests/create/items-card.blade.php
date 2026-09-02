@@ -41,9 +41,13 @@
                                     required />
                             </td>
                             <td class="align-middle text-center">
-                                <x-livewire.loading-button theme="outline-danger" class="btn-sm" icon="trash-alt"
-                                    title="Quitar material" wire:click="removeItem('{{ $key }}')"
-                                    wire:target="removeItem('{{ $key }}')" />
+                                @if ($item['can_delete'] ?? true)
+                                    <x-livewire.loading-button theme="outline-danger" class="btn-sm" icon="trash-alt"
+                                        title="Quitar material" wire:click="removeItem('{{ $key }}')"
+                                        wire:target="removeItem('{{ $key }}')" />
+                                @else
+                                    <i class="fas fa-ban text-muted" title="Ya tiene cantidades suministradas"></i>
+                                @endif
                             </td>
                         </tr>
                     @empty

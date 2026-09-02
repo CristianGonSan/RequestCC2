@@ -27,11 +27,14 @@ class MaterialLookup extends Controller
 
         $query->orderBy('name');
 
-        $results = $query->paginate(24, ['id', 'name']);
+        $results = $query->paginate(24, ['id', 'name', 'code', 'description', 'is_external']);
 
         $map = $results->map(fn (Material $item): array => [
-            'id'   => $item->id,
-            'text' => $item->name,
+            'id'          => $item->id,
+            'text'        => $item->name,
+            'code'        => $item->code,
+            'description' => $item->description,
+            'is_external' => $item->is_external,
         ]);
 
         return response()->json([

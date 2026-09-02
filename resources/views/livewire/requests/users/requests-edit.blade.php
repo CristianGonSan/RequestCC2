@@ -93,15 +93,18 @@
                             };
                         },
                     },
-                    templateResult: data => {
+                    templateResult: function (data) {
                         if (data.loading) return data.text;
+
                         return $(`
-                                    <div class="p-1">
-                                        <strong>${data.text}</strong>
-                                        <small class="d-block">${data.company}</small>
-                                        <small>${data.description}</small>
-                                    </div>
-                                    `);
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div>
+                                    <strong class="d-block">${data.text}</strong>
+                                    ${data.company ? `<small class="d-block opacity-75">Empresa: ${data.company}</small>` : ''}
+                                    ${data.description ? `<small class="d-block opacity-75 text-truncate" style="max-width: 300px;">${data.description}</small>` : ''}
+                                </div>
+                            </div>
+                        `);
                     }
                 }).build();
 

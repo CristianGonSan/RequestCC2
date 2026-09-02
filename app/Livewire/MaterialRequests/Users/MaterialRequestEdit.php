@@ -60,6 +60,7 @@ class MaterialRequestEdit extends Component
                 'material_name'      => $item->material->name,
                 'unit_id'            => $item->unit_id,
                 'quantity_requested' => (string) $item->quantity_requested,
+                'can_delete'         => $item->quantity_fulfilled === 0,
             ];
         }
     }
@@ -172,12 +173,21 @@ class MaterialRequestEdit extends Component
             'material_name'      => $material->name,
             'unit_id'            => $material->base_unit_id,
             'quantity_requested' => '',
+            'can_delete'         => true,
         ];
     }
 
     public function removeItem(string $key): void
     {
-        unset($this->items[$key]);
+        if ($item = $this->items[$key] ?? null) {
+            if (! $item['can_delete']) {
+                $this->toastError('No se puede eliminar: el material ya tiene cantidades suministradas.');
+
+                return;
+            } else {
+                unset($this->items[$key]);
+            }
+        }
     }
 
     private ?MaterialRequest $materialRequest = null;
