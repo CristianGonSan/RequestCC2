@@ -2,7 +2,7 @@
 
 namespace App\Models\Catalogs;
 
-use App\Models\RequestModel;
+use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Catalogs\Company|null $company
- * @property-read Collection<int, RequestModel> $requests
  * @property-read int|null $requests_count
  * @method static Builder<static>|CostCenter active()
  * @method static Builder<static>|CostCenter inactive()
@@ -37,6 +36,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|CostCenter whereIsActive($value)
  * @method static Builder<static>|CostCenter whereName($value)
  * @method static Builder<static>|CostCenter whereUpdatedAt($value)
+ * @property-read Collection<int, MoneyRequest> $moneyRequests
+ * @property-read int|null $money_requests_count
  * @mixin \Eloquent
  */
 class CostCenter extends Model
@@ -58,7 +59,7 @@ class CostCenter extends Model
 
     public function isInUse(): bool
     {
-        return $this->requests()->exists();
+        return $this->moneyRequests()->exists();
     }
 
     public function company(): BelongsTo
@@ -66,8 +67,8 @@ class CostCenter extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function requests(): HasMany
+    public function moneyRequests(): HasMany
     {
-        return $this->hasMany(RequestModel::class, 'cost_center_id', 'id');
+        return $this->hasMany(MoneyRequest::class, 'cost_center_id', 'id');
     }
 }

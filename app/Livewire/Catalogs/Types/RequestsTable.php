@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Catalogs\Types;
 
-use App\Enums\Requests\RequestStatus;
-use App\Models\RequestModel;
+use App\Enums\Requests\MoneyRequestStatus;
+use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,7 +75,7 @@ class RequestsTable extends Component
 
     private function getQuery(): Builder
     {
-        $query = RequestModel::query();
+        $query = MoneyRequest::query();
 
         $query->where('type_id', $this->typeId);
 
@@ -88,8 +88,8 @@ class RequestsTable extends Component
         }
 
         if ($this->sortColumn === 'status') {
-            $cases = collect(RequestStatus::cases())
-                ->map(fn(RequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
+            $cases = collect(MoneyRequestStatus::cases())
+                ->map(fn(MoneyRequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
                 ->implode(' ');
 
             $query->orderByRaw("CASE status $cases END {$this->sortDirection}");

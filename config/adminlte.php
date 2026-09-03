@@ -328,7 +328,7 @@ return [
                 [
                     'text'  => 'money',
                     'icon'  => 'fas fa-fw fa-money-bill-wave',
-                    'route' => 'requests.create',
+                    'route' => 'money-requests.create',
                 ],
                 [
                     'text'  => 'material',
@@ -352,7 +352,7 @@ return [
         [
             'text'  => 'money',
             'icon'  => 'fas fa-fw fa-money-bill-wave',
-            'route' => 'requests.index',
+            'route' => 'money-requests.index',
         ],
         [
             'text'  => 'material',
@@ -367,13 +367,13 @@ return [
             'submenu' => [
                 [
                     'text'  => 'manage',
-                    'route' => 'management.requests.index',
+                    'route' => 'management.money-requests.index',
                     'icon'  => 'fas fa-fw fa-list-check',
                     'can'   => 'manage_requests',
                 ],
                 [
                     'text'  => 'accounting',
-                    'route' => 'accounting.requests.index',
+                    'route' => 'accounting.money-requests.index',
                     'icon'  => 'fas fa-fw fa-calculator',
                     'can'   => 'manage_accounting',
                 ],

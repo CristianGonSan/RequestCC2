@@ -1,0 +1,22 @@
+@extends('adminlte::page')
+
+@section('title_prefix', 'Mis Solicitudes |')
+
+@section('content_header')
+    <div class="d-flex justify-content-between align-items-center">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+                <li class="breadcrumb-item active">Mis Solicitudes</li>
+            </ol>
+        </nav>
+
+        <a href="{{ route('money-requests.create') }}" class="btn btn-outline-primary">
+            <i class="fas fa-fw fa-plus mr-1"></i>Nueva solicitud
+        </a>
+    </div>
+@endsection
+
+@section('content')
+    <livewire:MoneyRequests.Users.RequestsTable />
+@endsection

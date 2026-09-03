@@ -30,7 +30,6 @@ use App\Traits\Models\CurrencyToWords;
  * @property-read Collection<int, MaterialRequestItem> $items
  * @property-read int|null $items_count
  * @property-read User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest query()
@@ -43,12 +42,10 @@ use App\Traits\Models\CurrencyToWords;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
- *
  * @property-read CostCenter $costCenter
  * @property-read Collection<int, MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
  * @property-read Type $type
- *
  * @mixin \Eloquent
  */
 class MaterialRequest extends Model

@@ -25,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @property-read Material $material
  * @property-read MaterialRequest $materialRequest
  * @property-read Unit $unit
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem query()
@@ -37,12 +36,11 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantityRequested($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUnitId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
- *
  * @property-read float $remaining_quantity
  * @property-read float $total_fulfilled_cost
  * @property-read float $total_fulfilled_quantity
  * @property-read float $percentage_fulfilled
- *
+ * @property-read float $total_spent
  * @mixin \Eloquent
  */
 class MaterialRequestItem extends Model

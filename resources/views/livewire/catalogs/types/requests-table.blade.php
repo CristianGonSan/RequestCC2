@@ -18,7 +18,7 @@
                 <td>{{ $request->shortText('concept') }}</td>
                 <td class="text-nowrap">{{ $request->created_at->format('d/m/Y H:i') }}</td>
                 <td class="text-center">
-                    <a href="{{ route('management.requests.show', $request->id) }}" class="d-block text-reset"
+                    <a href="{{ route('management.money-requests.show', $request->id) }}" class="d-block text-reset"
                         target="_blank">
                         <i class="fas fa-fw fa-arrow-up-right-from-square"></i>
                     </a>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Requests\RequestStatus;
+use App\Enums\Requests\MoneyRequestStatus;
 use App\Exports\Excel\RequestsExport;
+use App\Models\MoneyRequests\MoneyRequest;
 use Illuminate\Contracts\Database\Query\Builder;
-use App\Models\RequestModel;
 use App\Models\Catalogs\Type;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
@@ -14,25 +14,24 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExportController extends Controller
 {
-
     private array $columnsOptions = [
-        'id'            => 'id',
-        'created_at'    => 'Creado el',
-        'updated_at'    => 'Actualizado el',
-        'user'          => 'Solicita',
-        'concept'       => 'Concepto',
-        'cost_center'   => 'Centro de Costos',
-        'payee'         => 'Titular',
-        'amount'        => 'Importe',
-        'type'          => 'Tipo de Movimiento',
-        'is_transfer'   => 'Método de Pago',
-        'bank'          => 'Banco',
-        'card'          => 'Clave/Tarjeta',
-        'account'       => 'Cuenta',
-        'branch'        => 'Sucursal',
-        'reference'     => 'Referencia',
-        'covenant'      => 'Convenio',
-        'status'        => 'Estatus'
+        'id'          => 'id',
+        'created_at'  => 'Creado el',
+        'updated_at'  => 'Actualizado el',
+        'user'        => 'Solicita',
+        'concept'     => 'Concepto',
+        'cost_center' => 'Centro de Costos',
+        'payee'       => 'Titular',
+        'amount'      => 'Importe',
+        'type'        => 'Tipo de Movimiento',
+        'is_transfer' => 'Método de Pago',
+        'bank'        => 'Banco',
+        'card'        => 'Clave/Tarjeta',
+        'account'     => 'Cuenta',
+        'branch'      => 'Sucursal',
+        'reference'   => 'Referencia',
+        'covenant'    => 'Convenio',
+        'status'      => 'Estatus',
     ];
 
     public function index(): View
@@ -42,28 +41,28 @@ class ExportController extends Controller
             ->pluck('name', 'id')
             ->toArray();
 
-        $statusOptions = RequestStatus::options();
+        $statusOptions = MoneyRequestStatus::options();
 
         $columnsOptions = $this->columnsOptions;
 
-        return view('requests.export', compact([
+        return view('money-requests.export', compact([
             'typeOptions',
             'statusOptions',
-            'columnsOptions'
+            'columnsOptions',
         ]));
     }
 
     public function export(Request $request): BinaryFileResponse
     {
         $onlyColumns = $request->input('columns', []);
-        $query = $this->getQuery($request);
+        $query       = $this->getQuery($request);
 
         $export = new RequestsExport($query, $onlyColumns);
 
         return Excel::download($export, 'Solicitudes.xlsx');
     }
 
-    public function getQuery(Request $request): Builder|RequestModel
+    public function getQuery(Request $request): Builder|MoneyRequest
     {
         $functions = [
             'created_at_start' => function (Builder $query, $value) {
@@ -90,7 +89,7 @@ class ExportController extends Controller
                 $query->whereIn('cost_center_name', $value);
             },
             'concept' => function (Builder $query, $value) {
-                $concepts = explode("|", $value);
+                $concepts = explode('|', $value);
                 $query->where(function (Builder $q) use ($concepts) {
                     foreach ($concepts as $concept) {
                         $q->orWhere('concept', 'like', "%{$concept}%");
@@ -114,10 +113,10 @@ class ExportController extends Controller
             },
             'status' => function (Builder $query, $value) {
                 $query->whereIn('status', $value);
-            }
+            },
         ];
 
-        $query = RequestModel::query()->with(['user:id,name', 'type:id,name']);
+        $query = MoneyRequest::query()->with(['user:id,name', 'type:id,name']);
 
         foreach ($functions as $key => $function) {
             if ($value = $request->input($key)) {

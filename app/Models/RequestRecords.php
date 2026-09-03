@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use App\Models\Catalogs\Type;
+use App\Models\MoneyRequests\MoneyRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read RequestModel|null $request
- * @property-read User|null $user
  * @property int $id
  * @property int $request_id
  * @property int|null $user_id
@@ -19,17 +18,19 @@ use Illuminate\Support\Carbon;
  * @property Carbon $registered_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereAction($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereRegisteredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|RequestRecords whereUserId($value)
+ * @property-read MoneyRequest $request
+ * @property-read User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereRegisteredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUserId($value)
  * @mixin \Eloquent
  */
 class RequestRecords extends Model
@@ -55,7 +56,7 @@ class RequestRecords extends Model
         'user_id',
         'action',
         'details',
-        'registered_at'
+        'registered_at',
     ];
 
     protected $casts = [
@@ -64,7 +65,7 @@ class RequestRecords extends Model
 
     public function request(): BelongsTo
     {
-        return $this->belongsTo(RequestModel::class);
+        return $this->belongsTo(MoneyRequest::class);
     }
 
     public function user(): BelongsTo
@@ -72,12 +73,12 @@ class RequestRecords extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getActionText(): String
+    public function getActionText(): string
     {
         return self::ACTION_TEXT[$this->action] ?? 'Desconocido';
     }
 
-    public function getActionBSClass(): String
+    public function getActionBSClass(): string
     {
         return self::ACTION_BS_CLASS[$this->action] ?? 'secondary';
     }
@@ -87,49 +88,49 @@ class RequestRecords extends Model
         $record = new RequestRecords;
 
         $record->request_id = $requestId;
-        $record->user_id = $user->id;
-        $record->action = self::CHANGE_STATUS;
+        $record->user_id    = $user->id;
+        $record->action     = self::CHANGE_STATUS;
 
-        $name = $user->name;
+        $name  = $user->name;
         $email = $user->email;
 
-        $record->details = "$name - ($email) Cambió el estatus de <strong>$oldStatus</strong> a <strong>$newStatus</strong>";
+        $record->details       = "$name - ($email) Cambió el estatus de <strong>$oldStatus</strong> a <strong>$newStatus</strong>";
         $record->registered_at = $registered_at ?? now();
         $record->save();
 
         return $record;
     }
 
-    public static function edited(User $user, RequestModel $updatedRequestModel, array $oldData, $registered_at = null)
+    public static function edited(User $user, MoneyRequest $updateMoneyRequest, array $oldData, $registered_at = null)
     {
         $labels = [
-            'concept' => 'Concepto',
+            'concept'     => 'Concepto',
             'cost_center' => 'Centro de costos',
-            'payee' => 'Beneficiario',
-            'amount' => 'Monto',
-            'type' => 'Tipo',
-            'bank' => 'Banco',
-            'card' => 'Tarjeta',
-            'account' => 'Cuenta',
-            'branch' => 'Sucursal',
-            'reference' => 'Referencia',
-            'covenant' => 'Convenio',
+            'payee'       => 'Beneficiario',
+            'amount'      => 'Monto',
+            'type'        => 'Tipo',
+            'bank'        => 'Banco',
+            'card'        => 'Tarjeta',
+            'account'     => 'Cuenta',
+            'branch'      => 'Sucursal',
+            'reference'   => 'Referencia',
+            'covenant'    => 'Convenio',
         ];
 
         $record = new RequestRecords;
 
-        $record->request_id = $updatedRequestModel->id;
-        $record->user_id = $user->id;
-        $record->action = self::EDITED;
+        $record->request_id = $updateMoneyRequest->id;
+        $record->user_id    = $user->id;
+        $record->action     = self::EDITED;
 
-        $name = $user->name;
+        $name  = $user->name;
         $email = $user->email;
 
-        $details = "$name - ($email) Editó la solicitud, edición número $updatedRequestModel->edit_count: ";
+        $details = "$name - ($email) Editó la solicitud, edición número $updateMoneyRequest->edit_count: ";
 
         $updatedCount = 0;
 
-        foreach ($updatedRequestModel->toArray() as $key => $newValue) {
+        foreach ($updateMoneyRequest->toArray() as $key => $newValue) {
             $oldValue = $oldData[$key];
 
             if ($oldValue != $newValue) {
@@ -158,7 +159,7 @@ class RequestRecords extends Model
             $details .= "\n- No se hicieron cambios.";
         }
 
-        $record->details = trim($details);
+        $record->details       = trim($details);
         $record->registered_at = $registered_at ?? now();
         $record->save();
 

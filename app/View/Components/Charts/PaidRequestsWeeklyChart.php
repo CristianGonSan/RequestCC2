@@ -2,8 +2,8 @@
 
 namespace App\View\Components\Charts;
 
-use App\Enums\Requests\RequestStatus;
-use App\Models\RequestModel;
+use App\Enums\Requests\MoneyRequestStatus;
+use App\Models\MoneyRequests\MoneyRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -61,15 +61,15 @@ class PaidRequestsWeeklyChart extends Component
             $startDate = Carbon::now()->subDays(6)->startOfDay();
             $endDate = Carbon::now()->endOfDay();
 
-            $query = RequestModel::query()
-                ->where('status', RequestStatus::Paid)
+            $query = MoneyRequest::query()
+                ->where('status', MoneyRequestStatus::Paid)
                 ->whereBetween('updated_at', [$startDate, $endDate]);
 
             if ($this->onlyCurrentUser) {
                 $query->where('user_id', Auth::id());
             }
 
-            // 'S05' corresponde al value del status pagado en RequestStatus.
+            // 'S05' corresponde al value del status pagado en MoneyRequestStatus.
             $paidTotalsByDate = $query
                 ->selectRaw('DATE(updated_at) as paid_date, SUM(amount) as total_amount')
                 ->groupBy('paid_date')

@@ -2,18 +2,15 @@
 
 namespace App\Models\Catalogs;
 
-use App\Models\RequestModel;
+use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\User;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-
 
 /**
  * @property int $id
@@ -21,11 +18,11 @@ use Illuminate\Support\Facades\Auth;
  * @property string|null $description
  * @property string|null $key
  * @property bool $is_active
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read Collection<int, RequestModel> $requests
- * @property-read int|null $requests_count
- * @property-read Collection<int, User> $users
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, MoneyRequest> $moneyRequests
+ * @property-read int|null $money_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Type active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Type inactive()
@@ -58,7 +55,7 @@ class Type extends Model
 
     public function isInUse(): bool
     {
-        return $this->requests()->exists();
+        return $this->moneyRequests()->exists();
     }
 
     public function users(): BelongsToMany
@@ -66,9 +63,9 @@ class Type extends Model
         return $this->belongsToMany(User::class, 'type_user');
     }
 
-    public function requests(): HasMany
+    public function moneyRequests(): HasMany
     {
-        return $this->hasMany(RequestModel::class, 'type_id');
+        return $this->hasMany(MoneyRequest::class, 'type_id');
     }
 
     public static function options(bool $onlyActive = true): array

@@ -4,7 +4,7 @@ namespace App\Exports\Excel;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use App\Exports\Excel\QueryExport;
-use App\Models\RequestModel;
+use App\Models\MoneyRequests\MoneyRequest;
 
 class RequestsExport extends QueryExport
 {
@@ -16,15 +16,15 @@ class RequestsExport extends QueryExport
             ],
             'created_at' => [
                 'header' => 'Creado el',
-                'format' => fn(RequestModel $item) => $item->created_at->format('Y-m-d h:i:s a')
+                'format' => fn(MoneyRequest $item) => $item->created_at->format('Y-m-d h:i:s a')
             ],
             'updated_at' => [
                 'header' => 'Actualizado el',
-                'format' => fn(RequestModel $item) => $item->updated_at->format('Y-m-d h:i:s a')
+                'format' => fn(MoneyRequest $item) => $item->updated_at->format('Y-m-d h:i:s a')
             ],
             'user' => [
                 'header' => 'Solicita',
-                'format' => fn(RequestModel $item) => $item->user->name
+                'format' => fn(MoneyRequest $item) => $item->user->name
             ],
             'concept' => [
                 'header' => 'Concepto'
@@ -40,11 +40,11 @@ class RequestsExport extends QueryExport
             ],
             'type' => [
                 'header' => 'Tipo de Movimiento',
-                'format' => fn(RequestModel $item) => $item->type->name
+                'format' => fn(MoneyRequest $item) => $item->type->name
             ],
             'is_transfer' => [
                 'header' => 'Método de Pago',
-                'format' => fn(RequestModel $item) => $item->paymentMethod()
+                'format' => fn(MoneyRequest $item) => $item->paymentMethod()
             ],
             'bank' => [
                 'header' => 'Banco'
@@ -66,7 +66,7 @@ class RequestsExport extends QueryExport
             ],
             'status' => [
                 'header' => 'Estatus',
-                'format' => fn(RequestModel $item) => $item->status->label()
+                'format' => fn(MoneyRequest $item) => $item->status->label()
             ],
         ], $onlyColumns);
     }

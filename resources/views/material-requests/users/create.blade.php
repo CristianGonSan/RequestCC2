@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('requests.index') }}">Mis solicitudes</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('money-requests.index') }}">Mis solicitudes</a></li>
             <li class="breadcrumb-item active">Nueva solicitud</li>
         </ol>
     </nav>

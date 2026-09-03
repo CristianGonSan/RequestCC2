@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Configurations\Notifications;
 
-use App\Enums\Requests\RequestStatus;
+use App\Enums\Requests\MoneyRequestStatus;
 use App\Models\Setting;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\View\View;
@@ -35,7 +35,7 @@ class MailNotifications extends Component
     {
         $invalidEmails = $this->invalidEmails($this->createRequest);
 
-        foreach (RequestStatus::options() as $key => $name) {
+        foreach (MoneyRequestStatus::options() as $key => $name) {
             $invalidEmails = \array_merge($invalidEmails, $this->invalidEmails($this->statusChange[$key] ?? []));
         }
 

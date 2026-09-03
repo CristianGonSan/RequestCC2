@@ -104,7 +104,7 @@ enum MaterialRequestStatus: string
     }
 
     /**
-     * @param  MaterialRequestStatus[]  $excluded
+     * @param  self[]  $excluded
      */
     public static function exclude(array $excluded): array
     {

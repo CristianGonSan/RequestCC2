@@ -6,7 +6,7 @@ use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\Catalogs\Type;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Support\DataBag;
-use App\Traits\Livewire\RequestModel\HasRequestModelTable;
+use App\Traits\Livewire\MoneyRequests\HasMoneyRequestTable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ use Livewire\Component;
 
 class MaterialRequestsTable extends Component
 {
-    use HasRequestModelTable;
+    use HasMoneyRequestTable;
 
     #[Session]
     public string $searchTerm = '';

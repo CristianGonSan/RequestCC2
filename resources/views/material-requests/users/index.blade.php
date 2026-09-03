@@ -11,7 +11,7 @@
             </ol>
         </nav>
 
-        <a href="{{ route('requests.create') }}" class="btn btn-outline-primary">
+        <a href="{{ route('money-requests.create') }}" class="btn btn-outline-primary">
             <i class="fas fa-fw fa-plus mr-1"></i>Nueva solicitud
         </a>
     </div>

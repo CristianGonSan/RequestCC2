@@ -2,10 +2,13 @@
 
 namespace App\Models\Catalogs;
 
+use App\Models\MaterialRequests\MaterialRequestItem;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -15,8 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $description
  * @property bool $is_external
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material newModelQuery()
@@ -31,7 +34,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereUpdatedAt($value)
- * @property-read \App\Models\Catalogs\Unit $baseUnit
+ * @property-read Unit $baseUnit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, MaterialRequestItem> $materialRequestItems
+ * @property-read int|null $material_request_items_count
  * @mixin \Eloquent
  */
 class Material extends Model
@@ -51,16 +56,21 @@ class Material extends Model
 
     protected $casts = [
         'is_external' => 'boolean',
-        'is_active' => 'boolean',
+        'is_active'   => 'boolean',
     ];
 
     public function isInUse(): bool
     {
-        return !true; // TODO: Implement logic to check if the material is in use in any requests
+        return $this->materialRequestItems()->exists();
     }
 
     public function baseUnit(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'base_unit_id');
+    }
+
+    public function materialRequestItems(): HasMany
+    {
+        return $this->hasMany(MaterialRequestItem::class, 'material_id');
     }
 }

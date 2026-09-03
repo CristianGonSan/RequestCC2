@@ -1,4 +1,4 @@
-@use(App\Enums\Requests\RequestStatus)
+@use(App\Enums\Requests\MoneyRequestStatus)
 
 <div>
     <form wire:submit="save">
@@ -17,7 +17,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Cuando una solicitud cambia de estado:</label>
-                    @foreach (RequestStatus::cases() as $status)
+                    @foreach (MoneyRequestStatus::cases() as $status)
                         <div class="mb-3">
                             <x-form.select-wire-ignore id="statusChangeSelect_{{ $status->value }}"
                                 label="{{ $status->label() }}" label-class="text-{{ $status->bootstrapColorClass() }}"
@@ -67,11 +67,11 @@
                 .wireModel('createRequest')
                 .build();
 
-            @foreach (RequestStatus::options() as $key => $name)
+            @foreach (MoneyRequestStatus::options() as $key => $name)
                 select2Builder.selector('#statusChangeSelect_{{ $key }}')
                     .wireModel('statusChange.{{ $key }}')
                     .build();
             @endforeach
-        });
+            });
     </script>
 @endpush

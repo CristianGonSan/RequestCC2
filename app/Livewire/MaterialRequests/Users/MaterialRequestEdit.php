@@ -60,7 +60,7 @@ class MaterialRequestEdit extends Component
                 'material_name'      => $item->material->name,
                 'unit_id'            => $item->unit_id,
                 'quantity_requested' => (string) $item->quantity_requested,
-                'can_delete'         => $item->quantity_fulfilled === 0,
+                'can_delete'         => $item->quantity_fulfilled == 0,
             ];
         }
     }

@@ -4,6 +4,9 @@ use App\Http\Controllers\Lookups\MaterialLookup;
 use App\Http\Controllers\MaterialRequests\FulfillmentMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\ManagementMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\UserMaterialRequestController;
+use App\Http\Controllers\MoneyRequests\AccountingMoneyRequestController;
+use App\Http\Controllers\MoneyRequests\ManagementMoneyRequestController;
+use App\Http\Controllers\MoneyRequests\UserMoneyRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
@@ -25,9 +28,6 @@ use App\Http\Controllers\Configurations\EmailNotificationsController;
 use App\Http\Controllers\Lookups\CostCenterLookup;
 use App\Http\Controllers\Lookups\TypeLookup;
 use App\Http\Controllers\Lookups\UserLookup;
-use App\Http\Controllers\Requests\AccountingController;
-use App\Http\Controllers\Requests\ManagementRequestController;
-use App\Http\Controllers\Requests\UserRequestController;
 
 Route::get('/', fn () => redirect()->route('dashboard'))->name('root');
 Route::get('/home', fn () => redirect()->route('dashboard'))->name('home');
@@ -59,11 +59,11 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('account', [AccountController::class, 'show'])
         ->name('account');
 
-    Route::resource('requests', UserRequestController::class)->only(['index', 'create', 'show', 'edit']);
+    Route::resource('money-requests', UserMoneyRequestController::class)->only(['index', 'create', 'show', 'edit']);
     Route::resource('material-requests', UserMaterialRequestController::class)->only(['index', 'create', 'show', 'edit']);
 
     Route::prefix('management')->name('management.')->group(function () {
-        Route::resource('requests', ManagementRequestController::class)->except(['destroy'])->middleware('permission:manage_requests');
+        Route::resource('money-requests', ManagementMoneyRequestController::class)->except(['destroy'])->middleware('permission:manage_requests');
         Route::resource('material-requests', ManagementMaterialRequestController::class)->only(['index', 'show']);
     });
 
@@ -71,10 +71,10 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::resource('material-requests', FulfillmentMaterialRequestController::class)->only(['index', 'show']);
     });
 
-    Route::prefix('accounting/requests')->name('accounting.requests.')->middleware('permission:manage_accounting')
+    Route::prefix('accounting/money-requests')->name('accounting.money-requests.')->middleware('permission:manage_accounting')
         ->group(function () {
-            Route::get('', [AccountingController::class, 'index'])->name('index');
-            Route::get('{requests}', [AccountingController::class, 'show'])->name('show');
+            Route::get('', [AccountingMoneyRequestController::class, 'index'])->name('index');
+            Route::get('{requests}', [AccountingMoneyRequestController::class, 'show'])->name('show');
         });
 
     Route::resource('users', UserController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_users');

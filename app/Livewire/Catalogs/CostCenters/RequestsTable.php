@@ -2,10 +2,8 @@
 
 namespace App\Livewire\Catalogs\CostCenters;
 
-use App\Enums\Requests\RequestStatus;
-use App\Models\Catalogs\CostCenter;
-use App\Models\RequestModel;
-use App\Models\Catalogs\Type;
+use App\Enums\Requests\MoneyRequestStatus;
+use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
@@ -32,25 +30,25 @@ class RequestsTable extends Component
     protected array $theadConfig = [
         [
             'column' => 'id',
-            'label' => 'ID',
-            'style' => 'width: 1%',
+            'label'  => 'ID',
+            'style'  => 'width: 1%',
         ],
         [
             'column' => 'amount',
-            'label' => 'Monto MXN',
-            'style' => 'width: 1%',
+            'label'  => 'Monto MXN',
+            'style'  => 'width: 1%',
         ],
         [
             'column' => 'status',
-            'label' => 'Estado',
+            'label'  => 'Estado',
         ],
         [
             'label' => 'Concepto',
         ],
         [
             'column' => 'created_at',
-            'label' => 'Creado el',
-            'style' => 'width: 1%',
+            'label'  => 'Creado el',
+            'style'  => 'width: 1%',
         ],
         [
             'label' => 'Ver más',
@@ -76,7 +74,7 @@ class RequestsTable extends Component
 
     private function getQuery(): Builder
     {
-        $query = RequestModel::query();
+        $query = MoneyRequest::query();
 
         $query->where('cost_center_id', $this->costCenterId);
 
@@ -89,8 +87,8 @@ class RequestsTable extends Component
         }
 
         if ($this->sortColumn === 'status') {
-            $cases = collect(RequestStatus::cases())
-                ->map(fn(RequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
+            $cases = collect(MoneyRequestStatus::cases())
+                ->map(fn (MoneyRequestStatus $case) => "WHEN '{$case->value}' THEN '{$case->label()}'")
                 ->implode(' ');
 
             $query->orderByRaw("CASE status $cases END {$this->sortDirection}");

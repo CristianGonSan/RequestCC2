@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\MoneyRequests\MoneyRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Message whereRequestId($value)
  * @method static Builder|Message whereUpdatedAt($value)
  * @method static Builder|Message whereUserId($value)
- * @property-read RequestModel $request
+ * @property-read MoneyRequest $request
  * @mixin \Eloquent
  */
 class Message extends Model
@@ -42,7 +43,7 @@ class Message extends Model
 
     public function request(): BelongsTo
     {
-        return $this->belongsTo(RequestModel::class);
+        return $this->belongsTo(MoneyRequest::class);
     }
 
     public function user(): BelongsTo

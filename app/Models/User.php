@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Catalogs\Company;
 use App\Models\Catalogs\Type;
 use App\Models\MaterialRequests\MaterialRequest;
+use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\Models\HasActiveState;
 use Eloquent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -42,7 +43,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read Collection<int, RequestModel> $requests
+ * @property-read Collection<int, MoneyRequest> $requests
  * @property-read int|null $requests_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
@@ -70,6 +71,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User withoutRole($roles, $guard = null)
  * @property-read Collection<int, MaterialRequest> $materialRequests
  * @property-read int|null $material_requests_count
+ * @property-read Collection<int, MoneyRequest> $moneyRequests
+ * @property-read int|null $money_requests_count
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
@@ -98,7 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isInUse(): bool
     {
-        return $this->requests()->exists();
+        return $this->moneyRequests()->exists() || $this->materialRequests()->exists();
     }
 
     public function typeOptions(bool $onlyActive = true): array
@@ -112,9 +115,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->pluck('types.name', 'types.id')->toArray();
     }
 
-    public function requests(): HasMany
+    public function moneyRequests(): HasMany
     {
-        return $this->hasMany(RequestModel::class);
+        return $this->hasMany(MoneyRequest::class);
     }
 
     public function materialRequests(): HasMany
