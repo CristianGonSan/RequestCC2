@@ -4,11 +4,11 @@ namespace App\Enums\Requests;
 
 enum MoneyRequestStatus: string
 {
-    case Pending = 'S01';
-    case Accepted = 'S02';
-    case Rejected = 'S03';
+    case Pending   = 'S01';
+    case Accepted  = 'S02';
+    case Rejected  = 'S03';
     case Cancelled = 'S04';
-    case Paid = 'S05';
+    case Paid      = 'S05';
 
     public function label(): string
     {
@@ -30,6 +30,41 @@ enum MoneyRequestStatus: string
             self::Cancelled => 'secondary',
             self::Paid      => 'info',
         };
+    }
+
+    public function canChangeTo(self $newStatus): bool
+    {
+        $transitions = [
+            self::Pending->value => [
+                self::Accepted, self::Rejected, self::Cancelled,
+            ],
+            self::Accepted->value => [
+                self::Pending, self::Rejected, self::Paid, self::Cancelled,
+            ],
+            self::Rejected->value => [
+                self::Pending, self::Accepted,
+            ],
+            self::Paid->value      => [self::Cancelled],
+            self::Cancelled->value => [],
+        ];
+
+        return \in_array($newStatus, $transitions[$this->value], true);
+    }
+
+    public function cannotChangeTo(self $newStatus): bool
+    {
+        return ! $this->canChangeTo($newStatus);
+    }
+
+    public function canChangeAny(array $statuses): bool
+    {
+        foreach ($statuses as $status) {
+            if ($this->canChangeTo($status)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isPending(): bool

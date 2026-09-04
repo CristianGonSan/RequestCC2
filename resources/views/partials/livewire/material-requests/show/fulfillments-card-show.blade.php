@@ -40,14 +40,14 @@
                             </div>
                         </div>
 
-                        @if (!$readonly)
-                            @if ($fulfillment->isCurrentUser())
+                        @unless ($readonly)
+                            @if ($fulfillment->isCurrentUser() && !$materialRequest->status->isCompleted())
                                 <x-livewire.loading-button label="Eliminar" theme="outline-danger" class="btn-sm mr-1"
                                     icon="trash-alt" wire:click="deleteFulfillment({{ $fulfillment->id }})"
                                     wire:target="deleteFulfillment({{ $fulfillment->id }})"
                                     wire:swal-delete="¿Está seguro de eliminar este movimiento?" />
                             @endif
-                        @endif
+                        @endunless
                     </div>
                 </li>
             @empty

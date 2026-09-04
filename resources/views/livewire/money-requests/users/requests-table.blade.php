@@ -1,7 +1,3 @@
-@php
-    /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
-@endphp
-
 <div>
     <x-livewire.table.search-pane>
         @include('partials.livewire.money-requests.table.filters', ['addUserOrder' => false])
@@ -9,6 +5,10 @@
 
     <div class="form-row mt-2">
         @forelse ($requests as $moneyRequest)
+            @php
+                /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
+            @endphp
+
             <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $moneyRequest->id }}">
 
                 <div class="card card-dark">
@@ -30,10 +30,10 @@
                         </div>
                     </div>
                 </div>
-
+                
             </div>
         @empty
-            @include('partials.requests.table.empty')
+            @include('partials.money-requests.table.empty')
         @endforelse
     </div>
 

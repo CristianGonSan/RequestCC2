@@ -1,7 +1,3 @@
-@php
-    /** @var App\Models\MaterialRequests\MaterialRequest $materialRequest */
-@endphp
-
 <div>
     <x-livewire.table.search-pane>
         @include('partials.livewire.material-requests.table.filters')
@@ -9,6 +5,10 @@
 
     <div class="form-row mt-2">
         @forelse ($materialRequests as $materialRequest)
+            @php
+                /** @var App\Models\MaterialRequests\MaterialRequest $materialRequest */
+            @endphp
+
             <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $materialRequest->id }}">
 
                 <div class="card card-dark">

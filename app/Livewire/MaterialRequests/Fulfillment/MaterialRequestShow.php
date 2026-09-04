@@ -57,7 +57,7 @@ class MaterialRequestShow extends Component
     {
         $materialRequest = $this->materialRequest();
 
-        if ($materialRequest->status->isCancelled()) {
+        if ($materialRequest->status->cannotChangeTo($status)) {
             $this->toastError('Acción no permitida.');
 
             return;
@@ -117,7 +117,7 @@ class MaterialRequestShow extends Component
     {
         $fulfillment = MaterialRequestFulfillment::findOrFail($id);
 
-        if (! $fulfillment->isCurrentUser()) {
+        if (! $fulfillment->isCurrentUser() || $fulfillment->materialRequest->status->isCompleted()) {
             $this->toastError('Acción no autorizada.');
 
             return;

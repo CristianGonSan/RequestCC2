@@ -44,7 +44,7 @@ class RequestShow extends Component
     {
         $moneyRequest = $this->moneyRequest();
 
-        if (!$moneyRequest->is_transfer || $moneyRequest->status->isCancelled()) {
+        if (! $moneyRequest->is_transfer || $moneyRequest->status->cannotChangeTo($status)) {
             $this->toastError('Acción no permitida.');
 
             return;

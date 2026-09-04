@@ -58,7 +58,7 @@ class MaterialRequestShow extends Component
     {
         $materialRequest = $this->materialRequest();
 
-        if ($materialRequest->status->isCancelled()) {
+        if ($materialRequest->status->cannotChangeTo($status)) {
             $this->toastError('Acción no permitida.');
 
             return;

@@ -48,13 +48,29 @@ enum MaterialRequestStatus: string
                 self::Completed, self::Cancelled,
             ],
             self::Rejected->value => [
-                self::Pending,
+                self::Pending, self::Accepted,
             ],
-            self::Completed->value => [],
+            self::Completed->value => [self::Cancelled],
             self::Cancelled->value => [],
         ];
 
         return \in_array($newStatus, $transitions[$this->value], true);
+    }
+
+    public function cannotChangeTo(self $newStatus): bool
+    {
+        return ! $this->canChangeTo($newStatus);
+    }
+
+    public function canChangeAny(array $statuses): bool
+    {
+        foreach ($statuses as $status) {
+            if ($this->canChangeTo($status)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isPending(): bool

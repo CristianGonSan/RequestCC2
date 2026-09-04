@@ -35,32 +35,6 @@
             </div>
         @endunless
 
-        @if (!$status->isCancelled())
-            <button type="button" class="btn btn-outline-primary dropdown-toggle mr-1" data-toggle="dropdown">
-                <i class="fas fa-fw fa-ellipsis-vertical mr-1"></i> Acciones
-            </button>
-            <div class="dropdown-menu">
-                @if ($status->canChangeTo(Status::Accepted))
-                    <button class="dropdown-item" wire:click="acceptRequest"
-                        wire:swal-confirm="¿Está seguro de aceptar esta solicitud?">
-                        Aceptar
-                    </button>
-                @endif
-                @if ($status->canChangeTo(Status::Rejected))
-                    <button class="dropdown-item" wire:click="rejectRequest"
-                        wire:swal-confirm="¿Está seguro de rechazar esta solicitud?">
-                        Rechazar
-                    </button>
-                @endif
-                @if ($status->canChangeTo(Status::Pending))
-                    <button class="dropdown-item" wire:click="markAsPending"
-                        wire:swal-confirm="¿Está seguro de pasar a pendiente esta solicitud?">
-                        Pendiente
-                    </button>
-                @endif
-            </div>
-        @endif
-
         <a href="{{ route('fulfillment.material-requests.index') }}" class="btn btn-outline-secondary mr-1">
             <i class="fas fa-fw fa-chevron-left mr-1"></i> Volver
         </a>

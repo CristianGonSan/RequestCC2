@@ -1,6 +1,4 @@
-@php
-    /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
-@endphp
+@use('App\Enums\Requests\MoneyRequestStatus as Status')
 
 <div>
     <x-livewire.table.search-pane>
@@ -9,6 +7,11 @@
 
     <div class="form-row mt-2">
         @forelse ($requests as $moneyRequest)
+            @php
+                /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
+                $status = $moneyRequest->status;
+            @endphp
+
             <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $moneyRequest->id }}">
 
                 <div class="card card-dark">
@@ -22,53 +25,54 @@
                                 <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($moneyRequest->id) }}
                             </a>
 
-                            @if (!$moneyRequest->status->isCancelled())
-                                <button type="button" class="btn btn-outline-primary dropdown-toggle ml-auto"
+                            @unless ($status->isCancelled())
+                                <button type="button" class="btn btn-outline-primary dropdown-toggle mr-1"
                                     data-toggle="dropdown">
                                     <i class="fas fa-fw fa-ellipsis-vertical mr-1"></i> Acciones
                                 </button>
                                 <div class="dropdown-menu">
-                                    @if (!$moneyRequest->status->isAccepted())
-                                        <button class="dropdown-item" wire:click="acceptRequest({{ $moneyRequest->id }})"
+                                    @if ($status->canChangeTo(Status::Accepted))
+                                        <button class="dropdown-item" wire:click="acceptRequest"
                                             wire:swal-confirm="¿Está seguro de aceptar esta solicitud?">
                                             Aceptar
                                         </button>
                                     @endif
-                                    @if (!$moneyRequest->status->isRejected())
-                                        <button class="dropdown-item" wire:click="rejectRequest({{ $moneyRequest->id }})"
+                                    @if ($status->canChangeTo(Status::Rejected))
+                                        <button class="dropdown-item" wire:click="rejectRequest"
                                             wire:swal-confirm="¿Está seguro de rechazar esta solicitud?">
                                             Rechazar
                                         </button>
                                     @endif
-                                    @if (!$moneyRequest->status->isPending())
-                                        <button class="dropdown-item" wire:click="markAsPending({{ $moneyRequest->id }})"
+                                    @if ($status->canChangeTo(Status::Pending))
+                                        <button class="dropdown-item" wire:click="markAsPending"
                                             wire:swal-confirm="¿Está seguro de pasar a pendiente esta solicitud?">
                                             Pendiente
                                         </button>
                                     @endif
-                                    @if (!$moneyRequest->is_transfer)
+                                    @unless ($moneyRequest->is_transfer)
                                         <div class="dropdown-divider"></div>
-                                        @if (!$moneyRequest->status->isPaid())
-                                            <button class="dropdown-item" wire:click="markAsPaid({{ $moneyRequest->id }})"
+                                        @if ($status->canChangeTo(Status::Paid))
+                                            <button class="dropdown-item" wire:click="markAsPaid"
                                                 wire:swal-confirm="¿Está seguro de pagar esta solicitud?">
                                                 Pagadar
                                             </button>
                                         @endif
-                                        @if (!$moneyRequest->status->isCancelled())
-                                            <button class="dropdown-item" wire:click="cancelRequest({{ $moneyRequest->id }})"
+                                        @if ($status->canChangeTo(Status::Cancelled))
+                                            <button class="dropdown-item" wire:click="cancelRequest"
                                                 wire:swal-confirm="¿Está seguro de cancelar esta solicitud?">
                                                 Cancelar
                                             </button>
                                         @endif
-                                    @endif
+                                    @endunless
                                 </div>
-                            @endif
+                            @endunless
                         </div>
                     </div>
                 </div>
+                
             </div>
         @empty
-            @include('partials.requests.table.empty')
+            @include('partials.money-requests.table.empty')
         @endforelse
     </div>
 

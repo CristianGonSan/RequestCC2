@@ -91,7 +91,7 @@ class RequestsTable extends Component
     {
         $moneyRequest = MoneyRequest::findOrFail($id);
 
-        if ($moneyRequest->status->isCancelled()) {
+        if ($moneyRequest->status->cannotChangeTo($status)) {
             $this->toastError('Acción no permitida.');
 
             return;
