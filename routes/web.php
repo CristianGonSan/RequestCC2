@@ -87,8 +87,8 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::resource('materials', MaterialController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_materials');
 
     Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
-        Route::get('', [ExportController::class, 'index'])->name('requests.index');
-        Route::get('download', [ExportController::class, 'export'])->name('requests.download');
+        Route::get('money-requests', [ExportController::class, 'index'])->name('money-requests.index');
+        Route::get('money-requests/download', [ExportController::class, 'export'])->name('money-requests.download');
 
         Route::prefix('lookups')->name('lookups.')->group(function () {
             Route::get('cost-centers', [CostCenterLookup::class, 'select2'])

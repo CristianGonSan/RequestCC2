@@ -53,10 +53,10 @@ class RequestsTable extends Component
 
     public function render(): View
     {
-        $requests = $this->getQuery()->paginate($this->perPage);
+        $moneyRequests = $this->getQuery()->paginate($this->perPage);
 
         return view('livewire.money-requests.users.requests-table', [
-            'requests'      => $requests,
+            'moneyRequests' => $moneyRequests,
             'statusOptions' => MoneyRequestStatus::options(),
             'typeOptions'   => Type::options(),
         ]);
@@ -73,45 +73,45 @@ class RequestsTable extends Component
             'user:id,name',
         ]);
 
-        $query->join('cost_centers', 'requests.cost_center_id', '=', 'cost_centers.id')
-            ->join('types', 'requests.type_id', '=', 'types.id')
-            ->select('requests.*');
+        $query->join('cost_centers', 'money_requests.cost_center_id', '=', 'cost_centers.id')
+            ->join('types', 'money_requests.type_id', '=', 'types.id')
+            ->select('money_requests.*');
 
-        $query->where('requests.user_id', Auth::id());
+        $query->where('money_requests.user_id', Auth::id());
 
         if ($term = $this->searchTerm) {
             if ($id = $this->getIdFromSearchTerm()) {
-                $query->where('requests.id', $id);
+                $query->where('money_requests.id', $id);
             } else {
                 $query->where(function (Builder $query) use ($term): void {
                     $query
                         ->where('cost_centers.name', 'like', "%$term%")
-                        ->orWhere('requests.payee', 'like', "%$term%")
-                        ->orWhere('requests.concept', 'like', "%$term%");
+                        ->orWhere('money_requests.payee', 'like', "%$term%")
+                        ->orWhere('money_requests.concept', 'like', "%$term%");
                 });
             }
         }
 
         $query->when($filtersBag->filled('payMethod'),
-            fn () => $query->where('requests.is_transfer', $filtersBag->boolean('payMethod'))
+            fn () => $query->where('money_requests.is_transfer', $filtersBag->boolean('payMethod'))
         )
             ->when($filtersBag->filled('type'),
-                fn () => $query->where('requests.type_id', $filtersBag->string('type'))
+                fn () => $query->where('money_requests.type_id', $filtersBag->string('type'))
             )
             ->when($filtersBag->filled('status'),
-                fn () => $query->where('requests.status', $filtersBag->string('status'))
+                fn () => $query->where('money_requests.status', $filtersBag->string('status'))
             )
             ->when($filtersBag->filled('minAmount'),
-                fn () => $query->where('requests.amount', '>=', $filtersBag->float('minAmount'))
+                fn () => $query->where('money_requests.amount', '>=', $filtersBag->float('minAmount'))
             )
             ->when($filtersBag->filled('maxAmount'),
-                fn () => $query->where('requests.amount', '<=', $filtersBag->float('maxAmount'))
+                fn () => $query->where('money_requests.amount', '<=', $filtersBag->float('maxAmount'))
             )
             ->when($filtersBag->filled('minDate'),
-                fn () => $query->where('requests.created_at', '>=', $filtersBag->string('minDate'))
+                fn () => $query->where('money_requests.created_at', '>=', $filtersBag->string('minDate'))
             )
             ->when($filtersBag->filled('maxDate'),
-                fn () => $query->where('requests.created_at', '<=', $filtersBag->string('maxDate'))
+                fn () => $query->where('money_requests.created_at', '<=', $filtersBag->string('maxDate'))
             );
 
         if ($this->sortColumn === 'status') {
@@ -125,15 +125,15 @@ class RequestsTable extends Component
         }
 
         $sortable = [
-            'created_at'  => 'requests.created_at',
-            'id'          => 'requests.id',
-            'payee'       => 'requests.payee',
+            'created_at'  => 'money_requests.created_at',
+            'id'          => 'money_requests.id',
+            'payee'       => 'money_requests.payee',
             'cost_center' => 'cost_centers.name',
-            'amount'      => 'requests.amount',
+            'amount'      => 'money_requests.amount',
             'type'        => 'types.name',
         ];
 
-        $column = $sortable[$this->sortColumn] ?? 'requests.created_at';
+        $column = $sortable[$this->sortColumn] ?? 'money_requests.created_at';
 
         $query->orderBy($column, $this->sortDirection);
 

@@ -23,7 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Catalogs\Company|null $company
- * @property-read int|null $requests_count
+ * @property-read int|null $moneyRequests_count
  * @method static Builder<static>|CostCenter active()
  * @method static Builder<static>|CostCenter inactive()
  * @method static Builder<static>|CostCenter newModelQuery()

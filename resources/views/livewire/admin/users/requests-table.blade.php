@@ -1,4 +1,4 @@
-<x-card-table :pagination="$requests">
+<x-card-table :pagination="$moneyRequests">
     <x-slot:header>
         <x-livewire.table.search-pane :autofocus="false" />
     </x-slot:header>
@@ -6,7 +6,7 @@
     {{ $this->thead() }}
 
     <tbody>
-        @forelse($requests as $request)
+        @forelse($moneyRequests as $request)
             <tr wire:key="request-{{ $request->id }}">
                 <td>{{ $request->id }}</td>
                 <td>{{ number_format($request->amount, 2) }}</td>

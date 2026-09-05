@@ -4,7 +4,7 @@
     </x-livewire.table.search-pane>
 
     <div class="form-row mt-2">
-        @forelse ($requests as $moneyRequest)
+        @forelse ($moneyRequests as $moneyRequest)
             @php
                 /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
             @endphp
@@ -30,12 +30,12 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         @empty
             @include('partials.money-requests.table.empty')
         @endforelse
     </div>
 
-    {{ $requests->links() }}
+    {{ $moneyRequests->links() }}
 </div>

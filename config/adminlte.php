@@ -455,7 +455,7 @@ return [
         ],
         [
             'text'  => 'export',
-            'route' => 'export.requests.index',
+            'route' => 'export.money-requests.index',
             'icon'  => 'fas fa-fw fa-file-export',
             'can'   => 'export',
         ],

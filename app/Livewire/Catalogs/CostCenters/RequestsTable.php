@@ -65,10 +65,10 @@ class RequestsTable extends Component
 
     public function render(): View
     {
-        $requests = $this->getQuery()->paginate($this->perPage);
+        $moneyRequests = $this->getQuery()->paginate($this->perPage);
 
         return view('livewire.catalogs.cost-centers.requests-table', [
-            'requests' => $requests,
+            'moneyRequests' => $moneyRequests,
         ]);
     }
 

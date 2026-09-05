@@ -5,9 +5,6 @@ namespace App\Models\MoneyRequests;
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
-use App\Models\FileManagement;
-use App\Models\Message;
-use App\Models\RequestRecords;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
 use App\Traits\Models\TruncateText;
@@ -68,18 +65,17 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder<static>|MoneyRequest whereUserId($value)
  * @property-read Collection<int, FileManagement> $files
  * @property-read int|null $files_count
- * @property-read Collection<int, Message> $messages
- * @property-read int|null $messages_count
- * @property-read Collection<int, RequestRecords> $records
+ * @property-read Collection<int, MoneyRequestRecords> $records
  * @property-read int|null $records_count
  * @property-read User $user
+ * @property-read string $payment_method
+ * @property-read Collection<int, \App\Models\MoneyRequests\Message> $messages
+ * @property-read int|null $messages_count
  * @mixin \Eloquent
  */
 class MoneyRequest extends Model
 {
     use HasFactory, TruncateText, CurrencyToWords;
-
-    protected $table = 'requests';
 
     protected $fillable = [
         'user_id',
@@ -113,7 +109,7 @@ class MoneyRequest extends Model
 
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class, 'request_id');
+        return $this->hasMany(Message::class, 'money_request_id');
     }
 
     public function costCenter(): BelongsTo
@@ -131,14 +127,19 @@ class MoneyRequest extends Model
         return $this->is_transfer ? 'Transferencia' : 'Efectivo';
     }
 
+    public function getPaymentMethodAttribute(): string
+    {
+        return $this->paymentMethod();
+    }
+
     public function files(): HasMany
     {
-        return $this->hasMany(FileManagement::class, 'request_id');
+        return $this->hasMany(FileManagement::class, 'money_request_id');
     }
 
     public function records(): HasMany
     {
-        return $this->hasMany(RequestRecords::class, 'request_id');
+        return $this->hasMany(MoneyRequestRecords::class, 'money_request_id');
     }
 
     public function addEditCount(): int
@@ -153,7 +154,7 @@ class MoneyRequest extends Model
         $newStatus = $this->status->label();
         $this->save();
 
-        RequestRecords::changeStatus($user ?? Auth::user(), $this->id, $oldStatus, $newStatus);
+        MoneyRequestRecords::changeStatus($user ?? Auth::user(), $this->id, $oldStatus, $newStatus);
     }
 
     public function updateWithRecord(array $validated, ?User $user = null): void
@@ -162,7 +163,7 @@ class MoneyRequest extends Model
         $this->addEditCount();
         $this->update($validated);
 
-        RequestRecords::edited($user ?? Auth::user(), $this, $oldData);
+        MoneyRequestRecords::edited($user ?? Auth::user(), $this, $oldData);
     }
 
     public function formattedAmount(): string

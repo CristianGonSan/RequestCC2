@@ -44,7 +44,7 @@
                         <span class="info-box-icon bg-info"><i class="far fa-file-alt"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Solicitudes</span>
-                            <span class="info-box-number">{{ $requestTotal }}</span>
+                            <span class="info-box-number">{{ $moneyRequestTotal }}</span>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                         <span class="info-box-icon bg-info"><i class="far fa-flag"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Pagadas</span>
-                            <span class="info-box-number">{{ $requestsPaid }}</span>
+                            <span class="info-box-number">{{ $moneyRequestsPaid }}</span>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         <span class="info-box-icon bg-primary"><i class="fas fa-dollar-sign"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Monto Pagado</span>
-                            <span class="info-box-number">${{ number_format($totalAmountPaid, 2) }}</span>
+                            <span class="info-box-number">${{ number_format($moneyRequestsTotalAmountPaid, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -111,14 +111,14 @@
                             <th scope="col">Monto %</th>
 
                             <tbody>
-                                @foreach ($requestsByCostCenter as $cc)
+                                @foreach ($moneyRequestsByCostCenter as $cc)
                                     <tr>
                                         <td>{{ $cc->cost_center_name }}</td>
                                         <td>{{ $cc->cost_center_count }}</td>
-                                        <td>{{ $requestsPaid > 0 ? number_format((100 / $requestsPaid) * $cc->cost_center_count, 2) : '0.00' }}%
+                                        <td>{{ $moneyRequestsPaid > 0 ? number_format((100 / $moneyRequestsPaid) * $cc->cost_center_count, 2) : '0.00' }}%
                                         </td>
                                         <td>{{ number_format($cc->amount_count, 2) }}</td>
-                                        <td>{{ $totalAmountPaid > 0 ? number_format((100 / $totalAmountPaid) * $cc->amount_count, 2) : '0.00' }}%
+                                        <td>{{ $moneyRequestsTotalAmountPaid > 0 ? number_format((100 / $moneyRequestsTotalAmountPaid) * $cc->amount_count, 2) : '0.00' }}%
                                         </td>
                                     </tr>
                                 @endforeach
@@ -183,7 +183,7 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     return context.label + ': ' + context.raw;
                                 }
                             }
@@ -195,13 +195,13 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // Verifica que estos valores están bien definidos y contienen datos
-            const labelsByType = @json($requestsByType['labels']);
-            const dataByType = @json($requestsByType['type_count']);
-            const amountByType = @json($requestsByType['amount_count']);
+            const labelsByType = @json($moneyRequestsByType['labels']);
+            const dataByType = @json($moneyRequestsByType['type_count']);
+            const amountByType = @json($moneyRequestsByType['amount_count']);
 
-            const labelsByStatus = @json($requestsByStatus['labels']);
-            const dataByStatus = @json($requestsByStatus['status_count']);
-            const amountByStatus = @json($requestsByStatus['amount_count']);
+            const labelsByStatus = @json($moneyRequestsByStatus['labels']);
+            const dataByStatus = @json($moneyRequestsByStatus['status_count']);
+            const amountByStatus = @json($moneyRequestsByStatus['amount_count']);
 
             createPieChart('requestsByType', labelsByType, dataByType, 'X');
             createPieChart('amountByType', labelsByType, amountByType, 'X');

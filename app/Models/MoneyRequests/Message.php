@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\MoneyRequests;
 
 use App\Models\MoneyRequests\MoneyRequest;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Message whereUpdatedAt($value)
  * @method static Builder|Message whereUserId($value)
  * @property-read MoneyRequest $request
+ * @property int $money_request_id
+ * @method static Builder<static>|Message whereMoneyRequestId($value)
  * @mixin \Eloquent
  */
 class Message extends Model
@@ -36,7 +39,7 @@ class Message extends Model
     protected $table = 'messages';
 
     protected $fillable = [
-        'request_id',
+        'money_request_id',
         'user_id',
         'message',
     ];

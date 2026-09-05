@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\MoneyRequests;
 
 use App\Models\Catalogs\Type;
 use App\Models\MoneyRequests\MoneyRequest;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,9 +32,11 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUserId($value)
+ * @property int $money_request_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereMoneyRequestId($value)
  * @mixin \Eloquent
  */
-class RequestRecords extends Model
+class MoneyRequestRecords extends Model
 {
     use HasFactory;
 
@@ -52,7 +55,7 @@ class RequestRecords extends Model
     ];
 
     protected $fillable = [
-        'request_id',
+        'money_request_id',
         'user_id',
         'action',
         'details',
@@ -85,7 +88,7 @@ class RequestRecords extends Model
 
     public static function changeStatus(User $user, int $requestId, string $oldStatus, string $newStatus, $registered_at = null)
     {
-        $record = new RequestRecords;
+        $record = new MoneyRequestRecords;
 
         $record->request_id = $requestId;
         $record->user_id    = $user->id;
@@ -117,7 +120,7 @@ class RequestRecords extends Model
             'covenant'    => 'Convenio',
         ];
 
-        $record = new RequestRecords;
+        $record = new MoneyRequestRecords;
 
         $record->request_id = $updateMoneyRequest->id;
         $record->user_id    = $user->id;

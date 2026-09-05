@@ -2,7 +2,7 @@
 
 namespace App\Livewire\MoneyRequests;
 
-use App\Models\FileManagement;
+use App\Models\MoneyRequests\FileManagement;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
@@ -62,7 +62,7 @@ class ShowFiles extends Component
         $file_path = $this->newFile->store($path, 'local');
 
         if (Storage::exists($file_path)) {
-            $fileManagement = new FileManagement;
+            $fileManagement = new FileManagement();
             $fileManagement->request_id = $moneyRequest->id;
             $fileManagement->user_id = Auth::id();
             $fileManagement->file_path = $file_path;

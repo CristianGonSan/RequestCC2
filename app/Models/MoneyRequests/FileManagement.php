@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\MoneyRequests;
 
 use App\Enums\Files\FileExtensionSupport;
 use App\Models\MoneyRequests\MoneyRequest;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $request_id
+ * @property int $money_request_id
  * @property int $user_id
  * @property string $file_path
  * @property string|null $original_name
@@ -39,6 +40,7 @@ use Illuminate\Support\Carbon;
  * @property-read float $file_size_in_k_b
  * @property-read float $file_size_in_m_b
  * @property-read string $human_readable_size
+ * @method static Builder<static>|FileManagement whereMoneyRequestId($value)
  * @mixin \Eloquent
  */
 class FileManagement extends Model
@@ -48,7 +50,7 @@ class FileManagement extends Model
     protected $table = 'file_management';
 
     protected $fillable = [
-        'request_id',
+        'money_request_id',
         'user_id',
         'file_path',
         'original_name',

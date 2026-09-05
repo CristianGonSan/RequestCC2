@@ -36,15 +36,15 @@ class ReportController extends Controller
             ->whereDate('created_at', '>=', $startDate)
             ->whereDate('created_at', '<=', $endDate);
 
-        $requestTotal = $query->count();
+        $moneyRequestTotal = $query->count();
 
         $paid = $query->where('status', MoneyRequestStatus::Paid);
 
-        $requestsPaid    = $paid->count();
-        $totalAmountPaid = $paid->sum('amount');
+        $moneyRequestsPaid = $paid->count();
+        $moneyRequestsTotalAmountPaid   = $paid->sum('amount');
 
         // --- Reporte por tipo (para gráficos, sí se transforma a array) ---
-        $requestsByType = MoneyRequest::select([
+        $moneyRequestsByType = MoneyRequest::select([
             "{$table}.type_id",
             'types.name as type_name',
             DB::raw('COUNT(*) as type_count'),
@@ -58,14 +58,14 @@ class ReportController extends Controller
             ->orderBy('types.name')
             ->get();
 
-        $requestsByType = [
-            'labels'       => $requestsByType->pluck('type_name'),
-            'type_count'   => $requestsByType->pluck('type_count'),
-            'amount_count' => $requestsByType->pluck('amount_count'),
+        $moneyRequestsByType = [
+            'labels'       => $moneyRequestsByType->pluck('type_name'),
+            'type_count'   => $moneyRequestsByType->pluck('type_count'),
+            'amount_count' => $moneyRequestsByType->pluck('amount_count'),
         ];
 
         // --- Reporte por centro de costo (para TABLA, se deja como colección de filas) ---
-        $requestsByCostCenter = MoneyRequest::select([
+        $moneyRequestsByCostCenter = MoneyRequest::select([
             "{$table}.cost_center_id",
             'cost_centers.name as cost_center_name',
             DB::raw('COUNT(*) as cost_center_count'),
@@ -81,7 +81,7 @@ class ReportController extends Controller
         // Nota: se deja tal cual (colección), NO se convierte a array de labels/counts.
 
         // --- Reporte por estado (para gráficos, se transforma a array) ---
-        $requestsByStatus = MoneyRequest::select([
+        $moneyRequestsByStatus = MoneyRequest::select([
             'status',
             DB::raw('COUNT(*) as status_count'),
             DB::raw('SUM(amount) as amount_count'),
@@ -91,21 +91,21 @@ class ReportController extends Controller
             ->groupBy('status')->orderBy('status')
             ->get();
 
-        $requestsByStatus = [
-            'labels' => $requestsByStatus->pluck('status')->map(function ($item) use ($statusOptions) {
+        $moneyRequestsByStatus = [
+            'labels' => $moneyRequestsByStatus->pluck('status')->map(function ($item) use ($statusOptions) {
                 return $statusOptions[$item->value];
             }),
-            'status_count' => $requestsByStatus->pluck('status_count')->toArray(),
-            'amount_count' => $requestsByStatus->pluck('amount_count')->toArray(),
+            'status_count' => $moneyRequestsByStatus->pluck('status_count')->toArray(),
+            'amount_count' => $moneyRequestsByStatus->pluck('amount_count')->toArray(),
         ];
 
         return view('reports.index', compact([
-            'requestTotal',
-            'requestsPaid',
-            'totalAmountPaid',
-            'requestsByType',
-            'requestsByCostCenter',
-            'requestsByStatus',
+            'moneyRequestTotal',
+            'moneyRequestsPaid',
+            'moneyRequestsTotalAmountPaid',
+            'moneyRequestsByType',
+            'moneyRequestsByCostCenter',
+            'moneyRequestsByStatus',
             'startDate',
             'endDate',
         ]));

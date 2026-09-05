@@ -3,7 +3,7 @@
 @section('plugins.Select2', true)
 @section('plugins.InputMask', true)
 
-@section('title_prefix', 'Exportar |')
+@section('title_prefix', 'Exportar Solicitudes de Dinero |')
 
 @section('content_header')
     <div class="container">
@@ -11,6 +11,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
                 <li class="breadcrumb-item active">Exportar</li>
+                <li class="breadcrumb-item active">Solicitudes de Dinero</li>
             </ol>
         </nav>
     </div>
@@ -26,7 +27,7 @@
 
         <h1 class="h4 mb-3">Exportar v2</h1>
 
-        <form class="row" action="{{ route('export.requests.download') }}" method="GET">
+        <form class="row" action="{{ route('export.money-requests.download') }}" method="GET">
             <!-- Panel de Filtros -->
             <div class="col-md-8">
                 <div class="card">
