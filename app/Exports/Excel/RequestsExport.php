@@ -44,7 +44,7 @@ class RequestsExport extends QueryExport
             ],
             'is_transfer' => [
                 'header' => 'Método de Pago',
-                'format' => fn(MoneyRequest $item) => $item->paymentMethod()
+                'format' => fn(MoneyRequest $item) => $item->payment_method
             ],
             'bank' => [
                 'header' => 'Banco'

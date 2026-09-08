@@ -61,6 +61,11 @@ class RequestShow extends Component
 
     private function moneyRequest(): MoneyRequest
     {
-        return $this->moneyRequest ??= MoneyRequest::with(['costCenter:id,name', 'type:id,name'])->findOrFail($this->moneyRequestId);
+        return $this->moneyRequest ??= MoneyRequest::with([
+            'user:id,name,email',
+            'costCenter:id,name,description,company_id',
+            'costCenter.company:id,name',
+            'type:id,name',
+        ])->findOrFail($this->moneyRequestId);
     }
 }

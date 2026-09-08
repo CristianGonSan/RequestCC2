@@ -59,17 +59,10 @@ return [
     'monetary'        => 'Monetarias',
     'fulfillment'     => 'Abastecimiento',
 
+    'incomes'         => 'Ingresos',
+
     'section_my_requests'         => 'Mis solicitudes',
     'section_requests_management' => 'Gestión de solicitudes',
     'section_catalogs'            => 'Catálogos',
     'section_administration'      => 'Administración',
-
-    'new' => [
-        'user'        => 'Nuevo Usuario',
-        'cost_center' => 'Nuevo CC',
-        'company'     => 'Nueva Empresa',
-        'role'        => 'Nuevo Rol',
-        'permission'  => 'Nuevo Permiso',
-        'type'        => 'Nuevo Tipo',
-    ],
 ];

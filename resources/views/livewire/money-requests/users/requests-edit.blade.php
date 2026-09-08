@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <i class="fas fa-fw fa-{{ $moneyRequest->is_transfer ? 'credit-card' : 'money-bill-wave' }} mr-1"></i>
-                <strong>{{ $moneyRequest->paymentMethod() }}</strong>
+                <strong>{{ $moneyRequest->payment_method }}</strong>
 
                 <hr>
 
@@ -97,14 +97,14 @@
                         if (data.loading) return data.text;
 
                         return $(`
-                                        <div class="d-flex justify-content-between align-items-center w-100">
-                                            <div>
-                                                <strong class="d-block">${data.text}</strong>
-                                                ${data.company ? `<small class="d-block opacity-75">Empresa: ${data.company}</small>` : ''}
-                                                ${data.description ? `<small class="d-block opacity-75 text-truncate" style="max-width: 300px;">${data.description}</small>` : ''}
-                                            </div>
-                                        </div>
-                                    `);
+                                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                                            <div>
+                                                                <strong class="d-block">${data.text}</strong>
+                                                                ${data.company ? `<small class="d-block opacity-75">Empresa: ${data.company}</small>` : ''}
+                                                                ${data.description ? `<small class="d-block opacity-75 text-truncate" style="max-width: 300px;">${data.description}</small>` : ''}
+                                                            </div>
+                                                        </div>
+                                                    `);
                     }
                 }).build();
 

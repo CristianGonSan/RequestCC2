@@ -1,6 +1,6 @@
 <div>
     <x-livewire.table.search-pane>
-        @include('partials.livewire.material-requests.table.filters')
+        @include('partials.livewire.material-requests.table.filters', ['addUserOrder' => false])
     </x-livewire.table.search-pane>
 
     <div class="form-row mt-2">
@@ -9,21 +9,21 @@
                 /** @var App\Models\MaterialRequests\MaterialRequest $materialRequest */
             @endphp
 
-            <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $materialRequest->id }}">
+            <div class="col-lg-4 col-md-6 col-sm-12 d-flex" wire:key="card-{{ $materialRequest->id }}">
 
-                <div class="card card-dark">
+                <div class="card card-outline card-{{ $materialRequest->status_bs_color }} w-100">
                     @include('partials.livewire.material-requests.table.card.card-header')
                     @include('partials.livewire.material-requests.table.card.card-body')
 
-                    <div class="card-footer">
+                    <div class="card-footer py-2">
                         <div class="d-flex">
                             <a href="{{ route('material-requests.show', $materialRequest->id) }}"
-                                class="btn btn-outline-primary">
+                                class="btn btn-outline-primary btn-sm">
                                 <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($materialRequest->id) }}
                             </a>
 
                             @if ($materialRequest->status->isPending())
-                                <x-livewire.loading-button label="Eliminar" theme="outline-danger" class="ml-auto"
+                                <x-livewire.loading-button label="Eliminar" theme="outline-danger" class="ml-auto btn-sm"
                                     icon="trash-alt" wire:click="deleteMaterialRequest({{ $materialRequest->id }})"
                                     wire:target="deleteMaterialRequest({{ $materialRequest->id }})"
                                     wire:swal-delete="¿Está seguro de eliminar esta solicitud?" />

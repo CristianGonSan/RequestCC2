@@ -1,5 +1,9 @@
 @php
     /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
+
+    $costCenter = $moneyRequest->costCenter;
+    $company = $costCenter->company;
+    $type = $moneyRequest->type;
 @endphp
 
 <div class="card">
@@ -9,8 +13,8 @@
                 <dl class="row mb-2">
                     <dt class="col-6 col-md-4 text-muted">Estatus</dt>
                     <dd class="col-6 col-md-8 mb-0">
-                        <span class="badge bg-{{ $moneyRequest->status->bootstrapColorClass() }}">
-                            {{ $moneyRequest->status->label() }}
+                        <span class="badge bg-{{ $moneyRequest->status_bs_color }}">
+                            {{ $moneyRequest->status_label }}
                         </span>
                     </dd>
                 </dl>
@@ -28,7 +32,7 @@
                     <dt class="col-6 col-md-4 text-muted">Método de pago</dt>
                     <dd class="col-6 col-md-8 mb-0">
                         <span class="badge {{ $moneyRequest->is_transfer ? 'badge-transfer' : 'badge-cash' }}">
-                            {{ $moneyRequest->paymentMethod() }}
+                            {{ $moneyRequest->payment_method }}
                         </span>
                     </dd>
                 </dl>
@@ -39,9 +43,19 @@
                     <dt class="col-md-2 text-muted">Monto</dt>
                     <dd class="col-md-10 mb-0">
                         <span class="h3 font-weight-bold text-success d-block mb-0">
-                            {{ $moneyRequest->formattedAmount() }}
+                            {{ $moneyRequest->formatted_amount }}
                         </span>
-                        <em class="text-muted">{{ ucfirst($moneyRequest->amountToWord()) }}</em>
+                        <em class="text-muted">{{ ucfirst($moneyRequest->amount_to_word) }}</em>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="col-12 order-4 order-md-4">
+                <dl class="row mb-2">
+                    <dt class="col-md-2 text-muted">Centro de Costos</dt>
+                    <dd class="col-md-10 mb-0">
+                        <span class="d-block mb-0">{{ $costCenter->name }} - {{ $company->name }}</span>
+                        <em class="text-muted">{{ $costCenter->description ?? 'Sin descripción' }}</em>
                     </dd>
                 </dl>
             </div>
@@ -60,28 +74,21 @@
             <div class="col-md-6">
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Solicitante</dt>
-                    <dd class="col-md-8 mb-0">{{ $moneyRequest->user->name ?? 'N/D' }}</dd>
+                    <dd class="col-md-8 mb-0">{{ $moneyRequest->user->name }}</dd>
                 </dl>
             </div>
 
             <div class="col-md-6">
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Beneficiario</dt>
-                    <dd class="col-md-8 mb-0">{{ $moneyRequest->payee ?? 'N/D' }}</dd>
-                </dl>
-            </div>
-
-            <div class="col-md-6">
-                <dl class="row mb-2">
-                    <dt class="col-md-4 text-muted">Centro de costos</dt>
-                    <dd class="col-md-8 mb-0">{{ $moneyRequest->costCenter->name }}</dd>
+                    <dd class="col-md-8 mb-0">{{ $moneyRequest->payee }}</dd>
                 </dl>
             </div>
 
             <div class="col-md-6">
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Tipo</dt>
-                    <dd class="col-md-8 mb-0">{{ $moneyRequest->type->name }}</dd>
+                    <dd class="col-md-8 mb-0">{{ $type->name }}</dd>
                 </dl>
             </div>
         </div>

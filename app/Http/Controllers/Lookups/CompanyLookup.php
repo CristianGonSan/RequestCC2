@@ -38,4 +38,37 @@ class CompanyLookup extends Controller
             'pagination'    => ['more' => $results->hasMorePages()],
         ]);
     }
+
+    public function select2ByAuthUser(Request $request): JsonResponse
+    {
+        $userId = auth()->id();
+
+        $query = Company::where('companies.is_active', true);
+
+        $query->join('company_user', function ($join) use ($userId): void {
+            $join->on('company_user.company_id', '=', 'companies.id')
+                ->where('company_user.user_id', '=', $userId);
+        });
+
+        if ($request->has('term')) {
+            $term = $request->string('term');
+            $query->where(
+                fn ($q) => $q->where('name', 'like', "%$term%")
+            );
+        }
+
+        $query->orderBy('name');
+
+        $results = $query->paginate(24, ['companies.id', 'companies.name']);
+
+        $map = $results->map(fn (Company $item): array => [
+            'id'    => $item->id,
+            'text'  => $item->name,
+        ]);
+
+        return response()->json([
+            'results'       => $map,
+            'pagination'    => ['more' => $results->hasMorePages()],
+        ]);
+    }
 }

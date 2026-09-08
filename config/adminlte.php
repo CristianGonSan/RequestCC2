@@ -338,6 +338,11 @@ return [
             ],
         ],
         [
+            'text'  => 'incomes',
+            'route' => 'incomes.index',
+            'icon'  => 'fas fa-fw fa-money-bill-trend-up',
+        ],
+        [
             'text'  => 'info',
             'route' => 'info',
             'icon'  => 'far fa-fw fa-question-circle',

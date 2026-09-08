@@ -4,6 +4,7 @@
 
 @php
     /** @var App\Models\MaterialRequests\MaterialRequest $materialRequest */
+    /** @var App\Models\MaterialRequests\MaterialRequestFulfillment $fulfillment */
 @endphp
 
 <div class="card">

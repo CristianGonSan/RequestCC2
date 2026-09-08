@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
-use NumberToWords\NumberToWords;
 use App\Traits\Models\CurrencyToWords;
 
 /**
@@ -27,8 +26,15 @@ use App\Traits\Models\CurrencyToWords;
  * @property numeric $total_spent
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read CostCenter $costCenter
+ * @property-read Collection<int, MaterialRequestFulfillment> $fulfillments
+ * @property-read int|null $fulfillments_count
+ * @property-read string $formatted_total_spent
+ * @property-read bool $is_fulfilled
+ * @property-read string $total_spent_to_words
  * @property-read Collection<int, MaterialRequestItem> $items
  * @property-read int|null $items_count
+ * @property-read Type $type
  * @property-read User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
@@ -42,15 +48,13 @@ use App\Traits\Models\CurrencyToWords;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
- * @property-read CostCenter $costCenter
- * @property-read Collection<int, MaterialRequestFulfillment> $fulfillments
- * @property-read int|null $fulfillments_count
- * @property-read Type $type
+ * @property-read string $status_bs_color
+ * @property-read string $status_label
  * @mixin \Eloquent
  */
 class MaterialRequest extends Model
 {
-    use CurrencyToWords, TruncateText , HasFactory;
+    use CurrencyToWords, HasFactory , TruncateText;
 
     protected $fillable = [
         'user_id',
@@ -85,6 +89,31 @@ class MaterialRequest extends Model
         return $this->belongsTo(Type::class);
     }
 
+    public function getFormattedTotalSpentAttribute(): string
+    {
+        return '$'.number_format($this->total_spent, 2);
+    }
+
+    public function getTotalSpentToWordsAttribute(): string
+    {
+        return $this->toCurrencyWords('total_spent');
+    }
+
+    public function getIsFulfilledAttribute(): bool
+    {
+        return $this->items()->whereColumn('quantity_requested', '>', 'quantity_fulfilled')->doesntExist();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status->label();
+    }
+
+    public function getStatusBsColorAttribute(): string
+    {
+        return $this->status->bootstrapColorClass();
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(MaterialRequestItem::class);
@@ -98,15 +127,5 @@ class MaterialRequest extends Model
     public function isCurrentUser(): bool
     {
         return $this->user_id === auth()->id();
-    }
-
-    public function isFulfilled(): bool
-    {
-        return $this->items()->whereColumn('quantity_requested', '>', 'quantity_fulfilled')->doesntExist();
-    }
-
-    public function totalSpentToWords(): string
-    {
-        return $this->toCurrencyWords('total_spent');
     }
 }

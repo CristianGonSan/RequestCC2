@@ -1,3 +1,7 @@
+@php
+    /** @var App\Models\MaterialRequests\MaterialRequestItem $fulfillingItem */
+@endphp
+
 <div wire:ignore.self id="modalFulfillItem" class="modal fade" tabindex="-1" role="dialog"
     aria-labelledby="modalFulfillItemLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

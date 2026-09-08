@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Incomes\UserIncomeController;
+use App\Http\Controllers\Lookups\CompanyLookup;
 use App\Http\Controllers\Lookups\MaterialLookup;
 use App\Http\Controllers\MaterialRequests\FulfillmentMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\ManagementMaterialRequestController;
@@ -58,6 +60,8 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::get('account', [AccountController::class, 'show'])
         ->name('account');
+
+    Route::resource('incomes', UserIncomeController::class)->only(['index', 'create', 'show', 'edit']);
 
     Route::resource('money-requests', UserMoneyRequestController::class)->only(['index', 'create', 'show', 'edit']);
     Route::resource('material-requests', UserMaterialRequestController::class)->only(['index', 'create', 'show', 'edit']);
@@ -126,8 +130,14 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('cost-centers/select2/auth', [CostCenterLookup::class, 'select2ByAuthUser'])
             ->name('cost-centers.select2.auth');
 
+        Route::get('companies/select2/auth', [CompanyLookup::class, 'select2ByAuthUser'])
+            ->name('companies.select2.auth');
+
         Route::get('cost-centers/select2', [CostCenterLookup::class, 'select2'])
             ->name('cost-centers.select2');
+
+        Route::get('companies/select2', [CompanyLookup::class, 'select2'])
+            ->name('companies.select2');
 
         Route::get('types/select2/auth', [TypeLookup::class, 'select2ByAuthUser'])
             ->name('types.select2.auth');

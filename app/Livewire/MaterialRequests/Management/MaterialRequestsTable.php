@@ -6,16 +6,16 @@ use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\Catalogs\Type;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Support\DataBag;
-use App\Traits\Livewire\MoneyRequests\HasMoneyRequestTable;
+use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
+use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 
 class MaterialRequestsTable extends Component
 {
-    use HasMoneyRequestTable;
+    use HasLivewireTableBehavior, Toast;
 
     #[Session]
     public string $searchTerm = '';
@@ -64,28 +64,34 @@ class MaterialRequestsTable extends Component
         $filtersBag = DataBag::make($this->filters);
 
         $query->with([
-            'costCenter:id,name',
-            'type:id,name',
             'user:id,name',
+            'costCenter:id,name,description,company_id',
+            'costCenter.company:id,name',
+            'type:id,name',
         ])
             ->withCount('items')
             ->withSum('items as items_requested_sum', 'quantity_requested')
             ->withSum('items as items_fulfilled_sum', 'quantity_fulfilled');
 
-        $query->join('cost_centers', 'material_requests.cost_center_id', '=', 'cost_centers.id')
-            ->join('users', 'material_requests.user_id', '=', 'users.id')
+        $query->join('users', 'material_requests.user_id', '=', 'users.id')
+            ->join('cost_centers', 'material_requests.cost_center_id', '=', 'cost_centers.id')
+            ->join('companies', 'cost_centers.company_id', '=', 'companies.id')
             ->join('types', 'material_requests.type_id', '=', 'types.id')
-            ->addSelect('material_requests.*');
+            ->select('material_requests.*');
 
         if ($term = $this->searchTerm) {
             if ($id = $this->getIdFromSearchTerm()) {
                 $query->where('material_requests.id', $id);
             } else {
                 $query->where(function (Builder $query) use ($term): void {
-                    $query
-                        ->where('users.name', 'like', "%$term%")
-                        ->orWhere('cost_centers.name', 'like', "%$term%")
-                        ->orWhere('material_requests.concept', 'like', "%$term%");
+                    $query->whereAny([
+                        'users.name',
+                        'cost_centers.name',
+                        'companies.name',
+                        'cost_centers.description',
+                        'types.name',
+                        'material_requests.concept',
+                    ], 'like', "%$term%");
                 });
             }
         }

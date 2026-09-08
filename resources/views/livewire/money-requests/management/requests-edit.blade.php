@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <i class="fas fa-fw fa-{{ $moneyRequest->is_transfer ? 'credit-card' : 'money-bill-wave' }} mr-1"></i>
-                <strong>{{ $moneyRequest->paymentMethod() }}</strong>
+                <strong>{{ $moneyRequest->payment_method }}</strong>
 
                 <hr>
 
@@ -99,12 +99,12 @@
                     templateResult: data => {
                         if (data.loading) return data.text;
                         return $(`
-                                                <div class="p-1">
-                                                    <strong>${data.text}</strong>
-                                                    <small class="d-block">${data.company}</small>
-                                                    <small>${data.description}</small>
-                                                </div>
-                                                `);
+                                                                <div class="p-1">
+                                                                    <strong>${data.text}</strong>
+                                                                    <small class="d-block">${data.company}</small>
+                                                                    <small>${data.description}</small>
+                                                                </div>
+                                                                `);
                     }
                 }).build();
 

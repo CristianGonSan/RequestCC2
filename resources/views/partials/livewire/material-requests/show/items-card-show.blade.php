@@ -4,6 +4,7 @@
 
 @php
     /** @var App\Models\MaterialRequests\MaterialRequest $materialRequest */
+    /** @var App\Models\MaterialRequests\MaterialRequestItem $item */
 @endphp
 
 <div class="card">
@@ -35,7 +36,7 @@
                             </div>
                         </div>
 
-                        @if ($item->isFullyFulfilled())
+                        @if ($item->is_fully_fulfilled)
                             <span class="badge badge-success">Completado</span>
                         @else
                             @unless($readonly)
@@ -47,13 +48,13 @@
                     </div>
 
                     <div class="progress mt-2" style="height: 6px;">
-                        <div class="progress-bar bg-{{ $item->isFullyFulfilled() ? 'success' : 'warning' }}"
+                        <div class="progress-bar bg-{{ $item->is_fully_fulfilled ? 'success' : 'warning' }}"
                             role="progressbar" style="width: {{ min($item->percentage_fulfilled, 100) }}%;"
                             aria-valuenow="{{ $item->percentage_fulfilled }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
 
                     <div class="mt-1">
-                        <span class="text-muted">Gastado: ${{ number_format($item->total_spent, 2) }}</span>
+                        <span class="text-muted">Gastado: {{ $item->total_spent_formatted }}</span>
                     </div>
                 </li>
             @empty

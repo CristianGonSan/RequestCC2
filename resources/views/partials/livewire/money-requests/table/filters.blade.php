@@ -13,6 +13,7 @@
             <option value="user">Usuario</option>
         @endif
         <option value="cost_center">Centro de Costos</option>
+        <option value="companies">Empresa</option>
         <option value="amount">Monto</option>
         <option value="status">Estatus</option>
         <option value="type">Tipo</option>

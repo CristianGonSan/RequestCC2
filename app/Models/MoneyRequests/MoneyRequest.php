@@ -36,10 +36,18 @@ use Illuminate\Support\Facades\Auth;
  * @property MoneyRequestStatus $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int $is_transfer
+ * @property bool $is_transfer
  * @property int $edit_count
- * @property-read CostCenter|null $costCenter
+ * @property-read CostCenter $costCenter
+ * @property-read Collection<int, FileManagement> $files
+ * @property-read int|null $files_count
+ * @property-read string $payment_method
+ * @property-read Collection<int, Message> $messages
+ * @property-read int|null $messages_count
+ * @property-read Collection<int, MoneyRequestRecords> $records
+ * @property-read int|null $records_count
  * @property-read Type|null $type
+ * @property-read User $user
  * @method static Builder<static>|MoneyRequest newModelQuery()
  * @method static Builder<static>|MoneyRequest newQuery()
  * @method static Builder<static>|MoneyRequest query()
@@ -63,26 +71,21 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder<static>|MoneyRequest whereTypeKey($value)
  * @method static Builder<static>|MoneyRequest whereUpdatedAt($value)
  * @method static Builder<static>|MoneyRequest whereUserId($value)
- * @property-read Collection<int, FileManagement> $files
- * @property-read int|null $files_count
- * @property-read Collection<int, MoneyRequestRecords> $records
- * @property-read int|null $records_count
- * @property-read User $user
- * @property-read string $payment_method
- * @property-read Collection<int, \App\Models\MoneyRequests\Message> $messages
- * @property-read int|null $messages_count
+ * @property-read string $amount_to_word
+ * @property-read string $formatted_amount
+ * @property-read string $status_bs_color
+ * @property-read string $status_label
  * @mixin \Eloquent
  */
 class MoneyRequest extends Model
 {
-    use HasFactory, TruncateText, CurrencyToWords;
+    use CurrencyToWords, HasFactory, TruncateText;
 
     protected $fillable = [
         'user_id',
         'cost_center_id',
         'type_id',
         'concept',
-        'cost_center_name',
         'payee',
         'amount',
         'type_key',
@@ -98,8 +101,9 @@ class MoneyRequest extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
-        'status' => MoneyRequestStatus::class,
+        'amount'      => 'decimal:2',
+        'status'      => MoneyRequestStatus::class,
+        'is_transfer' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -122,14 +126,29 @@ class MoneyRequest extends Model
         return $this->belongsTo(Type::class, 'type_id');
     }
 
-    public function paymentMethod(): string
+    public function getPaymentMethodAttribute(): string
     {
         return $this->is_transfer ? 'Transferencia' : 'Efectivo';
     }
 
-    public function getPaymentMethodAttribute(): string
+    public function getFormattedAmountAttribute(): string
     {
-        return $this->paymentMethod();
+        return '$'.number_format($this->amount, 2);
+    }
+
+    public function getAmountToWordAttribute(): string
+    {
+        return $this->toCurrencyWords('amount');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status->label();
+    }
+
+    public function getStatusBsColorAttribute(): string
+    {
+        return $this->status->bootstrapColorClass();
     }
 
     public function files(): HasMany
@@ -149,9 +168,9 @@ class MoneyRequest extends Model
 
     public function changeStatusWithRecord(MoneyRequestStatus $status, ?User $user = null): void
     {
-        $oldStatus = $this->status->label();
+        $oldStatus    = $this->status->label();
         $this->status = $status;
-        $newStatus = $this->status->label();
+        $newStatus    = $this->status->label();
         $this->save();
 
         MoneyRequestRecords::changeStatus($user ?? Auth::user(), $this->id, $oldStatus, $newStatus);

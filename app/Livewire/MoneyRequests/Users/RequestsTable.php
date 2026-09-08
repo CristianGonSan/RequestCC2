@@ -7,7 +7,8 @@ use App\Exports\ExportRequests;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
 use App\Support\DataBag;
-use App\Traits\Livewire\MoneyRequests\HasMoneyRequestTable;
+use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
+use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RequestsTable extends Component
 {
-    use HasMoneyRequestTable;
+    use HasLivewireTableBehavior, Toast;
 
     #[Session]
     public string $searchTerm = '';
@@ -68,12 +69,15 @@ class RequestsTable extends Component
         $filtersBag = DataBag::make($this->filters);
 
         $query->with([
-            'costCenter:id,name',
-            'type:id,name',
             'user:id,name',
+            'costCenter:id,name,description,company_id',
+            'costCenter.company:id,name',
+            'type:id,name',
         ]);
 
-        $query->join('cost_centers', 'money_requests.cost_center_id', '=', 'cost_centers.id')
+        $query->join('users', 'money_requests.user_id', '=', 'users.id')
+            ->join('cost_centers', 'money_requests.cost_center_id', '=', 'cost_centers.id')
+            ->join('companies', 'cost_centers.company_id', '=', 'companies.id')
             ->join('types', 'money_requests.type_id', '=', 'types.id')
             ->select('money_requests.*');
 
@@ -84,10 +88,14 @@ class RequestsTable extends Component
                 $query->where('money_requests.id', $id);
             } else {
                 $query->where(function (Builder $query) use ($term): void {
-                    $query
-                        ->where('cost_centers.name', 'like', "%$term%")
-                        ->orWhere('money_requests.payee', 'like', "%$term%")
-                        ->orWhere('money_requests.concept', 'like', "%$term%");
+                    $query->whereAny([
+                        'cost_centers.name',
+                        'companies.name',
+                        'cost_centers.description',
+                        'money_requests.payee',
+                        'types.name',
+                        'money_requests.concept',
+                    ], 'like', "%$term%");
                 });
             }
         }
@@ -129,6 +137,7 @@ class RequestsTable extends Component
             'id'          => 'money_requests.id',
             'payee'       => 'money_requests.payee',
             'cost_center' => 'cost_centers.name',
+            'companies'   => 'companies.name',
             'amount'      => 'money_requests.amount',
             'type'        => 'types.name',
         ];
@@ -140,7 +149,7 @@ class RequestsTable extends Component
         return $query;
     }
 
-    public function deleteRequest(int $id): void
+    public function deleteMoneyRequest(int $id): void
     {
         $MoneyRequest = MoneyRequest::findOrFail($id);
 

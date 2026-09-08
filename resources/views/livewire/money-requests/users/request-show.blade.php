@@ -4,7 +4,7 @@
 @endphp
 
 <div>
-    @include('partials.money-requests.card-show')
+    @include('partials.livewire.money-requests.show.card-show')
 
     <div class="my-3">
         <a href="{{ route('money-requests.create', ['copy' => $moneyRequest->id]) }}" class="btn btn-outline-info mr-1">

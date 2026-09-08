@@ -62,13 +62,13 @@ class ShowFiles extends Component
         $file_path = $this->newFile->store($path, 'local');
 
         if (Storage::exists($file_path)) {
-            $fileManagement = new FileManagement();
-            $fileManagement->request_id = $moneyRequest->id;
-            $fileManagement->user_id = Auth::id();
-            $fileManagement->file_path = $file_path;
-            $fileManagement->original_name = $this->newFile->getClientOriginalName();
-            $fileManagement->mime_type = $this->newFile->getMimeType();
-            $fileManagement->size = $this->newFile->getSize();
+            $fileManagement                   = new FileManagement;
+            $fileManagement->money_request_id = $moneyRequest->id;
+            $fileManagement->user_id          = Auth::id();
+            $fileManagement->file_path        = $file_path;
+            $fileManagement->original_name    = $this->newFile->getClientOriginalName();
+            $fileManagement->mime_type        = $this->newFile->getMimeType();
+            $fileManagement->size             = $this->newFile->getSize();
             $fileManagement->save();
 
             $this->reset(['newFile', 'fileName']);

@@ -3,7 +3,6 @@
 namespace App\Models\MoneyRequests;
 
 use App\Models\Catalogs\Type;
-use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -90,9 +89,9 @@ class MoneyRequestRecords extends Model
     {
         $record = new MoneyRequestRecords;
 
-        $record->request_id = $requestId;
-        $record->user_id    = $user->id;
-        $record->action     = self::CHANGE_STATUS;
+        $record->money_request_id = $requestId;
+        $record->user_id          = $user->id;
+        $record->action           = self::CHANGE_STATUS;
 
         $name  = $user->name;
         $email = $user->email;
@@ -122,9 +121,9 @@ class MoneyRequestRecords extends Model
 
         $record = new MoneyRequestRecords;
 
-        $record->request_id = $updateMoneyRequest->id;
-        $record->user_id    = $user->id;
-        $record->action     = self::EDITED;
+        $record->money_request_id = $updateMoneyRequest->id;
+        $record->user_id          = $user->id;
+        $record->action           = self::EDITED;
 
         $name  = $user->name;
         $email = $user->email;

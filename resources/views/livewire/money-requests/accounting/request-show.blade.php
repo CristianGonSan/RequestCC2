@@ -6,7 +6,7 @@
 @endphp
 
 <div>
-    @include('partials.money-requests.card-show')
+    @include('partials.livewire.money-requests.show.card-show')
 
     <div class="my-3">
         @unless ($moneyRequest->is_transfer && $status->isCancelled())

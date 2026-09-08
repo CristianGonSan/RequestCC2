@@ -41,6 +41,8 @@ use Illuminate\Support\Carbon;
  * @property-read float $total_fulfilled_quantity
  * @property-read float $percentage_fulfilled
  * @property-read float $total_spent
+ * @property-read bool $is_fully_fulfilled
+ * @property-read string $total_spent_formatted
  * @mixin \Eloquent
  */
 class MaterialRequestItem extends Model
@@ -103,8 +105,13 @@ class MaterialRequestItem extends Model
         return $this->fulfillments()->sum('cost');
     }
 
-    public function isFullyFulfilled(): bool
+    public function getIsFullyFulfilledAttribute(): bool
     {
         return $this->quantity_fulfilled >= $this->quantity_requested;
+    }
+
+    public function getTotalSpentFormattedAttribute(): string
+    {
+        return '$'.number_format($this->total_spent, 2);
     }
 }

@@ -6,7 +6,7 @@
 @endphp
 
 <div>
-    @include('partials.livewire.material-requests.show.details-card-show')
+    @include('partials.livewire.material-requests.show.card-show')
 
     <div class="my-3">
         @unless ($status->isCancelled())
