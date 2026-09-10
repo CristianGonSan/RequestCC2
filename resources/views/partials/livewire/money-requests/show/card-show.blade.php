@@ -43,7 +43,7 @@
                     <dt class="col-md-2 text-muted">Monto</dt>
                     <dd class="col-md-10 mb-0">
                         <span class="h3 font-weight-bold text-success d-block mb-0">
-                            {{ $moneyRequest->formatted_amount }}
+                            {{ $moneyRequest->amount_formatted }}
                         </span>
                         <em class="text-muted">{{ ucfirst($moneyRequest->amount_to_word) }}</em>
                     </dd>

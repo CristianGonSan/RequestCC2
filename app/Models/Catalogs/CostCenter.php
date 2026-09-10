@@ -23,7 +23,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Catalogs\Company|null $company
- * @property-read int|null $moneyRequests_count
+ * @property-read Collection<int, MoneyRequest> $moneyRequests
+ * @property-read int|null $money_requests_count
  * @method static Builder<static>|CostCenter active()
  * @method static Builder<static>|CostCenter inactive()
  * @method static Builder<static>|CostCenter newModelQuery()
@@ -36,8 +37,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|CostCenter whereIsActive($value)
  * @method static Builder<static>|CostCenter whereName($value)
  * @method static Builder<static>|CostCenter whereUpdatedAt($value)
- * @property-read Collection<int, MoneyRequest> $moneyRequests
- * @property-read int|null $money_requests_count
  * @mixin \Eloquent
  */
 class CostCenter extends Model

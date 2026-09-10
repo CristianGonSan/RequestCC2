@@ -15,9 +15,8 @@
                     <x-adminlte-textarea fgroup-class="col-md-12" name="concept" label="Concepto *" rows="3"
                         placeholder="Inserte el concepto..." wire:model="concept" maxlength="255" required />
 
-                    <x-form.select-wire-ignore fgroup-class="col-md-6" name="company_id" label="Empresa *"
-                        required>
-                    </x-form.select-wire-ignore>
+                    <x-form.select-wire-ignore fgroup-class="col-md-6" name="cost_center_id" label="Centro de costos *"
+                        required />
 
                     <x-adminlte-input fgroup-class="col-md-6" name="payee" label="Titular *" placeholder="titular"
                         wire:model="payee" maxlength="128" required />
@@ -82,12 +81,12 @@
                 .placeholder('Selecciona el tipo')
                 .build();
 
-            const companySelect = select2Builder.selector('#company_id').wireModel('company_id')
-                .value(@json($company_id), @json($companyText))
-                .placeholder('Selecciona la empresa')
+            const costCenterSelect = select2Builder.selector('#cost_center_id').wireModel('cost_center_id')
+                .value(@json($cost_center_id), @json($costCenterText))
+                .placeholder('Selecciona el centro de costos')
                 .appendConfig({
                     ajax: {
-                        url: "{{ route('lookups.companies.select2.auth') }}",
+                        url: "{{ route('lookups.cost-centers.select2.auth') }}",
                         dataType: 'json',
                         delay: 250,
                         cache: true,
@@ -102,12 +101,14 @@
                         if (data.loading) return data.text;
 
                         return $(`
-                                <div class="d-flex justify-content-between align-items-center w-100">
-                                    <div>
-                                        <strong class="d-block">${data.text}</strong>
-                                    </div>
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div>
+                                    <strong class="d-block">${data.text}</strong>
+                                    ${data.company ? `<small class="d-block opacity-75">Empresa: ${data.company}</small>` : ''}
+                                    ${data.description ? `<small class="d-block opacity-75 text-truncate" style="max-width: 300px;">${data.description}</small>` : ''}
                                 </div>
-                            `);
+                            </div>
+                        `);
                     }
                 }).build();
 

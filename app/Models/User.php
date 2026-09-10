@@ -40,12 +40,14 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $companies_count
  * @property-read Collection<int, FileManagement> $files
  * @property-read int|null $files_count
+ * @property-read Collection<int, MaterialRequest> $materialRequests
+ * @property-read int|null $material_requests_count
+ * @property-read Collection<int, MoneyRequest> $moneyRequests
+ * @property-read int|null $money_requests_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read Collection<int, MoneyRequest> $moneyRequests
- * @property-read int|null $moneyRequests_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
  * @property-read Collection<int, Type> $types
@@ -70,10 +72,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User whereUpdatedAt($value)
  * @method static Builder<static>|User withoutPermission($permissions)
  * @method static Builder<static>|User withoutRole($roles, $guard = null)
- * @property-read Collection<int, MaterialRequest> $materialRequests
- * @property-read int|null $material_requests_count
- * @property-read Collection<int, MoneyRequest> $moneyRequests
- * @property-read int|null $money_requests_count
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail

@@ -1,13 +1,14 @@
 @php
     /** @var App\Models\Incomes\Income $income */
 
-    $company = $income->company;
+    $costCenter = $income->costCenter;
+    $company = $costCenter->company;
     $type = $income->type;
 @endphp
 
 <div class="card-body py-2">
     <div class="d-flex justify-content-between align-items-center">
-        <strong class="text-truncate">{{ $income->formatted_amount }}</strong>
+        <strong class="text-truncate">{{ $income->amount_formatted }}</strong>
         <span class="badge {{ $income->is_transfer ? 'badge-transfer' : 'badge-cash' }} flex-shrink-0 ml-2">
             {{ $income->payment_method }}
         </span>
@@ -15,11 +16,12 @@
 
     <hr class="my-2">
 
-    <div class="text-truncate" title="{{ $company->name }}">
-        <strong>{{ $company->name }}</strong>
+    <div class="text-truncate" title="{{ $costCenter->name }} - {{ $company->name }}">
+        <strong>{{ $costCenter->name }}</strong><span> -
+        </span><span>{{ $company->name }}</span>
     </div>
-    <div class="small text-muted text-truncate" title="{{ $company->description ?? 'Sin descripción' }}">
-        {{ $company->description ?? 'Sin description' }}
+    <div class="small text-muted text-truncate" title="{{ $costCenter->description }}">
+        <em>{{ $costCenter->description }}</em>
     </div>
 
     <hr class="my-2">

@@ -62,13 +62,13 @@ class IncomesTable extends Component
         $filtersBag = DataBag::make($this->filters);
 
         $query->with([
-            'user:id,name',
-            'company:id,name',
-            'type:id,name',
+            'user',
+            'costCenter',
+            'type',
         ]);
 
         $query->join('users', 'incomes.user_id', '=', 'users.id')
-            ->join('companies', 'incomes.company_id', '=', 'companies.id')
+            ->join('cost_centers', 'incomes.cost_center_id', '=', 'cost_centers.id')
             ->join('types', 'incomes.type_id', '=', 'types.id')
             ->select('incomes.*');
 
@@ -79,7 +79,7 @@ class IncomesTable extends Component
                 $query->where(function (Builder $query) use ($term): void {
                     $query->whereAny([
                         'users.name',
-                        'companies.name',
+                        'cost_centers.name',
                         'types.name',
                         'incomes.concept',
                     ], 'like', "%$term%");
@@ -110,7 +110,7 @@ class IncomesTable extends Component
             'created_at'  => 'incomes.created_at',
             'id'          => 'incomes.id',
             'payee'       => 'incomes.payee',
-            'company'     => 'companies.name',
+            'costCenter'  => 'cost_centers.name',
             'amount'      => 'incomes.amount',
             'type'        => 'types.name',
             'income_date' => 'incomes.income_date',

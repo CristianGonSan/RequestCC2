@@ -12,24 +12,22 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $request_id
+ * @property int $money_request_id
  * @property int $user_id
  * @property string $message
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read MoneyRequest|null $request
  * @property-read User $user
- * @method static Builder|Message newModelQuery()
- * @method static Builder|Message newQuery()
- * @method static Builder|Message query()
- * @method static Builder|Message whereCreatedAt($value)
- * @method static Builder|Message whereId($value)
- * @method static Builder|Message whereMessage($value)
- * @method static Builder|Message whereRequestId($value)
- * @method static Builder|Message whereUpdatedAt($value)
- * @method static Builder|Message whereUserId($value)
- * @property-read MoneyRequest $request
- * @property int $money_request_id
+ * @method static Builder<static>|Message newModelQuery()
+ * @method static Builder<static>|Message newQuery()
+ * @method static Builder<static>|Message query()
+ * @method static Builder<static>|Message whereCreatedAt($value)
+ * @method static Builder<static>|Message whereId($value)
+ * @method static Builder<static>|Message whereMessage($value)
  * @method static Builder<static>|Message whereMoneyRequestId($value)
+ * @method static Builder<static>|Message whereUpdatedAt($value)
+ * @method static Builder<static>|Message whereUserId($value)
  * @mixin \Eloquent
  */
 class Message extends Model

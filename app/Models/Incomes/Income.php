@@ -2,8 +2,7 @@
 
 namespace App\Models\Incomes;
 
-use App\Enums\Requests\MoneyRequestStatus;
-use App\Models\Catalogs\Company;
+use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
@@ -13,16 +12,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * @property int $id
  * @property int $user_id
- * @property int $company_id
+ * @property int $cost_center_id
  * @property int $type_id
- * @property string|null $concept
- * @property string|null $payee
- * @property numeric|null $amount
+ * @property string $concept
+ * @property string $payee
+ * @property numeric $amount
  * @property bool $is_transfer
  * @property string|null $bank
  * @property string|null $card
@@ -33,9 +31,9 @@ use Illuminate\Support\Facades\Auth;
  * @property Carbon $income_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Company $company
+ * @property-read CostCenter $costCenter
+ * @property-read string $amount_formatted
  * @property-read string $amount_to_word
- * @property-read string $formatted_amount
  * @property-read string $payment_method
  * @property-read Type $type
  * @property-read User $user
@@ -47,8 +45,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder<static>|Income whereBank($value)
  * @method static Builder<static>|Income whereBranch($value)
  * @method static Builder<static>|Income whereCard($value)
- * @method static Builder<static>|Income whereCompanyId($value)
  * @method static Builder<static>|Income whereConcept($value)
+ * @method static Builder<static>|Income whereCostCenterId($value)
  * @method static Builder<static>|Income whereCovenant($value)
  * @method static Builder<static>|Income whereCreatedAt($value)
  * @method static Builder<static>|Income whereId($value)
@@ -67,7 +65,7 @@ class Income extends Model
 
     protected $fillable = [
         'user_id',
-        'company_id',
+        'cost_center_id',
         'type_id',
         'concept',
         'payee',
@@ -93,9 +91,9 @@ class Income extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function company(): BelongsTo
+    public function costCenter(): BelongsTo
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(CostCenter::class, 'cost_center_id');
     }
 
     public function type(): BelongsTo
@@ -108,7 +106,7 @@ class Income extends Model
         return $this->is_transfer ? 'Transferencia' : 'Efectivo';
     }
 
-    public function getFormattedAmountAttribute(): string
+    public function getAmountFormattedAttribute(): string
     {
         return '$'.number_format($this->amount, 2);
     }

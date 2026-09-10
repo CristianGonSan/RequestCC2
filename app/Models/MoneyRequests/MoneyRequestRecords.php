@@ -11,28 +11,26 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $request_id
+ * @property int $money_request_id
  * @property int|null $user_id
  * @property string|null $action
  * @property string|null $details
  * @property Carbon $registered_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read MoneyRequest $request
+ * @property-read \App\Models\MoneyRequests\MoneyRequest|null $request
  * @property-read User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereAction($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereRegisteredAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestRecords whereUserId($value)
- * @property int $money_request_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereMoneyRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereRegisteredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyRequestRecords whereUserId($value)
  * @mixin \Eloquent
  */
 class MoneyRequestRecords extends Model

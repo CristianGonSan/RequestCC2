@@ -27,12 +27,14 @@ use App\Traits\Models\CurrencyToWords;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read CostCenter $costCenter
- * @property-read Collection<int, MaterialRequestFulfillment> $fulfillments
+ * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
- * @property-read string $formatted_total_spent
  * @property-read bool $is_fulfilled
+ * @property-read string $status_bs_color
+ * @property-read string $status_label
+ * @property-read string $total_spent_formatted
  * @property-read string $total_spent_to_words
- * @property-read Collection<int, MaterialRequestItem> $items
+ * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestItem> $items
  * @property-read int|null $items_count
  * @property-read Type $type
  * @property-read User $user
@@ -48,8 +50,6 @@ use App\Traits\Models\CurrencyToWords;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
- * @property-read string $status_bs_color
- * @property-read string $status_label
  * @mixin \Eloquent
  */
 class MaterialRequest extends Model
@@ -89,7 +89,7 @@ class MaterialRequest extends Model
         return $this->belongsTo(Type::class);
     }
 
-    public function getFormattedTotalSpentAttribute(): string
+    public function getTotalSpentFormattedAttribute(): string
     {
         return '$'.number_format($this->total_spent, 2);
     }

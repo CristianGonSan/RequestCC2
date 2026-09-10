@@ -8,7 +8,7 @@
 
 <div class="card-body py-2">
     <div class="d-flex justify-content-between align-items-center">
-        <strong class="text-truncate">${{ number_format((float) $materialRequest->total_spent, 2) }}</strong>
+        <strong class="text-truncate">{{ $materialRequest->total_spent_formatted }}</strong>
     </div>
 
     <hr class="my-2">

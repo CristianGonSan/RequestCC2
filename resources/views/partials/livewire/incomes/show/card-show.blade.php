@@ -1,7 +1,8 @@
 @php
     /** @var App\Models\Incomes\Income $income */
 
-    $company = $income->company;
+    $costCenter = $income->costCenter;
+    $company = $costCenter->company;
     $type = $income->type;
 @endphp
 
@@ -31,7 +32,7 @@
                     <dt class="col-md-2 text-muted">Monto</dt>
                     <dd class="col-md-10 mb-0">
                         <span class="h3 font-weight-bold text-success d-block mb-0">
-                            {{ $income->formatted_amount }}
+                            {{ $income->amount_formatted }}
                         </span>
                         <em class="text-muted">{{ ucfirst($income->amount_to_word) }}</em>
                     </dd>
@@ -40,10 +41,10 @@
 
             <div class="col-12 order-4 order-md-4">
                 <dl class="row mb-2">
-                    <dt class="col-md-2 text-muted">Unidad de negocio</dt>
+                    <dt class="col-md-2 text-muted">Centro de Costos</dt>
                     <dd class="col-md-10 mb-0">
-                        <span class="d-block mb-0">{{ $company->name }}</span>
-                        <em class="text-muted">{{ $company->description ?? 'Sin descripción' }}</em>
+                        <span class="d-block mb-0">{{ $costCenter->name }} - {{ $company->name }}</span>
+                        <em class="text-muted">{{ $costCenter->description ?? 'Sin descripción' }}</em>
                     </dd>
                 </dl>
             </div>

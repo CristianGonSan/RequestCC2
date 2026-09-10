@@ -42,7 +42,7 @@ class IncomeShow extends Component
     private function income(): Income
     {
         return $this->income ??= Income::with([
-            'company:id,name', 'type:id,name',
+            'costCenter', 'type',
         ])->findOrFail($this->incomeId);
     }
 }

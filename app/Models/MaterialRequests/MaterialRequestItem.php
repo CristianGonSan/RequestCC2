@@ -20,10 +20,15 @@ use Illuminate\Support\Carbon;
  * @property numeric $quantity_fulfilled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, MaterialRequestFulfillment> $fulfillments
+ * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
+ * @property-read bool $is_fully_fulfilled
+ * @property-read float $percentage_fulfilled
+ * @property-read float $remaining_quantity
+ * @property-read float $total_spent
+ * @property-read string $total_spent_formatted
  * @property-read Material $material
- * @property-read MaterialRequest $materialRequest
+ * @property-read \App\Models\MaterialRequests\MaterialRequest $materialRequest
  * @property-read Unit $unit
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newQuery()
@@ -36,13 +41,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantityRequested($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUnitId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
- * @property-read float $remaining_quantity
- * @property-read float $total_fulfilled_cost
- * @property-read float $total_fulfilled_quantity
- * @property-read float $percentage_fulfilled
- * @property-read float $total_spent
- * @property-read bool $is_fully_fulfilled
- * @property-read string $total_spent_formatted
  * @mixin \Eloquent
  */
 class MaterialRequestItem extends Model

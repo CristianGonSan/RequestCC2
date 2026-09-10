@@ -22,9 +22,9 @@ class IncomeCreate extends Component
 
     public string $concept = '';
 
-    public int $company_id;
+    public int $cost_center_id;
 
-    public ?string $companyText = null;
+    public ?string $costCenterText = null;
 
     public int $type_id;
 
@@ -73,13 +73,13 @@ class IncomeCreate extends Component
         $this->amount = str_replace(',', '', $this->amount ?? 0);
 
         $rules = [
-            'concept'     => ['required', 'string', 'max:255'],
-            'company_id'  => ['required', 'integer', Rule::exists('companies', 'id')->where('is_active', true)],
-            'type_id'     => ['required', 'integer', Rule::exists('types', 'id')->where('is_active', true)],
-            'payee'       => ['required', 'string', 'max:128'],
-            'amount'      => ['required', 'numeric', 'min:0', 'max:999999999999.99'],
-            'income_date' => ['required', 'date'],
-            'is_transfer' => ['required', 'boolean'],
+            'concept'        => ['required', 'string', 'max:255'],
+            'cost_center_id' => ['required', 'integer', Rule::exists('cost_centers', 'id')->where('is_active', true)],
+            'type_id'        => ['required', 'integer', Rule::exists('types', 'id')->where('is_active', true)],
+            'payee'          => ['required', 'string', 'max:128'],
+            'amount'         => ['required', 'numeric', 'min:0', 'max:999999999999.99'],
+            'income_date'    => ['required', 'date'],
+            'is_transfer'    => ['required', 'boolean'],
         ];
 
         if ($this->is_transfer) {
@@ -108,7 +108,7 @@ class IncomeCreate extends Component
         if ($this->createAnother) {
             $this->reset([
                 'concept',
-                'company_id',
+                'cost_center_id',
                 'type_id',
                 'payee',
                 'amount',
@@ -133,18 +133,20 @@ class IncomeCreate extends Component
 
     private function loadCopy(int $copyFromId): void
     {
-        $copyIncome = Income::with(['company:id,name,is_active', 'type:id,name,is_active'])->findOrFail($copyFromId);
+        $copyIncome = Income::with([
+            'costCenter', 'type',
+        ])->findOrFail($copyFromId);
 
-        $company = $copyIncome->company;
-        $type    = $copyIncome->type;
+        $costCenter = $copyIncome->costCenter;
+        $type       = $copyIncome->type;
 
-        $this->concept     = $copyIncome->concept;
-        $this->company_id  = $company->id;
-        $this->companyText = $company->name;
-        $this->type_id     = $type->id;
-        $this->typeText    = $type->name;
-        $this->payee       = $copyIncome->payee;
-        $this->amount      = (string) $copyIncome->amount;
+        $this->concept        = $copyIncome->concept;
+        $this->cost_center_id = $costCenter->id;
+        $this->costCenterText = $costCenter->name;
+        $this->type_id        = $type->id;
+        $this->typeText       = $type->name;
+        $this->payee          = $copyIncome->payee;
+        $this->amount         = $copyIncome->amount;
 
         // La fecha no se copia: un ingreso nuevo siempre inicia con la fecha actual.
         $this->is_transfer = $copyIncome->is_transfer;
@@ -156,8 +158,8 @@ class IncomeCreate extends Component
         $this->reference = $copyIncome->reference;
         $this->covenant  = $copyIncome->covenant;
 
-        if (! $company->is_active) {
-            $this->addError('company_id', 'La empresa copiada ya no está activa.');
+        if (! $costCenter->is_active) {
+            $this->addError('cost_center_id', 'La centro de costo copiado ya no está activo.');
         }
 
         if (! $type->is_active) {

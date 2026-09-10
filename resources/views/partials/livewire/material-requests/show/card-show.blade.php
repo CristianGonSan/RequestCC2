@@ -32,7 +32,7 @@
                     <dt class="col-md-2 text-muted">Total gastado</dt>
                     <dd class="col-md-10 mb-0">
                         <span class="h3 font-weight-bold text-success d-block mb-0">
-                            {{ $materialRequest->formatted_total_spent }}
+                            {{ $materialRequest->total_spent_formatted }}
                         </span>
                         <em class="text-muted">{{ ucfirst($materialRequest->total_spent_to_words) }}</em>
                     </dd>

@@ -18,17 +18,17 @@ return new class extends Migration
                 ->constrained('users')
                 ->onDelete('cascade');
 
-            $table->foreignId('company_id')
-                ->constrained('companies')
+            $table->foreignId('cost_center_id')
+                ->constrained('cost_centers')
                 ->restrictOnDelete();
 
             $table->foreignId('type_id')
                 ->constrained('types')
                 ->restrictOnDelete();
 
-            $table->text('concept')->nullable();
-            $table->string('payee')->nullable();
-            $table->decimal('amount', 14)->nullable();
+            $table->text('concept');
+            $table->string('payee');
+            $table->decimal('amount', 14);
 
             $table->boolean('is_transfer')->default(false);
 

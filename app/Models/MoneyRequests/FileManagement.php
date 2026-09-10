@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $money_request_id
+ * @property int|null $money_request_id
  * @property int $user_id
  * @property string $file_path
  * @property string|null $original_name
@@ -21,26 +21,25 @@ use Illuminate\Support\Carbon;
  * @property int|null $size
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read MoneyRequest $request
- * @property-read User $user
- * @method static Builder|FileManagement newModelQuery()
- * @method static Builder|FileManagement newQuery()
- * @method static Builder|FileManagement query()
- * @method static Builder|FileManagement whereCreatedAt($value)
- * @method static Builder|FileManagement whereFilePath($value)
- * @method static Builder|FileManagement whereId($value)
- * @method static Builder|FileManagement whereMimeType($value)
- * @method static Builder|FileManagement whereOriginalName($value)
- * @method static Builder|FileManagement whereRequestId($value)
- * @method static Builder|FileManagement whereSize($value)
- * @method static Builder|FileManagement whereUpdatedAt($value)
- * @method static Builder|FileManagement whereUserId($value)
  * @property-read string $extension
  * @property-read FileExtensionSupport $extension_support
  * @property-read float $file_size_in_k_b
  * @property-read float $file_size_in_m_b
  * @property-read string $human_readable_size
+ * @property-read MoneyRequest|null $request
+ * @property-read User $user
+ * @method static Builder<static>|FileManagement newModelQuery()
+ * @method static Builder<static>|FileManagement newQuery()
+ * @method static Builder<static>|FileManagement query()
+ * @method static Builder<static>|FileManagement whereCreatedAt($value)
+ * @method static Builder<static>|FileManagement whereFilePath($value)
+ * @method static Builder<static>|FileManagement whereId($value)
+ * @method static Builder<static>|FileManagement whereMimeType($value)
  * @method static Builder<static>|FileManagement whereMoneyRequestId($value)
+ * @method static Builder<static>|FileManagement whereOriginalName($value)
+ * @method static Builder<static>|FileManagement whereSize($value)
+ * @method static Builder<static>|FileManagement whereUpdatedAt($value)
+ * @method static Builder<static>|FileManagement whereUserId($value)
  * @mixin \Eloquent
  */
 class FileManagement extends Model

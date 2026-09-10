@@ -38,13 +38,17 @@ use Illuminate\Support\Facades\Auth;
  * @property Carbon|null $updated_at
  * @property bool $is_transfer
  * @property int $edit_count
- * @property-read CostCenter $costCenter
- * @property-read Collection<int, FileManagement> $files
+ * @property-read CostCenter|null $costCenter
+ * @property-read Collection<int, \App\Models\MoneyRequests\FileManagement> $files
  * @property-read int|null $files_count
+ * @property-read string $amount_formatted
+ * @property-read string $amount_to_word
  * @property-read string $payment_method
- * @property-read Collection<int, Message> $messages
+ * @property-read string $status_bs_color
+ * @property-read string $status_label
+ * @property-read Collection<int, \App\Models\MoneyRequests\Message> $messages
  * @property-read int|null $messages_count
- * @property-read Collection<int, MoneyRequestRecords> $records
+ * @property-read Collection<int, \App\Models\MoneyRequests\MoneyRequestRecords> $records
  * @property-read int|null $records_count
  * @property-read Type|null $type
  * @property-read User $user
@@ -71,10 +75,6 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder<static>|MoneyRequest whereTypeKey($value)
  * @method static Builder<static>|MoneyRequest whereUpdatedAt($value)
  * @method static Builder<static>|MoneyRequest whereUserId($value)
- * @property-read string $amount_to_word
- * @property-read string $formatted_amount
- * @property-read string $status_bs_color
- * @property-read string $status_label
  * @mixin \Eloquent
  */
 class MoneyRequest extends Model
@@ -131,7 +131,7 @@ class MoneyRequest extends Model
         return $this->is_transfer ? 'Transferencia' : 'Efectivo';
     }
 
-    public function getFormattedAmountAttribute(): string
+    public function getAmountFormattedAttribute(): string
     {
         return '$'.number_format($this->amount, 2);
     }

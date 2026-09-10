@@ -20,9 +20,9 @@ class IncomeEdit extends Component
 
     public string $concept = '';
 
-    public int $company_id;
+    public int $cost_center_id;
 
-    public ?string $companyText = null;
+    public ?string $costCenterText = null;
 
     public int $type_id;
 
@@ -54,17 +54,17 @@ class IncomeEdit extends Component
 
         $income = $this->income();
 
-        $company = $income->company;
-        $type    = $income->type;
+        $costCenter = $income->costCenter;
+        $type       = $income->type;
 
-        $this->concept     = $income->concept;
-        $this->company_id  = $company->id;
-        $this->companyText = $company->name;
-        $this->type_id     = $type->id;
-        $this->typeText    = $type->name;
-        $this->payee       = $income->payee;
-        $this->amount      = (string) $income->amount;
-        $this->income_date = $income->income_date->toDateString();
+        $this->concept        = $income->concept;
+        $this->cost_center_id = $costCenter->id;
+        $this->costCenterText = $costCenter->name;
+        $this->type_id        = $type->id;
+        $this->typeText       = $type->name;
+        $this->payee          = $income->payee;
+        $this->amount         = $income->amount;
+        $this->income_date    = $income->income_date->toDateString();
 
         $this->is_transfer = $income->is_transfer;
 
@@ -98,8 +98,8 @@ class IncomeEdit extends Component
             'income_date' => ['required', 'date'],
         ];
 
-        if ($this->company_id !== $income->company_id) {
-            $rules['company_id'] = ['required', 'integer', Rule::exists('companies', 'id')->where('is_active', true)];
+        if ($this->cost_center_id !== $income->cost_center_id) {
+            $rules['cost_center_id'] = ['required', 'integer', Rule::exists('cost_centers', 'id')->where('is_active', true)];
         }
 
         if ($this->type_id !== $income->type_id) {
@@ -135,6 +135,6 @@ class IncomeEdit extends Component
 
     private function income(): Income
     {
-        return $this->income ??= Income::with(['company', 'type'])->findOrFail($this->incomeId);
+        return $this->income ??= Income::with(['costCenter', 'type'])->findOrFail($this->incomeId);
     }
 }

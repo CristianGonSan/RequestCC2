@@ -20,6 +20,9 @@ use Illuminate\Support\Carbon;
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read \App\Models\Catalogs\Unit $baseUnit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, MaterialRequestItem> $materialRequestItems
+ * @property-read int|null $material_request_items_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material newModelQuery()
@@ -34,9 +37,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material whereUpdatedAt($value)
- * @property-read Unit $baseUnit
- * @property-read \Illuminate\Database\Eloquent\Collection<int, MaterialRequestItem> $materialRequestItems
- * @property-read int|null $material_request_items_count
  * @mixin \Eloquent
  */
 class Material extends Model

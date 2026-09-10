@@ -8,7 +8,7 @@
 
 <div class="card-body py-2">
     <div class="d-flex justify-content-between align-items-center">
-        <strong class="text-truncate">{{ $moneyRequest->formatted_amount }}</strong>
+        <strong class="text-truncate">{{ $moneyRequest->amount_formatted }}</strong>
         <span class="badge {{ $moneyRequest->is_transfer ? 'badge-transfer' : 'badge-cash' }} flex-shrink-0 ml-2">
             {{ $moneyRequest->payment_method }}
         </span>
