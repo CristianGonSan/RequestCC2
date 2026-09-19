@@ -37,6 +37,7 @@ use Illuminate\Support\Carbon;
  * @property-read string $payment_method
  * @property-read Type $type
  * @property-read User $user
+ * @method static \Database\Factories\Incomes\IncomeFactory factory($count = null, $state = [])
  * @method static Builder<static>|Income newModelQuery()
  * @method static Builder<static>|Income newQuery()
  * @method static Builder<static>|Income query()

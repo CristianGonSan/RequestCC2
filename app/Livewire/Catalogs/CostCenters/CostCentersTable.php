@@ -31,26 +31,26 @@ class CostCentersTable extends Component
     protected array $theadConfig = [
         [
             'column' => 'id',
-            'label' => 'ID',
-            'align' => 'center',
-            'style' => 'width: 1%;',
+            'label'  => 'ID',
+            'align'  => 'center',
+            'style'  => 'width: 1%;',
         ],
         [
             'column' => 'name',
-            'label' => 'Nombre',
+            'label'  => 'Nombre',
         ],
         [
             'column' => 'company',
-            'label' => 'Empresa',
+            'label'  => 'Empresa',
         ],
         [
             'label' => 'Descripción',
         ],
         [
             'column' => 'is_active',
-            'label' => 'Activo',
-            'align' => 'center',
-            'style' => 'width: 1%;',
+            'label'  => 'Activo',
+            'align'  => 'center',
+            'style'  => 'width: 1%;',
         ],
         [
             'label' => 'Ver más',
@@ -92,11 +92,11 @@ class CostCentersTable extends Component
         }
 
         $sortable = [
-            'id' => 'cost_centers.id',
-            'name' => 'cost_centers.name',
+            'id'          => 'cost_centers.id',
+            'name'        => 'cost_centers.name',
             'description' => 'cost_centers.description',
-            'is_active' => 'cost_centers.is_active',
-            'company' => 'companies.name',
+            'is_active'   => 'cost_centers.is_active',
+            'company'     => 'companies.name',
         ];
 
         $column = $sortable[$this->sortColumn] ?? 'cost_centers.name';

@@ -63,5 +63,10 @@
         <x-livewire.loading-button theme="outline-info" class="w-100 mt-2" wire:click="resetFilters"
             wire:target='resetFilters' label="Restablecer Filtros" icon="rotate-left" />
     </div>
+
+    <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">
+        <x-livewire.loading-button theme="outline-success" class="w-100 mt-2" wire:click="export" wire:target='export'
+            label="Exportar" icon="file-excel" />
+    </div>
 </div>
 <hr class="my-2">

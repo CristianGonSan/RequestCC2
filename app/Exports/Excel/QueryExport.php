@@ -7,24 +7,37 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class QueryExport implements FromQuery, WithMapping, WithHeadings
+abstract class QueryExport implements FromQuery, WithHeadings, WithMapping
 {
     protected Builder $query;
-    protected array $headings;
-    protected array $columnFormatter;
 
+    protected array $columnFormatters;
 
-
-    public function __construct(Builder $query, array $columnFormatter, array $onlyColumns = [])
+    public function __construct(Builder $query, array $onlyColumns = [])
     {
         $this->query = $query;
 
-        $this->columnFormatter = empty($onlyColumns) ?
-            $columnFormatter :
-            array_intersect_key($columnFormatter, array_flip($onlyColumns));
+        $columnFormatters = static::columnFormatters();
 
-        $this->headings = array_column($this->columnFormatter, 'header');
+        if (empty($onlyColumns)) {
+            $this->columnFormatters = $columnFormatters;
+            return;
+        }
+
+        $this->columnFormatters = [];
+        foreach ($onlyColumns as $column) {
+            if (\array_key_exists($column, $columnFormatters)) {
+                $this->columnFormatters[$column] = $columnFormatters[$column];
+            }
+        }
     }
+
+    public static function options(): array
+    {
+        return array_map(fn ($column) => $column['header'], static::columnFormatters());
+    }
+
+    abstract public static function columnFormatters();
 
     public function query(): Builder
     {
@@ -33,14 +46,14 @@ class QueryExport implements FromQuery, WithMapping, WithHeadings
 
     public function headings(): array
     {
-        return $this->headings;
+        return array_column($this->columnFormatters, 'header');
     }
 
     public function map($item): array
     {
         $row = [];
-        foreach ($this->columnFormatter as $column => $map) {
-            $format = $map['format'] ?? null;
+        foreach ($this->columnFormatters as $column => $map) {
+            $format       = $map['format'] ?? null;
             $row[$column] = $format ?
                 $format($item) : ($item->$column ?? null);
         }

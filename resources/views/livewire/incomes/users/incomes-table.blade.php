@@ -9,9 +9,9 @@
                 /** @var App\Models\Incomes\Income $income */
             @endphp
 
-            <div class="col-lg-4 col-md-6 col-sm-12" wire:key="card-{{ $income->id }}">
+            <div class="col-lg-4 col-md-6 col-sm-12 d-flex" wire:key="card-{{ $income->id }}">
 
-                <div class="card card-outline card-dark">
+                <div class="card card-outline card-dark w-100">
                     @include('partials.livewire.incomes.table.card.card-header')
                     @include('partials.livewire.incomes.table.card.card-body')
 

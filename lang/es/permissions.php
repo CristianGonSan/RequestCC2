@@ -17,4 +17,5 @@ return [
     'manage_development'    => 'Gestionar Desarrollo',
     'manage_units'          => 'Gestionar Unidades',
     'manage_materials'      => 'Gestionar Materiales',
+    'manage_incomes'        => 'Gestionar Ingresos',
 ];

@@ -3,7 +3,7 @@
 namespace App\Livewire\MoneyRequests\Management;
 
 use App\Enums\Requests\MoneyRequestStatus;
-use App\Exports\ExportRequests;
+use App\Exports\Excel\MoneyRequestsExport;
 use App\Services\Mails\MailManager;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
@@ -201,17 +201,15 @@ class RequestsTable extends Component
 
     public function export(): ?BinaryFileResponse
     {
-        $items = $this->getQuery()->paginate($this->perPage)->items();
+        $query = $this->getQuery()->forPage($this->page, $this->perPage);
 
-        if (empty($items)) {
+        if (! $query->exists()) {
             $this->toastWarning('No hay nada para exportar');
+
             return null;
         }
 
-        $results = collect($items);
-        $export  = new ExportRequests($results);
-
-        return Excel::download($export, 'Solicitudes.xlsx');
+        return Excel::download(new MoneyRequestsExport($query), 'Solicitudes.xlsx');
     }
 
     private function getIdFromSearchTerm(): ?int

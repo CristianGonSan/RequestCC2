@@ -2,7 +2,12 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\Catalogs\MaterialFactory;
+use App\Models\Catalogs\Unit;
+use App\Models\Incomes\Income;
+use App\Models\MoneyRequests\MoneyRequest;
+use Database\Seeders\Admin\PermissionsSeeder;
+use Database\Seeders\Catalogs\CostCentersSeeder;
+use Database\Seeders\Catalogs\TypeSeeder;
 use Database\Seeders\Catalogs\UnitSeeder;
 use Illuminate\Database\Seeder;
 
@@ -13,12 +18,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(UnitSeeder::class);
-        MaterialFactory::new()->count(20)->create();
+        Income::factory()->count(1000)->create();
+        Income::factory()->count(1000)->transfer()->create();
 
-        // $this->call(PermissionsSeeder::class);
-        // $this->call(PermissionNamesSeeder::class);
-        // $this->call(TypeSeeder::class);
-        // $this->call(CostCentersSeeder::class);
+        MoneyRequest::factory()->count(1000)->create();
+        MoneyRequest::factory()->count(1000)->transfer()->create();
     }
 }

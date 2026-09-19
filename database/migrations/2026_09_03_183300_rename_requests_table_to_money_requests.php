@@ -11,6 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Eliminar llaves foráneas y renombrar columnas en las tablas hijas antes de renombrar la tabla principal
+        if (Schema::hasColumn('file_management', 'request_id')) {
+            Schema::table('file_management', function (Blueprint $table) {
+                $table->dropForeign(['request_id']);
+                $table->renameColumn('request_id', 'money_request_id');
+            });
+        }
+
+        if (Schema::hasColumn('request_records', 'request_id')) {
+            Schema::table('request_records', function (Blueprint $table) {
+                // Eliminar la FK antes de renombrar la tabla garantiza usar el nombre correcto
+                $table->dropForeign(['request_id']);
+                $table->renameColumn('request_id', 'money_request_id');
+            });
+        }
+
+        if (Schema::hasColumn('messages', 'request_id')) {
+            Schema::table('messages', function (Blueprint $table) {
+                $table->dropForeign(['request_id']);
+                $table->renameColumn('request_id', 'money_request_id');
+            });
+        }
+
+        // 2. Renombrar las tablas principales
         if (Schema::hasTable('requests')) {
             Schema::rename('requests', 'money_requests');
         }
@@ -18,35 +42,18 @@ return new class extends Migration
             Schema::rename('request_records', 'money_request_records');
         }
 
-        if (Schema::hasColumn('file_management', 'request_id')) {
-            Schema::table('file_management', function (Blueprint $table) {
-                $table->dropForeign(['request_id']);
-                $table->renameColumn('request_id', 'money_request_id');
-            });
-            Schema::table('file_management', function (Blueprint $table) {
-                $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
-            });
-        }
+        // 3. Crear las nuevas llaves foráneas apuntando a la nueva tabla 'money_requests'
+        Schema::table('file_management', function (Blueprint $table) {
+            $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
+        });
 
-        if (Schema::hasColumn('money_request_records', 'request_id')) {
-            Schema::table('money_request_records', function (Blueprint $table) {
-                $table->dropForeign(['request_id']); // money_request_records_request_id_foreign
-                $table->renameColumn('request_id', 'money_request_id');
-            });
-            Schema::table('money_request_records', function (Blueprint $table) {
-                $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
-            });
-        }
+        Schema::table('money_request_records', function (Blueprint $table) {
+            $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
+        });
 
-        if (Schema::hasColumn('messages', 'request_id')) {
-            Schema::table('messages', function (Blueprint $table) {
-                $table->dropForeign(['request_id']); // messages_request_id_foreign
-                $table->renameColumn('request_id', 'money_request_id');
-            });
-            Schema::table('messages', function (Blueprint $table) {
-                $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
-            });
-        }
+        Schema::table('messages', function (Blueprint $table) {
+            $table->foreign('money_request_id')->references('id')->on('money_requests')->onDelete('cascade');
+        });
     }
 
     public function down(): void

@@ -7,5 +7,7 @@
 @endsection
 
 @section('content')
-    <img src="{{ asset('img/cc.png') }}" alt="web" class="img-fluid rounded">
+    <div class="pt-3">
+        <img src="{{ asset('img/logos/cc.png') }}" alt="web" class="img-fluid rounded p-5">
+    </div>
 @endsection

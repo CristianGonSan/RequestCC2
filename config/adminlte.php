@@ -341,6 +341,13 @@ return [
             'text'  => 'incomes',
             'route' => 'incomes.index',
             'icon'  => 'fas fa-fw fa-money-bill-trend-up',
+            'can'   => 'manage_incomes',
+        ],
+        [
+            'text'  => 'balance',
+            'route' => 'balance.index',
+            'icon'  => 'fas fa-fw fa-chart-pie',
+            'can'   => 'view_summary',
         ],
         [
             'text'  => 'info',
@@ -459,10 +466,22 @@ return [
             'can'   => 'view_summary',
         ],
         [
-            'text'  => 'export',
-            'route' => 'export.money-requests.index',
-            'icon'  => 'fas fa-fw fa-file-export',
-            'can'   => 'export',
+            'text'    => 'export',
+            'icon'    => 'fas fa-fw fa-file-export',
+            'submenu' => [
+                [
+                    'text'  => 'money_requests',
+                    'icon'  => 'fas fa-fw fa-money-bill-wave',
+                    'route' => 'export.money-requests.index',
+                    'can'   => 'export',
+                ],
+                [
+                    'text'  => 'incomes',
+                    'icon'  => 'fas fa-fw fa-money-bill-trend-up',
+                    'route' => 'export.incomes.index',
+                    'can'   => 'export',
+                ],
+            ],
         ],
         [
             'text'    => 'config',

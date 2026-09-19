@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string|null $reference
  * @property string|null $covenant
  * @property MoneyRequestStatus $status
+ * @property Carbon|null $paid_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property bool $is_transfer
@@ -52,8 +53,10 @@ use Illuminate\Support\Facades\Auth;
  * @property-read int|null $records_count
  * @property-read Type|null $type
  * @property-read User $user
+ * @method static \Database\Factories\MoneyRequests\MoneyRequestFactory factory($count = null, $state = [])
  * @method static Builder<static>|MoneyRequest newModelQuery()
  * @method static Builder<static>|MoneyRequest newQuery()
+ * @method static Builder<static>|MoneyRequest paid()
  * @method static Builder<static>|MoneyRequest query()
  * @method static Builder<static>|MoneyRequest whereAccount($value)
  * @method static Builder<static>|MoneyRequest whereAmount($value)
@@ -68,6 +71,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder<static>|MoneyRequest whereEditCount($value)
  * @method static Builder<static>|MoneyRequest whereId($value)
  * @method static Builder<static>|MoneyRequest whereIsTransfer($value)
+ * @method static Builder<static>|MoneyRequest wherePaidAt($value)
  * @method static Builder<static>|MoneyRequest wherePayee($value)
  * @method static Builder<static>|MoneyRequest whereReference($value)
  * @method static Builder<static>|MoneyRequest whereStatus($value)
@@ -88,7 +92,6 @@ class MoneyRequest extends Model
         'concept',
         'payee',
         'amount',
-        'type_key',
         'bank',
         'card',
         'account',
@@ -98,12 +101,14 @@ class MoneyRequest extends Model
         'status',
         'is_transfer',
         'edit_count',
+        'paid_at',
     ];
 
     protected $casts = [
         'amount'      => 'decimal:2',
         'status'      => MoneyRequestStatus::class,
         'is_transfer' => 'boolean',
+        'paid_at'     => 'date',
     ];
 
     public function user(): BelongsTo
@@ -208,5 +213,10 @@ class MoneyRequest extends Model
     public function isCurrentUser(): bool
     {
         return $this->user_id === auth()->id();
+    }
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('status', MoneyRequestStatus::Paid);
     }
 }

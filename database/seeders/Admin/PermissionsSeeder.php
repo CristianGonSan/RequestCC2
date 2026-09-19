@@ -30,6 +30,7 @@ class PermissionsSeeder extends Seeder
             'manage_development',
             'manage_units',
             'manage_materials',
+            'manage_incomes'
         ];
 
         foreach ($permissions as $permission) {

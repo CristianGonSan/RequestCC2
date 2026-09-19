@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\MaterialRequests\MaterialRequestFulfillment;
+use App\Models\MoneyRequests\MoneyRequest;
+use App\Observers\MaterialRequests\MaterialRequestFulfillmentObserver;
+use App\Observers\MoneyRequests\MoneyRequestObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -29,5 +33,8 @@ class AppServiceProvider extends ServiceProvider
             Blade::directive('loremsentence', fn () => "<?php echo e(fake('es_ES')->sentence()); ?>");
             Blade::directive('loremipsum', fn ($n) => "<?php echo nl2br(e(fake('es_ES')->paragraphs({$n} ?: 1, true))); ?>");
         }
+
+        MoneyRequest::observe(MoneyRequestObserver::class);
+        MaterialRequestFulfillment::observe(MaterialRequestFulfillmentObserver::class);
     }
 }

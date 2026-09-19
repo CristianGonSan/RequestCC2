@@ -3,7 +3,7 @@
 namespace App\Livewire\MoneyRequests\Users;
 
 use App\Enums\Requests\MoneyRequestStatus;
-use App\Exports\ExportRequests;
+use App\Exports\Excel\MoneyRequestsExport;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
 use App\Support\DataBag;
@@ -61,6 +61,33 @@ class RequestsTable extends Component
             'statusOptions' => MoneyRequestStatus::options(),
             'typeOptions'   => Type::options(),
         ]);
+    }
+
+    public function deleteMoneyRequest(int $id): void
+    {
+        $MoneyRequest = MoneyRequest::findOrFail($id);
+
+        if (! $MoneyRequest->canDelete()) {
+            $this->toastError('No se puede eliminar: la solicitud no esta en pendiente');
+
+            return;
+        }
+
+        $MoneyRequest->delete();
+        $this->toastSuccess('Solicitud eliminada correctamente.');
+    }
+
+    public function export(): ?BinaryFileResponse
+    {
+        $query = $this->getQuery()->forPage($this->page, $this->perPage);
+
+        if (! $query->exists()) {
+            $this->toastWarning('No hay nada para exportar');
+
+            return null;
+        }
+
+        return Excel::download(new MoneyRequestsExport($query), 'Solicitudes.xlsx');
     }
 
     private function getQuery(): Builder
@@ -147,35 +174,6 @@ class RequestsTable extends Component
         $query->orderBy($column, $this->sortDirection);
 
         return $query;
-    }
-
-    public function deleteMoneyRequest(int $id): void
-    {
-        $MoneyRequest = MoneyRequest::findOrFail($id);
-
-        if (! $MoneyRequest->canDelete()) {
-            $this->toastError('No se puede eliminar: la solicitud no esta en pendiente');
-
-            return;
-        }
-
-        $MoneyRequest->delete();
-        $this->toastSuccess('Solicitud eliminada correctamente.');
-    }
-
-    public function export(): ?BinaryFileResponse
-    {
-        $items = $this->getQuery()->paginate($this->perPage)->items();
-
-        if (empty($items)) {
-            $this->toastWarning('No hay nada para exportar');
-            return null;
-        }
-
-        $results = collect($items);
-        $export  = new ExportRequests($results);
-
-        return Excel::download($export, 'Solicitudes.xlsx');
     }
 
     private function getIdFromSearchTerm(): ?int

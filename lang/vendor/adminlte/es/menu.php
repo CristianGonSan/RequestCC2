@@ -59,7 +59,9 @@ return [
     'monetary'        => 'Monetarias',
     'fulfillment'     => 'Abastecimiento',
 
-    'incomes'         => 'Ingresos',
+    'incomes'        => 'Ingresos',
+    'money_requests' => 'Solicitudes de Dinero',
+    'balance'        => 'Blance',
 
     'section_my_requests'         => 'Mis solicitudes',
     'section_requests_management' => 'Gestión de solicitudes',

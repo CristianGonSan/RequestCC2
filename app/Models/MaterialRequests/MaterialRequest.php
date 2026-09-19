@@ -8,6 +8,7 @@ use App\Models\Catalogs\Type;
 use App\Models\User;
 use App\Traits\Models\TruncateText;
 use Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,18 +39,18 @@ use App\Traits\Models\CurrencyToWords;
  * @property-read int|null $items_count
  * @property-read Type $type
  * @property-read User $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereConcept($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCostCenterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereTotalSpent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
+ * @method static Builder<static>|MaterialRequest newModelQuery()
+ * @method static Builder<static>|MaterialRequest newQuery()
+ * @method static Builder<static>|MaterialRequest query()
+ * @method static Builder<static>|MaterialRequest whereConcept($value)
+ * @method static Builder<static>|MaterialRequest whereCostCenterId($value)
+ * @method static Builder<static>|MaterialRequest whereCreatedAt($value)
+ * @method static Builder<static>|MaterialRequest whereId($value)
+ * @method static Builder<static>|MaterialRequest whereStatus($value)
+ * @method static Builder<static>|MaterialRequest whereTotalSpent($value)
+ * @method static Builder<static>|MaterialRequest whereTypeId($value)
+ * @method static Builder<static>|MaterialRequest whereUpdatedAt($value)
+ * @method static Builder<static>|MaterialRequest whereUserId($value)
  * @mixin \Eloquent
  */
 class MaterialRequest extends Model

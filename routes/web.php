@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Balance\BalanceController;
+use App\Http\Controllers\Exports\ExportIncomesController;
+use App\Http\Controllers\Exports\ExportMoneyRequestsController;
 use App\Http\Controllers\Incomes\UserIncomeController;
 use App\Http\Controllers\Lookups\CompanyLookup;
 use App\Http\Controllers\Lookups\MaterialLookup;
@@ -12,7 +15,6 @@ use App\Http\Controllers\MoneyRequests\UserMoneyRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -91,8 +93,11 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::resource('materials', MaterialController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_materials');
 
     Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
-        Route::get('money-requests', [ExportController::class, 'index'])->name('money-requests.index');
-        Route::get('money-requests/download', [ExportController::class, 'export'])->name('money-requests.download');
+        Route::get('money-requests', [ExportMoneyRequestsController::class, 'index'])->name('money-requests.index');
+        Route::get('money-requests/download', [ExportMoneyRequestsController::class, 'export'])->name('money-requests.download');
+
+        Route::get('incomes', [ExportIncomesController::class, 'index'])->name('incomes.index');
+        Route::get('incomes/download', [ExportIncomesController::class, 'export'])->name('incomes.download');
 
         Route::prefix('lookups')->name('lookups.')->group(function () {
             Route::get('cost-centers', [CostCenterLookup::class, 'select2'])
@@ -101,6 +106,10 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('users', [UserLookup::class, 'select2'])
                 ->name('users.select2');
         });
+    });
+
+    Route::prefix('balance')->group(function () {
+        Route::get('', [BalanceController::class, 'index'])->name('balance.index');
     });
 
     Route::prefix('reports')->middleware('permission:view_summary')->group(function () {

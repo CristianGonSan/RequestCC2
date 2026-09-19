@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereUserId($value)
  * @mixin \Eloquent
  */
-#[ObservedBy(MaterialRequestFulfillmentObserver::class)]
 class MaterialRequestFulfillment extends Model
 {
     use HasFactory;

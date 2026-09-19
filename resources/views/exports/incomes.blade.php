@@ -3,7 +3,7 @@
 @section('plugins.Select2', true)
 @section('plugins.InputMask', true)
 
-@section('title_prefix', 'Exportar Solicitudes de Dinero |')
+@section('title_prefix', 'Exportar Ingresos |')
 
 @section('content_header')
     <div class="container">
@@ -11,7 +11,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
                 <li class="breadcrumb-item active">Exportar</li>
-                <li class="breadcrumb-item active">Solicitudes de Dinero</li>
+                <li class="breadcrumb-item active">Ingresos</li>
             </ol>
         </nav>
     </div>
@@ -25,9 +25,9 @@
             aplique, más precisos serán los resultados. El sistema no diferencia entre MAYÚSCULAS y minúsculas.
         </p>
 
-        <h1 class="h4 mb-3">Exportar v2</h1>
+        <h1 class="h4 mb-3">Exportar Ingresos</h1>
 
-        <form class="row" action="{{ route('export.money-requests.download') }}" method="GET">
+        <form class="row" action="{{ route('export.incomes.download') }}" method="GET">
             <!-- Panel de Filtros -->
             <div class="col-md-8">
                 <div class="card">
@@ -35,23 +35,12 @@
                         <h2 class="card-title">Filtros</h2>
                     </div>
                     <div class="card-body">
-                        <!-- Fecha de Creación -->
+                        <!-- Fecha de Ingreso -->
                         <div class="form-row">
-                            <div class="col-12 mb-2">Filtrar por fecha de creación</div>
-                            <x-adminlte-input fgroup-class="col-6" type="date" name="created_at_start" label="Desde"
+                            <div class="col-12 mb-2">Filtrar por fecha de ingreso</div>
+                            <x-adminlte-input fgroup-class="col-6" type="date" name="income_date_start" label="Desde"
                                 enable-old-support />
-                            <x-adminlte-input fgroup-class="col-6" type="date" name="created_at_end" label="Hasta"
-                                enable-old-support />
-                        </div>
-
-                        <hr class="my-3">
-
-                        <!-- Fecha de Actualización -->
-                        <div class="form-row">
-                            <div class="col-12 mb-2">Filtrar por fecha de actualización</div>
-                            <x-adminlte-input fgroup-class="col-6" type="date" name="updated_at_start" label="Desde"
-                                enable-old-support />
-                            <x-adminlte-input fgroup-class="col-6" type="date" name="updated_at_end" label="Hasta"
+                            <x-adminlte-input fgroup-class="col-6" type="date" name="income_date_end" label="Hasta"
                                 enable-old-support />
                         </div>
 
@@ -61,8 +50,7 @@
                         <div class="form-row">
                             <x-adminlte-select fgroup-class="col-md-6" id="orderBy" name="orderBy" class="custom-select"
                                 label="Ordenar Por">
-                                <option value="created_at">Ordenar por Fecha de Creación</option>
-                                <option value="updated_at">Ordenar por Fecha de Actualización</option>
+                                <option value="income_date">Ordenar por Fecha de Ingreso</option>
                                 <option value="cost_center">Ordenar por Centros de Costos</option>
                                 <option value="amount">Ordenar por Importe</option>
                                 <option value="id">Ordenar por ID</option>
@@ -112,7 +100,7 @@
 
                         <hr class="my-3">
 
-                        <!-- Tipo y Estado -->
+                        <!-- Tipo -->
                         <div class="form-row">
                             @php
                                 $config = [
@@ -124,11 +112,6 @@
                             <x-adminlte-select2 fgroup-class="col-12" id="type" name="type[]" label="Tipo"
                                 :config="$config" enable-old-support multiple>
                                 <x-adminlte-options :options="$typeOptions" />
-                            </x-adminlte-select2>
-
-                            <x-adminlte-select2 fgroup-class="col-12" id="status" name="status[]" label="Estado"
-                                :config="$config" enable-old-support multiple>
-                                <x-adminlte-options :options="$statusOptions" />
                             </x-adminlte-select2>
 
                             <!-- Método de Pago -->
@@ -150,7 +133,7 @@
                         <h2 class="card-title">Columnas a Exportar</h2>
                     </div>
                     <ul class="list-group list-group-flush overflow-auto">
-                        @forelse ($columnsOptions as $key => $column)
+                        @forelse ($columnOptions as $key => $column)
                             <li class="list-group-item py-1">
                                 <div class="icheck-primary">
                                     <input type="checkbox" id="column_{{ $key }}"

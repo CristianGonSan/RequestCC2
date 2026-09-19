@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Incomes\Users;
 
+use App\Exports\Excel\IncomesExport;
 use App\Models\Catalogs\Type;
 use App\Models\Incomes\Income;
 use App\Support\DataBag;
@@ -11,6 +12,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Session;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class IncomesTable extends Component
 {
@@ -129,6 +132,19 @@ class IncomesTable extends Component
 
         $income->delete();
         $this->toastSuccess('Ingreso eliminado correctamente.');
+    }
+
+    public function export(): ?BinaryFileResponse
+    {
+        $query = $this->getQuery()->forPage($this->page, $this->perPage);
+
+        if (! $query->exists()) {
+            $this->toastWarning('No hay nada para exportar');
+
+            return null;
+        }
+
+        return Excel::download(new IncomesExport($query), 'Solicitudes.xlsx');
     }
 
     private function getIdFromSearchTerm(): ?int
