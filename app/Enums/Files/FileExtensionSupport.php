@@ -9,92 +9,92 @@ use Symfony\Component\Mime\MimeTypes;
 enum FileExtensionSupport: string
 {
     // Documentos Microsoft Office
-    case Pdf = 'pdf';
-    case Doc = 'doc';
+    case Pdf  = 'pdf';
+    case Doc  = 'doc';
     case Docx = 'docx';
-    case Xls = 'xls';
+    case Xls  = 'xls';
     case Xlsx = 'xlsx';
-    case Ppt = 'ppt';
+    case Ppt  = 'ppt';
     case Pptx = 'pptx';
-    case Txt = 'txt';
-    case Rtf = 'rtf';
-    case Csv = 'csv';
+    case Txt  = 'txt';
+    case Rtf  = 'rtf';
+    case Csv  = 'csv';
 
-        // OpenDocument (LibreOffice / OpenOffice)
+    // OpenDocument (LibreOffice / OpenOffice)
     case Odt = 'odt';   // Writer (equivalente a .docx)
     case Ods = 'ods';   // Calc   (equivalente a .xlsx)
     case Odp = 'odp';   // Impress (equivalente a .pptx)
     case Odg = 'odg';   // Draw
     case Odf = 'odf';   // Fórmulas
 
-        // Imágenes
-    case Jpg = 'jpg';
+    // Imágenes
+    case Jpg  = 'jpg';
     case Jpeg = 'jpeg';
-    case Png = 'png';
+    case Png  = 'png';
     case Webp = 'webp';
-    case Gif = 'gif';
-    case Svg = 'svg';
+    case Gif  = 'gif';
+    case Svg  = 'svg';
     case Jfif = 'jfif';
-    case Bmp = 'bmp';
+    case Bmp  = 'bmp';
     case Tiff = 'tiff';
-    case Tif = 'tif';
+    case Tif  = 'tif';
     case Heic = 'heic';
-    case Ico = 'ico';
+    case Ico  = 'ico';
 
-        // Video
-    case Mp4 = 'mp4';
-    case Avi = 'avi';
-    case Mov = 'mov';
-    case Mkv = 'mkv';
+    // Video
+    case Mp4  = 'mp4';
+    case Avi  = 'avi';
+    case Mov  = 'mov';
+    case Mkv  = 'mkv';
     case Webm = 'webm';
 
-        // Audio
-    case Mp3 = 'mp3';
-    case Wav = 'wav';
-    case Ogg = 'ogg';
+    // Audio
+    case Mp3  = 'mp3';
+    case Wav  = 'wav';
+    case Ogg  = 'ogg';
     case Flac = 'flac';
-    case Aac = 'aac';
+    case Aac  = 'aac';
 
-        // Comprimidos
-    case Zip = 'zip';
-    case Rar = 'rar';
+    // Comprimidos
+    case Zip    = 'zip';
+    case Rar    = 'rar';
     case SevenZ = '7z';
-    case Tar = 'tar';
-    case Gz = 'gz';
+    case Tar    = 'tar';
+    case Gz     = 'gz';
 
-        // Código / Datos
+    // Código / Datos
     case Json = 'json';
-    case Xml = 'xml';
+    case Xml  = 'xml';
     case Html = 'html';
-    case Htm = 'htm';
+    case Htm  = 'htm';
 
-        // SAT — e.firma y Certificados de Sello Digital (CSD)
+    // SAT — e.firma y Certificados de Sello Digital (CSD)
     case Cer = 'cer';   // Certificado público (.cer)
     case Key = 'key';   // Llave privada cifrada
     case Req = 'req';   // Requerimiento de certificado
 
-        // SAT — Declaraciones y contabilidad electrónica
-    case Dec = 'dec';   // Declaraciones fiscales (DeclaraSAT)
+    // SAT — Declaraciones y contabilidad electrónica
+    case Dec  = 'dec';   // Declaraciones fiscales (DeclaraSAT)
     case Diot = 'diot'; // Declaración Informativa de Operaciones con Terceros
     case Xslt = 'xslt'; // Hojas de transformación CFDI
 
-        // IMSS / SUA
-    case Sua = 'sua';   // Sistema Único de Autodeterminación (cuotas IMSS)
-    case Dis = 'dis';   // Dispersión de nómina IMSS
+    // IMSS / SUA
+    case Sua  = 'sua';   // Sistema Único de Autodeterminación (cuotas IMSS)
+    case Dis  = 'dis';   // Dispersión de nómina IMSS
     case Idse = 'idse'; // IMSS Desde Su Empresa (movimientos afiliatorios)
-    case Noi = 'noi';   // Nómina Integral (exportación NOI)
+    case Noi  = 'noi';   // Nómina Integral (exportación NOI)
 
-        // INFONAVIT
+    // INFONAVIT
     case Sin = 'sin';   // Sistema de Información INFONAVIT (aportaciones)
 
-        // STPS / nómina
+    // STPS / nómina
     case Sar = 'sar';   // Archivos de aportaciones SAR/Afore
 
-        // Contabilidad / ERP (COI, NOI, ASPEL, etc.)
-    case Pol = 'pol';   // Pólizas contables (COI ASPEL)
-    case Coi = 'coi';   // Catálogo / respaldo COI ASPEL
-    case Bdf = 'bdf';   // Balanza de comprobación (exportación)
-    case Sae = 'sae';   // Respaldo SAE ASPEL
+    // Contabilidad / ERP (COI, NOI, ASPEL, etc.)
+    case Pol     = 'pol';   // Pólizas contables (COI ASPEL)
+    case Coi     = 'coi';   // Catálogo / respaldo COI ASPEL
+    case Bdf     = 'bdf';   // Balanza de comprobación (exportación)
+    case Sae     = 'sae';   // Respaldo SAE ASPEL
     case Nomixml = 'nomixml'; // CFDI nómina versión 1.2
 
     case Unknown = 'unknown';
@@ -102,132 +102,132 @@ enum FileExtensionSupport: string
     public function label(): string
     {
         return match ($this) {
-            self::Pdf                               => 'PDF',
-            self::Doc, self::Docx                   => 'Word',
-            self::Xls, self::Xlsx                   => 'Excel',
-            self::Ppt, self::Pptx                   => 'PowerPoint',
-            self::Txt                               => 'Texto plano',
-            self::Rtf                               => 'RTF',
-            self::Csv                               => 'CSV',
-            self::Odt                               => 'OpenDocument Texto',
-            self::Ods                               => 'OpenDocument Hoja de cálculo',
-            self::Odp                               => 'OpenDocument Presentación',
-            self::Odg                               => 'OpenDocument Dibujo',
-            self::Odf                               => 'OpenDocument Fórmula',
+            self::Pdf             => 'PDF',
+            self::Doc, self::Docx => 'Word',
+            self::Xls, self::Xlsx => 'Excel',
+            self::Ppt, self::Pptx => 'PowerPoint',
+            self::Txt             => 'Texto plano',
+            self::Rtf             => 'RTF',
+            self::Csv             => 'CSV',
+            self::Odt             => 'OpenDocument Texto',
+            self::Ods             => 'OpenDocument Hoja de cálculo',
+            self::Odp             => 'OpenDocument Presentación',
+            self::Odg             => 'OpenDocument Dibujo',
+            self::Odf             => 'OpenDocument Fórmula',
             self::Jpg, self::Jpeg, self::Png,
             self::Webp, self::Gif, self::Svg,
             self::Jfif, self::Bmp, self::Tiff,
-            self::Tif, self::Heic, self::Ico        => 'Imagen',
+            self::Tif, self::Heic, self::Ico => 'Imagen',
             self::Mp4, self::Avi, self::Mov,
-            self::Mkv, self::Webm                   => 'Video',
+            self::Mkv, self::Webm => 'Video',
             self::Mp3, self::Wav, self::Ogg,
-            self::Flac, self::Aac                   => 'Audio',
+            self::Flac, self::Aac => 'Audio',
             self::Zip, self::Rar, self::SevenZ,
-            self::Tar, self::Gz                     => 'Comprimido',
-            self::Json                              => 'JSON',
-            self::Xml                               => 'XML',
-            self::Html, self::Htm                   => 'HTML',
+            self::Tar, self::Gz   => 'Comprimido',
+            self::Json            => 'JSON',
+            self::Xml             => 'XML',
+            self::Html, self::Htm => 'HTML',
 
             // SAT — e.firma y Certificados de Sello Digital
-            self::Cer                               => 'Certificado SAT (.cer)',
-            self::Key                               => 'Llave privada SAT (.key)',
-            self::Req                               => 'Requerimiento de certificado SAT',
+            self::Cer => 'Certificado SAT (.cer)',
+            self::Key => 'Llave privada SAT (.key)',
+            self::Req => 'Requerimiento de certificado SAT',
 
             // SAT — Declaraciones y contabilidad electrónica
-            self::Dec                               => 'Declaración fiscal (DeclaraSAT)',
-            self::Diot                              => 'DIOT - Operaciones con Terceros',
-            self::Xslt                              => 'Hoja de transformación CFDI (XSLT)',
+            self::Dec  => 'Declaración fiscal (DeclaraSAT)',
+            self::Diot => 'DIOT - Operaciones con Terceros',
+            self::Xslt => 'Hoja de transformación CFDI (XSLT)',
 
             // IMSS / SUA
-            self::Sua                               => 'SUA - Cuotas IMSS',
-            self::Dis                               => 'Dispersión de nómina IMSS',
-            self::Idse                              => 'IDSE - Movimientos afiliatorios IMSS',
-            self::Noi                               => 'Nómina Integral (NOI)',
+            self::Sua  => 'SUA - Cuotas IMSS',
+            self::Dis  => 'Dispersión de nómina IMSS',
+            self::Idse => 'IDSE - Movimientos afiliatorios IMSS',
+            self::Noi  => 'Nómina Integral (NOI)',
 
             // INFONAVIT
-            self::Sin                               => 'INFONAVIT - Aportaciones (SIN)',
+            self::Sin => 'INFONAVIT - Aportaciones (SIN)',
 
             // STPS / nómina
-            self::Sar                               => 'Aportaciones SAR/Afore',
+            self::Sar => 'Aportaciones SAR/Afore',
 
             // Contabilidad / ERP
-            self::Pol                               => 'Pólizas contables (COI ASPEL)',
-            self::Coi                               => 'Catálogo/Respaldo COI ASPEL',
-            self::Bdf                               => 'Balanza de comprobación',
-            self::Sae                               => 'Respaldo SAE ASPEL',
-            self::Nomixml                           => 'CFDI Nómina XML (v1.2)',
+            self::Pol     => 'Pólizas contables (COI ASPEL)',
+            self::Coi     => 'Catálogo/Respaldo COI ASPEL',
+            self::Bdf     => 'Balanza de comprobación',
+            self::Sae     => 'Respaldo SAE ASPEL',
+            self::Nomixml => 'CFDI Nómina XML (v1.2)',
 
-            self::Unknown                           => 'Desconocido',
+            self::Unknown => 'Desconocido',
         };
     }
 
     public function icon(): string
     {
         return match ($this) {
-            self::Pdf                              => 'fa-file-pdf',
-            self::Doc, self::Docx                  => 'fa-file-word',
-            self::Xls, self::Xlsx, self::Csv       => 'fa-file-excel',
-            self::Ppt, self::Pptx                  => 'fa-file-powerpoint',
-            self::Txt, self::Rtf                   => 'fa-file-lines',
-            self::Odt                              => 'fa-file-word',
-            self::Ods                              => 'fa-file-excel',
-            self::Odp                              => 'fa-file-powerpoint',
-            self::Odg, self::Odf                   => 'fa-file',
+            self::Pdf                        => 'fa-file-pdf',
+            self::Doc, self::Docx            => 'fa-file-word',
+            self::Xls, self::Xlsx, self::Csv => 'fa-file-excel',
+            self::Ppt, self::Pptx            => 'fa-file-powerpoint',
+            self::Txt, self::Rtf             => 'fa-file-lines',
+            self::Odt                        => 'fa-file-word',
+            self::Ods                        => 'fa-file-excel',
+            self::Odp                        => 'fa-file-powerpoint',
+            self::Odg, self::Odf             => 'fa-file',
             self::Jpg, self::Jpeg, self::Png,
             self::Webp, self::Gif, self::Svg,
             self::Jfif, self::Bmp, self::Tiff,
-            self::Tif, self::Heic, self::Ico       => 'fa-file-image',
+            self::Tif, self::Heic, self::Ico => 'fa-file-image',
             self::Mp4, self::Avi, self::Mov,
-            self::Mkv, self::Webm                  => 'fa-file-video',
+            self::Mkv, self::Webm => 'fa-file-video',
             self::Mp3, self::Wav, self::Ogg,
-            self::Flac, self::Aac                  => 'fa-file-audio',
+            self::Flac, self::Aac => 'fa-file-audio',
             self::Zip, self::Rar, self::SevenZ,
-            self::Tar, self::Gz                    => 'fa-file-zipper',
+            self::Tar, self::Gz => 'fa-file-zipper',
             self::Json, self::Xml,
-            self::Html, self::Htm                  => 'fa-file-code',
-            self::Cer, self::Key, self::Req        => 'fa-file-shield',
+            self::Html, self::Htm           => 'fa-file-code',
+            self::Cer, self::Key, self::Req => 'fa-file-shield',
             self::Dec, self::Diot, self::Xslt,
             self::Sua, self::Dis, self::Idse,
             self::Noi, self::Sin, self::Sar,
             self::Pol, self::Coi, self::Bdf,
-            self::Sae, self::Nomixml               => 'fa-file-invoice',
-            self::Unknown                          => 'fa-file',
+            self::Sae, self::Nomixml => 'fa-file-invoice',
+            self::Unknown            => 'fa-file',
         };
     }
 
     public function color(): string
     {
         return match ($this) {
-            self::Pdf                              => '#e74c3c',
-            self::Doc, self::Docx                  => '#2980b9',
-            self::Xls, self::Xlsx, self::Csv       => '#27ae60',
-            self::Ppt, self::Pptx                  => '#e67e22',
-            self::Txt, self::Rtf                   => '#67b3d3',
-            self::Odt                              => '#3498db',
-            self::Ods                              => '#2ecc71',
-            self::Odp                              => '#e67e22',
-            self::Odg, self::Odf                   => '#1abc9c',
+            self::Pdf                        => '#e74c3c',
+            self::Doc, self::Docx            => '#2980b9',
+            self::Xls, self::Xlsx, self::Csv => '#27ae60',
+            self::Ppt, self::Pptx            => '#e67e22',
+            self::Txt, self::Rtf             => '#67b3d3',
+            self::Odt                        => '#3498db',
+            self::Ods                        => '#2ecc71',
+            self::Odp                        => '#e67e22',
+            self::Odg, self::Odf             => '#1abc9c',
             self::Jpg, self::Jpeg, self::Png,
             self::Webp, self::Gif, self::Svg,
             self::Jfif, self::Bmp, self::Tiff,
-            self::Tif, self::Heic, self::Ico       => '#8e44ad',
+            self::Tif, self::Heic, self::Ico => '#8e44ad',
             self::Mp4, self::Avi, self::Mov,
-            self::Mkv, self::Webm                  => '#c0392b',
+            self::Mkv, self::Webm => '#c0392b',
             self::Mp3, self::Wav, self::Ogg,
-            self::Flac, self::Aac                  => '#16a085',
+            self::Flac, self::Aac => '#16a085',
             self::Zip, self::Rar, self::SevenZ,
-            self::Tar, self::Gz                    => '#f39c12',
+            self::Tar, self::Gz => '#f39c12',
             self::Json, self::Xml,
-            self::Html, self::Htm                  => '#95a5a6',
-            self::Cer, self::Key, self::Req        => '#c0392b',  // Rojo SAT
-            self::Dec, self::Diot, self::Xslt      => '#e74c3c',  // Rojo SAT claro
+            self::Html, self::Htm             => '#95a5a6',
+            self::Cer, self::Key, self::Req   => '#c0392b',  // Rojo SAT
+            self::Dec, self::Diot, self::Xslt => '#e74c3c',  // Rojo SAT claro
             self::Sua, self::Dis, self::Idse,
-            self::Noi                              => '#2471a3',  // Azul IMSS
-            self::Sin                              => '#1a5276',  // Azul INFONAVIT
-            self::Sar                              => '#117a65',  // Verde SAR
+            self::Noi => '#2471a3',  // Azul IMSS
+            self::Sin => '#1a5276',  // Azul INFONAVIT
+            self::Sar => '#117a65',  // Verde SAR
             self::Pol, self::Coi, self::Bdf,
-            self::Sae, self::Nomixml               => '#6c3483',  // Morado ERP
-            self::Unknown                          => '#7f8c8d',
+            self::Sae, self::Nomixml => '#6c3483',  // Morado ERP
+            self::Unknown            => '#7f8c8d',
         };
     }
 
@@ -241,19 +241,19 @@ enum FileExtensionSupport: string
         return match ($this) {
             self::Jpg, self::Jpeg, self::Png,
             self::Webp, self::Gif, self::Svg,
-            self::Jfif, self::Bmp                       => 'image',
+            self::Jfif, self::Bmp => 'image',
 
-            self::Pdf                                   => 'pdf',
+            self::Pdf => 'pdf',
 
-            self::Mp4, self::Webm, self::Mov            => 'video',
+            self::Mp4, self::Webm, self::Mov => 'video',
 
             self::Mp3, self::Wav, self::Ogg,
-            self::Flac, self::Aac                       => 'audio',
+            self::Flac, self::Aac => 'audio',
 
             self::Txt, self::Json, self::Xml,
-            self::Csv, self::Html, self::Htm            => 'text',
+            self::Csv, self::Html, self::Htm => 'text',
 
-            default                                     => null,
+            default => null,
         };
     }
 
@@ -265,8 +265,7 @@ enum FileExtensionSupport: string
     public function editor(): ?string
     {
         return match ($this) {
-            self::Pdf   => 'pdf',
-            default     => null
+            default => null
         };
     }
 
@@ -278,8 +277,7 @@ enum FileExtensionSupport: string
     public function signatureRequest(): ?string
     {
         return match ($this) {
-            self::Pdf   => 'pdf',
-            default     => null,
+            default => null,
         };
     }
 
@@ -314,6 +312,7 @@ enum FileExtensionSupport: string
     public static function fromMedia(Media $media): self
     {
         $extension = strtolower($media->extension);
+
         return self::tryFrom($extension) ?? self::Unknown;
     }
 
@@ -323,18 +322,19 @@ enum FileExtensionSupport: string
         foreach (self::cases() as $case) {
             $array[$case->value] = $case->label();
         }
+
         return $array;
     }
 
     public static function values(): array
     {
-        return array_map(fn($case) => $case->value, self::cases());
+        return array_map(fn ($case) => $case->value, self::cases());
     }
 
     public static function mimeValues(): array
     {
         return collect(self::cases())
-            ->flatMap(fn(FileExtensionSupport $ext) => $ext->mimes())
+            ->flatMap(fn (FileExtensionSupport $ext) => $ext->mimes())
             ->unique()
             ->values()
             ->all();
