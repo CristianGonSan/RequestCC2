@@ -1,8 +1,15 @@
+@props([
+    'addUserOrder' => true,
+])
+
 <div class="form-row my-1">
     <x-adminlte-select fgroup-class="col-md-4 col-6 mb-0" class="custom-select" name="orderBy"
         wire:model.live="sortColumn" label="Ordenar por" label-class="text-muted mb-0">
         <option value="created_at">Fecha</option>
         <option value="id">ID</option>
+        @if ($addUserOrder)
+            <option value="user">Usuario</option>
+        @endif
         <option value="cost_center">Centro de Costos</option>
         <option value="total_spent">Total gastado</option>
         <option value="status">Estatus</option>
@@ -46,6 +53,16 @@
     <div class="form-group col-md-2 col-6 mb-0">
         <label class="text-muted mb-0">Fecha máxima</label>
         <input type="datetime-local" class="form-control" wire:model.live="filters.maxDate" />
+    </div>
+
+    @php
+        $onlyFavorites = $filters['onlyFavorites'];
+    @endphp
+
+    <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">
+        <x-livewire.loading-button theme="{{ $onlyFavorites ? 'primary' : 'outline-primary' }}" class="w-100 mt-2"
+            icon="star" icon-solid="{{ $onlyFavorites }}" wire:click="toggleOnlyFavoritesFilter"
+            wire:target="toggleOnlyFavoritesFilter" label="Mis favoritos" title="{{ $onlyFavorites }}" />
     </div>
 
     <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">

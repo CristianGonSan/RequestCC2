@@ -10,7 +10,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-class RequestsTable extends Component
+class MoneyRequestsTable extends Component
 {
     use HasLivewireTableBehavior;
 

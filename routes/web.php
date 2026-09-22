@@ -9,6 +9,7 @@ use App\Http\Controllers\Lookups\MaterialLookup;
 use App\Http\Controllers\MaterialRequests\FulfillmentMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\ManagementMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\UserMaterialRequestController;
+use App\Http\Controllers\Media\MediaController;
 use App\Http\Controllers\MoneyRequests\AccountingMoneyRequestController;
 use App\Http\Controllers\MoneyRequests\ManagementMoneyRequestController;
 use App\Http\Controllers\MoneyRequests\UserMoneyRequestController;
@@ -127,6 +128,16 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::get('file/{id}/preview', [ShowFileController::class, 'previewFile'])->name('file.preview');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::middleware('auth')->group(function (): void {
+        Route::get('/media/{id}/{filename}', [MediaController::class, 'show'])
+            ->where('id', '[0-9]+')
+            ->name('media.show');
+
+        Route::get('/media/{id}/{filename}/download', [MediaController::class, 'download'])
+            ->where('id', '[0-9]+')
+            ->name('media.download');
+    });
 
     Route::get('info', fn () => view('info'))->name('info');
 

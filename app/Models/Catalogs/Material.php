@@ -5,6 +5,7 @@ namespace App\Models\Catalogs;
 use App\Models\MaterialRequests\MaterialRequestItem;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, MaterialRequestItem> $materialRequestItems
  * @property-read int|null $material_request_items_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material active()
+ * @method static \Database\Factories\Catalogs\MaterialFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Material newQuery()
@@ -41,7 +43,7 @@ use Illuminate\Support\Carbon;
  */
 class Material extends Model
 {
-    use HasActiveState, TruncateText;
+    use HasActiveState, TruncateText, HasFactory;
 
     protected $table = 'materials';
 

@@ -10,6 +10,7 @@ use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -36,12 +37,13 @@ class IncomesTable extends Component
 
     #[Session]
     public array $filters = [
-        'type'      => null,
-        'payMethod' => null,
-        'minAmount' => null,
-        'maxAmount' => null,
-        'minDate'   => null,
-        'maxDate'   => null,
+        'type'          => null,
+        'payMethod'     => null,
+        'minAmount'     => null,
+        'maxAmount'     => null,
+        'minDate'       => null,
+        'maxDate'       => null,
+        'onlyFavorites' => false,
     ];
 
     public function mount(): void
@@ -53,10 +55,30 @@ class IncomesTable extends Component
     {
         $incomes = $this->getQuery()->paginate($this->perPage);
 
+        Auth::user()->attachFavoriteStatus($incomes);
+
         return view('livewire.incomes.users.incomes-table', [
             'incomes'     => $incomes,
             'typeOptions' => Type::options(),
         ]);
+    }
+
+    public function toggleOnlyFavoritesFilter(): void
+    {
+        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
+        $this->setPage(1);
+    }
+
+    public function toggleFavorite(int $id): void
+    {
+        $moneyRequest = Income::findOrFail($id);
+        $user         = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($moneyRequest);
+
+        $user->toggleFavorite($moneyRequest);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     private function getQuery(): Builder
@@ -65,34 +87,26 @@ class IncomesTable extends Component
         $filtersBag = DataBag::make($this->filters);
 
         $query->with([
-            'user',
-            'costCenter',
-            'type',
+            'user:id,name',
+            'costCenter:id,name,description,company_id',
+            'costCenter.company:id,name',
+            'type:id,name',
         ]);
 
         $query->join('users', 'incomes.user_id', '=', 'users.id')
             ->join('cost_centers', 'incomes.cost_center_id', '=', 'cost_centers.id')
+            ->join('companies', 'cost_centers.company_id', '=', 'companies.id')
             ->join('types', 'incomes.type_id', '=', 'types.id')
             ->select('incomes.*');
-
-        if ($term = $this->searchTerm) {
-            if ($id = $this->getIdFromSearchTerm()) {
-                $query->where('incomes.id', $id);
-            } else {
-                $query->where(function (Builder $query) use ($term): void {
-                    $query->whereAny([
-                        'users.name',
-                        'cost_centers.name',
-                        'types.name',
-                        'incomes.concept',
-                    ], 'like', "%$term%");
-                });
-            }
-        }
 
         $query->when($filtersBag->filled('payMethod'),
             fn () => $query->where('incomes.is_transfer', $filtersBag->boolean('payMethod'))
         )
+            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
+                $query->whereHas('favoriters', function ($q) {
+                    $q->where('user_id', Auth::id());
+                });
+            })
             ->when($filtersBag->filled('type'),
                 fn () => $query->where('incomes.type_id', $filtersBag->string('type'))
             )
@@ -108,6 +122,24 @@ class IncomesTable extends Component
             ->when($filtersBag->filled('maxDate'),
                 fn () => $query->where('incomes.income_date', '<=', $filtersBag->string('maxDate'))
             );
+
+        if ($term = $this->searchTerm) {
+            if ($id = $this->getIdFromSearchTerm()) {
+                $query->where('incomes.id', $id);
+            } else {
+                $query->where(function (Builder $query) use ($term): void {
+                    $query->whereAny([
+                        'users.name',
+                        'cost_centers.name',
+                        'companies.name',
+                        'cost_centers.description',
+                        'incomes.payee',
+                        'types.name',
+                        'incomes.concept',
+                    ], 'like', "%$term%");
+                });
+            }
+        }
 
         $sortable = [
             'created_at'  => 'incomes.created_at',

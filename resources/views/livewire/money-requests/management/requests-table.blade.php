@@ -10,6 +10,8 @@
             @php
                 /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
                 $status = $moneyRequest->status;
+
+                $hasFavorited = $moneyRequest->has_favorited;
             @endphp
 
             <div class="col-lg-4 col-md-6 col-sm-12 d-flex" wire:key="card-{{ $moneyRequest->id }}">
@@ -20,10 +22,16 @@
 
                     <div class="card-footer py-2">
                         <div class="d-flex">
-                            <a href="{{ route('management.money-requests.show', $moneyRequest->id) }}"
-                                class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($moneyRequest->id) }}
-                            </a>
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('management.money-requests.show', $moneyRequest->id) }}"
+                                    class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($moneyRequest->id) }}
+                                </a>
+                                <x-livewire.loading-button theme="outline-primary" class="btn-sm" icon="star"
+                                    icon-solid="{{ $hasFavorited }}" wire:click="toggleFavorite({{ $moneyRequest->id }})"
+                                    wire:target="toggleFavorite({{ $moneyRequest->id }})"
+                                    title="{{ $hasFavorited ? 'Quitar favorito' : 'Añadir favorito' }}" />
+                            </div>
 
                             @unless ($status->isCancelled())
                                 <button type="button" class="btn btn-outline-primary dropdown-toggle ml-auto btn-sm"

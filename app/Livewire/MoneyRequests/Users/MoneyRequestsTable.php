@@ -17,7 +17,7 @@ use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class RequestsTable extends Component
+class MoneyRequestsTable extends Component
 {
     use HasLivewireTableBehavior, Toast;
 
@@ -38,13 +38,14 @@ class RequestsTable extends Component
 
     #[Session]
     public array $filters = [
-        'type'      => null,
-        'status'    => null,
-        'payMethod' => null,
-        'minAmount' => null,
-        'maxAmount' => null,
-        'minDate'   => null,
-        'maxDate'   => null,
+        'type'          => null,
+        'status'        => null,
+        'payMethod'     => null,
+        'minAmount'     => null,
+        'maxAmount'     => null,
+        'minDate'       => null,
+        'maxDate'       => null,
+        'onlyFavorites' => false,
     ];
 
     public function mount(): void
@@ -56,11 +57,31 @@ class RequestsTable extends Component
     {
         $moneyRequests = $this->getQuery()->paginate($this->perPage);
 
+        Auth::user()->attachFavoriteStatus($moneyRequests);
+
         return view('livewire.money-requests.users.requests-table', [
             'moneyRequests' => $moneyRequests,
             'statusOptions' => MoneyRequestStatus::options(),
             'typeOptions'   => Type::options(),
         ]);
+    }
+
+    public function toggleOnlyFavoritesFilter(): void
+    {
+        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
+        $this->setPage(1);
+    }
+
+    public function toggleFavorite(int $id): void
+    {
+        $moneyRequest = MoneyRequest::findOrFail($id);
+        $user         = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($moneyRequest);
+
+        $user->toggleFavorite($moneyRequest);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     public function deleteMoneyRequest(int $id): void
@@ -110,26 +131,14 @@ class RequestsTable extends Component
 
         $query->where('money_requests.user_id', Auth::id());
 
-        if ($term = $this->searchTerm) {
-            if ($id = $this->getIdFromSearchTerm()) {
-                $query->where('money_requests.id', $id);
-            } else {
-                $query->where(function (Builder $query) use ($term): void {
-                    $query->whereAny([
-                        'cost_centers.name',
-                        'companies.name',
-                        'cost_centers.description',
-                        'money_requests.payee',
-                        'types.name',
-                        'money_requests.concept',
-                    ], 'like', "%$term%");
-                });
-            }
-        }
-
         $query->when($filtersBag->filled('payMethod'),
             fn () => $query->where('money_requests.is_transfer', $filtersBag->boolean('payMethod'))
         )
+            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
+                $query->whereHas('favoriters', function ($q) {
+                    $q->where('user_id', Auth::id());
+                });
+            })
             ->when($filtersBag->filled('type'),
                 fn () => $query->where('money_requests.type_id', $filtersBag->string('type'))
             )
@@ -148,6 +157,23 @@ class RequestsTable extends Component
             ->when($filtersBag->filled('maxDate'),
                 fn () => $query->where('money_requests.created_at', '<=', $filtersBag->string('maxDate'))
             );
+
+        if ($term = $this->searchTerm) {
+            if ($id = $this->getIdFromSearchTerm()) {
+                $query->where('money_requests.id', $id);
+            } else {
+                $query->where(function (Builder $query) use ($term): void {
+                    $query->whereAny([
+                        'cost_centers.name',
+                        'companies.name',
+                        'cost_centers.description',
+                        'money_requests.payee',
+                        'types.name',
+                        'money_requests.concept',
+                    ], 'like', "%$term%");
+                });
+            }
+        }
 
         if ($this->sortColumn === 'status') {
             $cases = collect(MoneyRequestStatus::cases())

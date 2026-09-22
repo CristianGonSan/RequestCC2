@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -32,9 +35,15 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read CostCenter $costCenter
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $favoriters
+ * @property-read int|null $favoriters_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
+ * @property-read int|null $favorites_count
  * @property-read string $amount_formatted
  * @property-read string $amount_to_word
  * @property-read string $payment_method
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
+ * @property-read int|null $media_count
  * @property-read Type $type
  * @property-read User $user
  * @method static \Database\Factories\Incomes\IncomeFactory factory($count = null, $state = [])
@@ -60,9 +69,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Income whereUserId($value)
  * @mixin \Eloquent
  */
-class Income extends Model
+class Income extends Model implements HasMedia
 {
-    use CurrencyToWords, HasFactory, TruncateText;
+    use CurrencyToWords, HasFactory, TruncateText, InteractsWithMedia, Favoriteable;
 
     protected $fillable = [
         'user_id',

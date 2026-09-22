@@ -17,4 +17,8 @@
     <h1 class="h4">Detalles de mi ingreso</h1>
 
     <livewire:Incomes.Users.IncomeShow :IncomeId="$income->id" />
+
+    <hr>
+
+    <livewire:Media.MediaBrowser :modelClass="$income::class" :modelId="$income->id" />
 @endsection

@@ -20,5 +20,5 @@
     <hr class="mt-1">
 
     <h1 class="h4">Solicitudes con este centro de costos</h1>
-    <livewire:Catalogs.CostCenters.RequestsTable :costCenterId="$costCenterId" />
+    <livewire:Catalogs.CostCenters.MoneyRequestsTable :costCenterId="$costCenterId" />
 @endsection

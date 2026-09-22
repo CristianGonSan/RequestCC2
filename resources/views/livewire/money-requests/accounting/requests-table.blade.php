@@ -9,6 +9,8 @@
         @forelse ($moneyRequests as $moneyRequest)
             @php
                 /** @var App\Models\MoneyRequests\MoneyRequest $moneyRequest */
+
+                $hasFavorited = $moneyRequest->has_favorited;
             @endphp
 
             <div class="col-lg-4 col-md-6 col-sm-12 d-flex" wire:key="card-{{ $moneyRequest->id }}">
@@ -18,10 +20,16 @@
                     @include('partials.livewire.money-requests.table.card.card-body')
 
                     <div class="card-footer py-2">
-                        <a href="{{ route('accounting.money-requests.show', $moneyRequest->id) }}"
-                            class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($moneyRequest->id) }}
-                        </a>
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('accounting.money-requests.show', $moneyRequest->id) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-fw fa-eye mr-1"></i> Ver #{{ number_format($moneyRequest->id) }}
+                            </a>
+                            <x-livewire.loading-button theme="outline-primary" class="btn-sm" icon="star"
+                                icon-solid="{{ $hasFavorited }}" wire:click="toggleFavorite({{ $moneyRequest->id }})"
+                                wire:target="toggleFavorite({{ $moneyRequest->id }})"
+                                title="{{ $hasFavorited ? 'Quitar favorito' : 'Añadir favorito' }}" />
+                        </div>
                     </div>
                 </div>
 

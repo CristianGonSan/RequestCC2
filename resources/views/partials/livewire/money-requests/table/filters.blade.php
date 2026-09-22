@@ -4,14 +4,14 @@
 ])
 
 <div class="form-row my-1">
-    <x-adminlte-select fgroup-class="col-md-4 col-6 mb-0" class="custom-select" name="orderBy" wire:model.live="sortColumn"
-        label="Ordenar por" label-class="text-muted mb-0">
+    <x-adminlte-select fgroup-class="col-md-4 col-6 mb-0" class="custom-select" name="orderBy"
+        wire:model.live="sortColumn" label="Ordenar por" label-class="text-muted mb-0">
         <option value="created_at">Fecha</option>
         <option value="id">ID</option>
-        <option value="payee">Beneficiario</option>
         @if ($addUserOrder)
             <option value="user">Usuario</option>
         @endif
+        <option value="payee">Beneficiario</option>
         <option value="cost_center">Centro de Costos</option>
         <option value="companies">Empresa</option>
         <option value="amount">Monto</option>
@@ -26,7 +26,8 @@
     </x-adminlte-select>
 
     <x-adminlte-select fgroup-class="col-md-2 mb-0" class="custom-select" name="payMethod"
-        wire:model.live="filters.payMethod" label="Método de pago" label-class="text-muted mb-0" :disabled="$disabledPayMethod">
+        wire:model.live="filters.payMethod" label="Método de pago" label-class="text-muted mb-0"
+        :disabled="$disabledPayMethod">
         <option value>Todos</option>
         <option value="0">Efectivo</option>
         <option value="1">Transferencia</option>
@@ -63,6 +64,16 @@
     <div class="form-group col-md-2 col-6 mb-0">
         <label class="text-muted mb-0">Fecha máxima</label>
         <input type="datetime-local" class="form-control" wire:model.live="filters.maxDate" />
+    </div>
+
+    @php
+        $onlyFavorites = $filters['onlyFavorites'];
+    @endphp
+
+    <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">
+        <x-livewire.loading-button theme="{{ $onlyFavorites ? 'primary' : 'outline-primary' }}" class="w-100 mt-2"
+            icon="star" icon-solid="{{ $onlyFavorites }}" wire:click="toggleOnlyFavoritesFilter"
+            wire:target="toggleOnlyFavoritesFilter" label="Mis favoritos" title="{{ $onlyFavorites }}" />
     </div>
 
     <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">

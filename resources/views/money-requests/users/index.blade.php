@@ -18,5 +18,5 @@
 @endsection
 
 @section('content')
-    <livewire:MoneyRequests.Users.RequestsTable />
+    <livewire:MoneyRequests.Users.MoneyRequestsTable />
 @endsection

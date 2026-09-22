@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use App\Traits\Models\CurrencyToWords;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -28,6 +31,10 @@ use App\Traits\Models\CurrencyToWords;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read CostCenter $costCenter
+ * @property-read Collection<int, User> $favoriters
+ * @property-read int|null $favoriters_count
+ * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
+ * @property-read int|null $favorites_count
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
  * @property-read bool $is_fulfilled
@@ -37,6 +44,8 @@ use App\Traits\Models\CurrencyToWords;
  * @property-read string $total_spent_to_words
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestItem> $items
  * @property-read int|null $items_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
+ * @property-read int|null $media_count
  * @property-read Type $type
  * @property-read User $user
  * @method static Builder<static>|MaterialRequest newModelQuery()
@@ -53,9 +62,9 @@ use App\Traits\Models\CurrencyToWords;
  * @method static Builder<static>|MaterialRequest whereUserId($value)
  * @mixin \Eloquent
  */
-class MaterialRequest extends Model
+class MaterialRequest extends Model implements HasMedia
 {
-    use CurrencyToWords, HasFactory , TruncateText;
+    use CurrencyToWords, HasFactory , TruncateText, InteractsWithMedia, Favoriteable;
 
     protected $fillable = [
         'user_id',

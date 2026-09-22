@@ -40,7 +40,7 @@
 
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-requests" role="tabpanel" aria-labelledby="pills-requests-tab">
-            <livewire:Catalogs.Types.RequestsTable :typeId="$typeId" />
+            <livewire:Catalogs.Types.MoneyRequestsTable :typeId="$typeId" />
         </div>
 
         <div class="tab-pane fade" id="pills-users" role="tabpanel" aria-labelledby="pills-users-tab">

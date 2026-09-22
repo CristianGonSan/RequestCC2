@@ -54,7 +54,7 @@
 
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-requests" role="tabpanel" aria-labelledby="pills-requests-tab">
-            <livewire:Admin.Users.RequestsTable :userId="$userId" />
+            <livewire:Admin.Users.MoneyRequestsTable :userId="$userId" />
         </div>
 
         <div class="tab-pane fade" id="pills-types" role="tabpanel" aria-labelledby="pills-types-tab">

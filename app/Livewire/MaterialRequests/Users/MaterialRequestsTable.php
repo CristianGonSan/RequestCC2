@@ -41,6 +41,7 @@ class MaterialRequestsTable extends Component
         'maxTotalSpent' => null,
         'minDate'       => null,
         'maxDate'       => null,
+        'onlyFavorites' => false,
     ];
 
     public function mount(): void
@@ -52,11 +53,31 @@ class MaterialRequestsTable extends Component
     {
         $materialRequests = $this->getQuery()->paginate($this->perPage);
 
+        Auth::user()->attachFavoriteStatus($materialRequests);
+
         return view('livewire.material-requests.users.material-requests-table', [
             'materialRequests' => $materialRequests,
             'statusOptions'    => MaterialRequestStatus::options(),
             'typeOptions'      => Type::options(),
         ]);
+    }
+
+    public function toggleOnlyFavoritesFilter(): void
+    {
+        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
+        $this->setPage(1);
+    }
+
+    public function toggleFavorite(int $id): void
+    {
+        $moneyRequest = MaterialRequest::findOrFail($id);
+        $user         = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($moneyRequest);
+
+        $user->toggleFavorite($moneyRequest);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     private function getQuery(): Builder
@@ -82,6 +103,30 @@ class MaterialRequestsTable extends Component
 
         $query->where('material_requests.user_id', Auth::id());
 
+        $query->when($filtersBag->filled('type'),
+            fn () => $query->where('material_requests.type_id', $filtersBag->string('type'))
+        )
+            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
+                $query->whereHas('favoriters', function ($q) {
+                    $q->where('user_id', Auth::id());
+                });
+            })
+            ->when($filtersBag->filled('status'),
+                fn () => $query->where('material_requests.status', $filtersBag->string('status'))
+            )
+            ->when($filtersBag->filled('minTotalSpent'),
+                fn () => $query->where('material_requests.total_spent', '>=', $filtersBag->float('minTotalSpent'))
+            )
+            ->when($filtersBag->filled('maxTotalSpent'),
+                fn () => $query->where('material_requests.total_spent', '<=', $filtersBag->float('maxTotalSpent'))
+            )
+            ->when($filtersBag->filled('minDate'),
+                fn () => $query->where('material_requests.created_at', '>=', $filtersBag->string('minDate'))
+            )
+            ->when($filtersBag->filled('maxDate'),
+                fn () => $query->where('material_requests.created_at', '<=', $filtersBag->string('maxDate'))
+            );
+
         if ($term = $this->searchTerm) {
             if ($id = $this->getIdFromSearchTerm()) {
                 $query->where('material_requests.id', $id);
@@ -98,25 +143,6 @@ class MaterialRequestsTable extends Component
                 });
             }
         }
-
-        $query->when($filtersBag->filled('type'),
-            fn () => $query->where('material_requests.type_id', $filtersBag->string('type'))
-        )
-            ->when($filtersBag->filled('status'),
-                fn () => $query->where('material_requests.status', $filtersBag->string('status'))
-            )
-            ->when($filtersBag->filled('minTotalSpent'),
-                fn () => $query->where('material_requests.total_spent', '>=', $filtersBag->float('minTotalSpent'))
-            )
-            ->when($filtersBag->filled('maxTotalSpent'),
-                fn () => $query->where('material_requests.total_spent', '<=', $filtersBag->float('maxTotalSpent'))
-            )
-            ->when($filtersBag->filled('minDate'),
-                fn () => $query->where('material_requests.created_at', '>=', $filtersBag->string('minDate'))
-            )
-            ->when($filtersBag->filled('maxDate'),
-                fn () => $query->where('material_requests.created_at', '<=', $filtersBag->string('maxDate'))
-            );
 
         if ($this->sortColumn === 'status') {
             $cases = collect(MaterialRequestStatus::cases())

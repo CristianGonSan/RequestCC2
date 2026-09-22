@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Livewire\MoneyRequests\Management;
+namespace App\Livewire\MoneyRequests\Accounting;
 
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Exports\Excel\MoneyRequestsExport;
-use App\Services\Mails\MailManager;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
 use App\Support\DataBag;
@@ -12,12 +11,13 @@ use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
 use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class RequestsTable extends Component
+class MoneyRequestsTable extends Component
 {
     use HasLivewireTableBehavior, Toast;
 
@@ -38,13 +38,18 @@ class RequestsTable extends Component
 
     #[Session]
     public array $filters = [
-        'type'      => null,
-        'status'    => null,
-        'payMethod' => null,
-        'minAmount' => null,
-        'maxAmount' => null,
-        'minDate'   => null,
-        'maxDate'   => null,
+        'type'          => null,
+        'status'        => null,
+        'payMethod'     => 1,
+        'minAmount'     => null,
+        'maxAmount'     => null,
+        'minDate'       => null,
+        'maxDate'       => null,
+        'onlyFavorites' => false,
+    ];
+
+    private const EXCLUDED = [
+        MoneyRequestStatus::Pending, MoneyRequestStatus::Rejected,
     ];
 
     public function mount(): void
@@ -56,61 +61,45 @@ class RequestsTable extends Component
     {
         $moneyRequests = $this->getQuery()->paginate($this->perPage);
 
-        return view('livewire.money-requests.management.requests-table', [
+        Auth::user()->attachFavoriteStatus($moneyRequests);
+
+        return view('livewire.money-requests.accounting.requests-table', [
             'moneyRequests' => $moneyRequests,
-            'statusOptions' => MoneyRequestStatus::options(),
+            'statusOptions' => MoneyRequestStatus::exclude(self::EXCLUDED),
             'typeOptions'   => Type::options(),
         ]);
+
     }
 
-    public function acceptRequest(int $id): void
+    public function toggleOnlyFavoritesFilter(): void
     {
-        $this->transitionStatus($id, MoneyRequestStatus::Accepted);
+        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
+        $this->setPage(1);
     }
 
-    public function rejectRequest(int $id): void
-    {
-        $this->transitionStatus($id, MoneyRequestStatus::Rejected);
-    }
-
-    public function markAsPending(int $id): void
-    {
-        $this->transitionStatus($id, MoneyRequestStatus::Pending);
-    }
-
-    public function markAsPaid(int $id): void
-    {
-        $this->transitionStatus($id, MoneyRequestStatus::Paid, false);
-    }
-
-    public function cancelRequest(int $id): void
-    {
-        $this->transitionStatus($id, MoneyRequestStatus::Cancelled, false);
-    }
-
-    private function transitionStatus(int $id, MoneyRequestStatus $status, bool $allowTransfer = true): void
+    public function toggleFavorite(int $id): void
     {
         $moneyRequest = MoneyRequest::findOrFail($id);
+        $user         = Auth::user();
 
-        if ($moneyRequest->status->cannotChangeTo($status)) {
-            $this->toastError('Acción no permitida.');
+        $wasFavorited = $user->hasFavorited($moneyRequest);
 
-            return;
+        $user->toggleFavorite($moneyRequest);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
+    }
+
+    public function export(): ?BinaryFileResponse
+    {
+        $query = $this->getQuery()->forPage($this->page, $this->perPage);
+
+        if (! $query->exists()) {
+            $this->toastWarning('No hay nada para exportar');
+
+            return null;
         }
 
-        if ($moneyRequest->is_transfer && ! $allowTransfer) {
-            $this->toastError('Acción no permitida para solicitudes de transferencia.');
-
-            return;
-        }
-
-        $moneyRequest->changeStatusWithRecord($status);
-
-        if ($moneyRequest->is_transfer) {
-            MailManager::sendStatusChangeNotification($moneyRequest);
-        }
-
-        $this->toastSuccess("Solicitud marcada como {$status->label()}.");
+        return Excel::download(new MoneyRequestsExport($query), 'Solicitudes.xlsx');
     }
 
     private function getQuery(): Builder
@@ -132,27 +121,16 @@ class RequestsTable extends Component
             ->join('types', 'money_requests.type_id', '=', 'types.id')
             ->select('money_requests.*');
 
-        if ($term = $this->searchTerm) {
-            if ($id = $this->getIdFromSearchTerm()) {
-                $query->where('money_requests.id', $id);
-            } else {
-                $query->where(function (Builder $query) use ($term): void {
-                    $query->whereAny([
-                        'users.name',
-                        'cost_centers.name',
-                        'companies.name',
-                        'cost_centers.description',
-                        'money_requests.payee',
-                        'types.name',
-                        'money_requests.concept',
-                    ], 'like', "%$term%");
-                });
-            }
-        }
+        $query->whereNotIn('money_requests.status', self::EXCLUDED);
 
         $query->when($filtersBag->filled('payMethod'),
-            fn () => $query->where('money_requests.is_transfer', $filtersBag->boolean('payMethod'))
+            fn () => $query->where('money_requests.is_transfer', true)
         )
+            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
+                $query->whereHas('favoriters', function ($q) {
+                    $q->where('user_id', Auth::id());
+                });
+            })
             ->when($filtersBag->filled('type'),
                 fn () => $query->where('money_requests.type_id', $filtersBag->string('type'))
             )
@@ -171,6 +149,24 @@ class RequestsTable extends Component
             ->when($filtersBag->filled('maxDate'),
                 fn () => $query->where('money_requests.created_at', '<=', $filtersBag->string('maxDate'))
             );
+
+        if ($term = $this->searchTerm) {
+            if ($id = $this->getIdFromSearchTerm()) {
+                $query->where('money_requests.id', $id);
+            } else {
+                $query->where(function (Builder $query) use ($term): void {
+                    $query->whereAny([
+                        'users.name',
+                        'cost_centers.name',
+                        'companies.name',
+                        'cost_centers.description',
+                        'money_requests.payee',
+                        'types.name',
+                        'money_requests.concept',
+                    ], 'like', "%$term%");
+                });
+            }
+        }
 
         if ($this->sortColumn === 'status') {
             $cases = collect(MoneyRequestStatus::cases())
@@ -197,19 +193,6 @@ class RequestsTable extends Component
         $query->orderBy($column, $this->sortDirection);
 
         return $query;
-    }
-
-    public function export(): ?BinaryFileResponse
-    {
-        $query = $this->getQuery()->forPage($this->page, $this->perPage);
-
-        if (! $query->exists()) {
-            $this->toastWarning('No hay nada para exportar');
-
-            return null;
-        }
-
-        return Excel::download(new MoneyRequestsExport($query), 'Solicitudes.xlsx');
     }
 
     private function getIdFromSearchTerm(): ?int

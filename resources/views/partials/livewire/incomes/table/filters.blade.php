@@ -59,6 +59,16 @@
         <input type="date" class="form-control" wire:model.live="filters.maxDate" />
     </div>
 
+    @php
+        $onlyFavorites = $filters['onlyFavorites'];
+    @endphp
+
+    <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">
+        <x-livewire.loading-button theme="{{ $onlyFavorites ? 'primary' : 'outline-primary' }}" class="w-100 mt-2"
+            icon="star" icon-solid="{{ $onlyFavorites }}" wire:click="toggleOnlyFavoritesFilter"
+            wire:target="toggleOnlyFavoritesFilter" label="Mis favoritos" title="{{ $onlyFavorites }}" />
+    </div>
+
     <div class="form-group col-md-2 col-6 mb-0 d-flex align-items-end">
         <x-livewire.loading-button theme="outline-info" class="w-100 mt-2" wire:click="resetFilters"
             wire:target='resetFilters' label="Restablecer Filtros" icon="rotate-left" />

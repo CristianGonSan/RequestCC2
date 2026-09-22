@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
 
 /**
  * @property int $id
@@ -40,6 +41,10 @@ use Illuminate\Support\Facades\Auth;
  * @property bool $is_transfer
  * @property int $edit_count
  * @property-read CostCenter|null $costCenter
+ * @property-read Collection<int, User> $favoriters
+ * @property-read int|null $favoriters_count
+ * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
+ * @property-read int|null $favorites_count
  * @property-read Collection<int, \App\Models\MoneyRequests\FileManagement> $files
  * @property-read int|null $files_count
  * @property-read string $amount_formatted
@@ -83,7 +88,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class MoneyRequest extends Model
 {
-    use CurrencyToWords, HasFactory, TruncateText;
+    use CurrencyToWords, HasFactory, TruncateText, Favoriteable;
 
     protected $fillable = [
         'user_id',

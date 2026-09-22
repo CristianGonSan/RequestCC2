@@ -21,6 +21,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Overtrue\LaravelFavorite\Traits\Favoriter;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
@@ -38,6 +39,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property array<array-key, mixed>|null $allowed_types
  * @property-read Collection<int, Company> $companies
  * @property-read int|null $companies_count
+ * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
+ * @property-read int|null $favorites_count
  * @property-read Collection<int, FileManagement> $files
  * @property-read int|null $files_count
  * @property-read Collection<int, MaterialRequest> $materialRequests
@@ -76,7 +79,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasActiveState, HasFactory, HasRoles, Notifiable;
+    use HasActiveState, HasFactory, HasRoles, Notifiable, Favoriter;
 
     protected $fillable = [
         'name',

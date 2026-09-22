@@ -20,14 +20,7 @@
                 </dl>
             </div>
 
-            <div class="col-md-6 order-1 order-md-2">
-                <dl class="row mb-2">
-                    <dt class="col-md-4 text-muted">Solicitado el</dt>
-                    <dd class="col-md-8 mb-0">{{ $moneyRequest->created_at->format('d/m/Y h:i a') }}</dd>
-                </dl>
-            </div>
-
-            <div class="col-md-6 order-3 order-md-3">
+            <div class="col-md-6 order-3 order-md-2">
                 <dl class="row mb-2">
                     <dt class="col-6 col-md-4 text-muted">Método de pago</dt>
                     <dd class="col-6 col-md-8 mb-0">
@@ -35,6 +28,20 @@
                             {{ $moneyRequest->payment_method }}
                         </span>
                     </dd>
+                </dl>
+            </div>
+
+            <div class="col-md-6 order-1 order-md-3">
+                <dl class="row mb-2">
+                    <dt class="col-md-4 text-muted">Pagado el</dt>
+                    <dd class="col-md-8 mb-0">{{ $moneyRequest->paid_at?->format('d/m/Y h:i a') ?? '--/--/---- --:-- --' }}</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-6 order-1 order-md-3">
+                <dl class="row mb-2">
+                    <dt class="col-md-4 text-muted">Solicitado el</dt>
+                    <dd class="col-md-8 mb-0">{{ $moneyRequest->created_at->format('d/m/Y h:i a') }}</dd>
                 </dl>
             </div>
 
