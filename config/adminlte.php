@@ -311,16 +311,17 @@ return [
             'topnav_right' => true,
         ],
 
-        // --- Uso general (todos los usuarios) ---
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
+
         [
             'text'  => 'dashboard',
             'route' => 'dashboard',
             'icon'  => 'fas fa-fw fa-home',
         ],
+        ['header' => 'section_movements'],
         [
             'text'    => 'request',
             'icon'    => 'fas fa-fw fa-square-plus',
@@ -339,25 +340,9 @@ return [
         ],
         [
             'text'  => 'incomes',
-            'route' => 'incomes.index',
             'icon'  => 'fas fa-fw fa-money-bill-trend-up',
+            'route' => 'incomes.index',
             'can'   => 'manage_incomes',
-        ],
-        [
-            'text'  => 'balance',
-            'route' => 'balance.index',
-            'icon'  => 'fas fa-fw fa-chart-pie',
-            'can'   => 'view_summary',
-        ],
-        [
-            'text'  => 'info',
-            'route' => 'info',
-            'icon'  => 'far fa-fw fa-question-circle',
-        ],
-        [
-            'text'  => 'my_account',
-            'icon'  => 'fas fa-fw fa-user-gear',
-            'route' => 'account',
         ],
 
         ['header' => 'section_my_requests'],
@@ -409,59 +394,11 @@ return [
                 ],
             ],
         ],
-        ['header' => 'section_catalogs'],
+
+        ['header' => 'section_reports'],
         [
-            'text'  => 'types',
-            'icon'  => 'fas fa-fw fa-clipboard-list',
-            'route' => 'types.index',
-            'can'   => 'manage_types',
-        ],
-        [
-            'text'  => 'companies',
-            'icon'  => 'fas fa-fw fa-building',
-            'route' => 'companies.index',
-            'can'   => 'manage_companies',
-        ],
-        [
-            'text'  => 'cost_centers',
-            'icon'  => 'fas fa-fw fa-coins',
-            'route' => 'cost-centers.index',
-            'can'   => 'manage_cost_centers',
-        ],
-        [
-            'text'  => 'units',
-            'icon'  => 'fas fa-fw fa-ruler',
-            'route' => 'units.index',
-            'can'   => 'manage_units',
-        ],
-        [
-            'text'  => 'materials',
-            'icon'  => 'fas fa-fw fa-boxes-stacked',
-            'route' => 'materials.index',
-            'can'   => 'manage_materials',
-        ],
-        ['header' => 'section_administration'],
-        [
-            'text'    => 'user_management',
-            'icon'    => 'fas fa-fw fa-address-card',
-            'submenu' => [
-                [
-                    'text'  => 'users',
-                    'icon'  => 'fas fa-fw fa-users',
-                    'route' => 'users.index',
-                    'can'   => 'manage_users',
-                ],
-                [
-                    'text'  => 'roles',
-                    'icon'  => 'fas fa-fw fa-user-tag',
-                    'route' => 'roles.index',
-                    'can'   => 'manage_roles',
-                ],
-            ],
-        ],
-        [
-            'text'  => 'summary',
-            'route' => 'reports.index',
+            'text'  => 'balance',
+            'route' => 'balance.index',
             'icon'  => 'fas fa-fw fa-chart-pie',
             'can'   => 'view_summary',
         ],
@@ -483,6 +420,64 @@ return [
                 ],
             ],
         ],
+
+        ['header' => 'section_catalogs'],
+        [
+            'text'    => 'catalogs',
+            'icon'    => 'fas fa-fw fa-book',
+            'submenu' => [
+                [
+                    'text'  => 'types',
+                    'icon'  => 'fas fa-fw fa-clipboard-list',
+                    'route' => 'types.index',
+                    'can'   => 'manage_types',
+                ],
+                [
+                    'text'  => 'companies',
+                    'icon'  => 'fas fa-fw fa-building',
+                    'route' => 'companies.index',
+                    'can'   => 'manage_companies',
+                ],
+                [
+                    'text'  => 'cost_centers',
+                    'icon'  => 'fas fa-fw fa-coins',
+                    'route' => 'cost-centers.index',
+                    'can'   => 'manage_cost_centers',
+                ],
+                [
+                    'text'  => 'units',
+                    'icon'  => 'fas fa-fw fa-ruler',
+                    'route' => 'units.index',
+                    'can'   => 'manage_units',
+                ],
+                [
+                    'text'  => 'materials',
+                    'icon'  => 'fas fa-fw fa-boxes-stacked',
+                    'route' => 'materials.index',
+                    'can'   => 'manage_materials',
+                ],
+            ],
+        ],
+
+        ['header' => 'section_administration'],
+        [
+            'text'    => 'user_management',
+            'icon'    => 'fas fa-fw fa-address-card',
+            'submenu' => [
+                [
+                    'text'  => 'users',
+                    'icon'  => 'fas fa-fw fa-users',
+                    'route' => 'users.index',
+                    'can'   => 'manage_users',
+                ],
+                [
+                    'text'  => 'roles',
+                    'icon'  => 'fas fa-fw fa-user-tag',
+                    'route' => 'roles.index',
+                    'can'   => 'manage_roles',
+                ],
+            ],
+        ],
         [
             'text'    => 'config',
             'icon'    => 'fas fa-fw fa-cog',
@@ -495,8 +490,19 @@ return [
                 ],
             ],
         ],
-    ],
 
+        ['header' => 'section_account'],
+        [
+            'text'  => 'my_account',
+            'icon'  => 'fas fa-fw fa-user-gear',
+            'route' => 'account',
+        ],
+        [
+            'text'  => 'info',
+            'route' => 'info',
+            'icon'  => 'far fa-fw fa-question-circle',
+        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Menu Filters

@@ -67,4 +67,8 @@ return [
     'section_requests_management' => 'Gestión de solicitudes',
     'section_catalogs'            => 'Catálogos',
     'section_administration'      => 'Administración',
+    'section_finance_reports'     => 'Finanzas y reportes',
+    'section_account'             => 'Cuenta',
+    'section_movements'           => 'Movimientos',
+    'section_reports'             => 'Reportes',
 ];

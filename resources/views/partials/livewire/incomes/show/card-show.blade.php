@@ -9,14 +9,14 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6 order-1">
+            <div class="col-md-6 order-md-2 order-1">
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Fecha</dt>
                     <dd class="col-md-8 mb-0">{{ $income->income_date->format('d/m/Y') }}</dd>
                 </dl>
             </div>
 
-            <div class="col-md-6 order-2">
+            <div class="col-md-6 order-md-1 order-2">
                 <dl class="row mb-2">
                     <dt class="col-6 col-md-4 text-muted">Método de pago</dt>
                     <dd class="col-6 col-md-8 mb-0">
