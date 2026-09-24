@@ -39,6 +39,10 @@ class ExportMoneyRequestsController extends Controller
         $query = MoneyRequest::with(['user', 'type', 'costCenter']);
 
         $query
+            ->when($request->filled('paid_at_start'),
+                fn (Builder $q) => $q->whereDate('paid_at', '>=', $request->date('paid_at_start')))
+            ->when($request->filled('paid_at_end'),
+                fn (Builder $q) => $q->whereDate('paid_at', '<=', $request->date('paid_at_end')))
             ->when($request->filled('created_at_start'),
                 fn (Builder $q) => $q->whereDate('created_at', '>=', $request->date('created_at_start')))
             ->when($request->filled('created_at_end'),

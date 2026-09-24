@@ -35,6 +35,17 @@
                         <h2 class="card-title">Filtros</h2>
                     </div>
                     <div class="card-body">
+                        <!-- Fecha de Pagado -->
+                        <div class="form-row">
+                            <div class="col-12 mb-2">Filtrar por fecha de pagado</div>
+                            <x-adminlte-input fgroup-class="col-6" type="date" name="paid_at_start" label="Desde"
+                                enable-old-support />
+                            <x-adminlte-input fgroup-class="col-6" type="date" name="paid_at_end" label="Hasta"
+                                enable-old-support />
+                        </div>
+
+                        <hr class="my-3">
+
                         <!-- Fecha de Creación -->
                         <div class="form-row">
                             <div class="col-12 mb-2">Filtrar por fecha de creación</div>
@@ -61,11 +72,12 @@
                         <div class="form-row">
                             <x-adminlte-select fgroup-class="col-md-6" id="orderBy" name="orderBy" class="custom-select"
                                 label="Ordenar Por">
-                                <option value="created_at">Ordenar por Fecha de Creación</option>
-                                <option value="updated_at">Ordenar por Fecha de Actualización</option>
-                                <option value="cost_center">Ordenar por Centros de Costos</option>
-                                <option value="amount">Ordenar por Importe</option>
-                                <option value="id">Ordenar por ID</option>
+                                <option value="created_at">Fecha de Creación</option>
+                                <option value="cpaid_at">Fecha de Pagado</option>
+                                <option value="updated_at">Fecha de Actualización</option>
+                                <option value="cost_center">Centros de Costos</option>
+                                <option value="amount">Importe</option>
+                                <option value="id">ID</option>
                             </x-adminlte-select>
 
                             <x-adminlte-select fgroup-class="col-md-6" id="orderDirection" name="orderDirection"

@@ -12,6 +12,10 @@ class MoneyRequestsExport extends QueryExport
             'id' => [
                 'header' => 'id',
             ],
+            'paid_at' => [
+                'header' => 'Pagado el',
+                'format' => fn (MoneyRequest $item) => $item->paid_at?->format('Y-m-d h:i:s a') ?? null,
+            ],
             'created_at' => [
                 'header' => 'Creado el',
                 'format' => fn (MoneyRequest $item) => $item->created_at->format('Y-m-d h:i:s a'),
