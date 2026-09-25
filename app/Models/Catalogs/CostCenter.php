@@ -2,6 +2,8 @@
 
 namespace App\Models\Catalogs;
 
+use App\Models\Incomes\Income;
+use App\Models\MaterialRequests\MaterialRequest;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\Models\HasActiveState;
 use App\Traits\Models\TruncateText;
@@ -13,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
-
 /**
  * @property int $id
  * @property int|null $company_id
@@ -23,6 +24,10 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\Catalogs\Company|null $company
+ * @property-read Collection<int, Income> $incomes
+ * @property-read int|null $incomes_count
+ * @property-read Collection<int, MaterialRequest> $materialRequests
+ * @property-read int|null $material_requests_count
  * @property-read Collection<int, MoneyRequest> $moneyRequests
  * @property-read int|null $money_requests_count
  * @method static Builder<static>|CostCenter active()
@@ -58,7 +63,7 @@ class CostCenter extends Model
 
     public function isInUse(): bool
     {
-        return $this->moneyRequests()->exists();
+        return $this->moneyRequests()->exists() || $this->materialRequests()->exists() || $this->incomes()->exists();
     }
 
     public function company(): BelongsTo
@@ -68,6 +73,16 @@ class CostCenter extends Model
 
     public function moneyRequests(): HasMany
     {
-        return $this->hasMany(MoneyRequest::class, 'cost_center_id', 'id');
+        return $this->hasMany(MoneyRequest::class);
+    }
+
+    public function materialRequests(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class);
+    }
+
+    public function incomes(): HasMany
+    {
+        return $this->hasMany(Income::class);
     }
 }

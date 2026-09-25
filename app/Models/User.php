@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Catalogs\Company;
 use App\Models\Catalogs\Type;
+use App\Models\Incomes\Income;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Models\MoneyRequests\FileManagement;
 use App\Models\MoneyRequests\MoneyRequest;
@@ -25,6 +26,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriter;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use Overtrue\LaravelFavorite\Favorite;
 
 /**
  * @property int $id
@@ -39,10 +41,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property array<array-key, mixed>|null $allowed_types
  * @property-read Collection<int, Company> $companies
  * @property-read int|null $companies_count
- * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
+ * @property-read Collection<int, Favorite> $favorites
  * @property-read int|null $favorites_count
  * @property-read Collection<int, FileManagement> $files
  * @property-read int|null $files_count
+ * @property-read bool $is_in_use
+ * @property-read Collection<int, Income> $incomes
+ * @property-read int|null $incomes_count
  * @property-read Collection<int, MaterialRequest> $materialRequests
  * @property-read int|null $material_requests_count
  * @property-read Collection<int, MoneyRequest> $moneyRequests
@@ -79,7 +84,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasActiveState, HasFactory, HasRoles, Notifiable, Favoriter;
+    use Favoriter, HasActiveState, HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name',
@@ -101,9 +106,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active'         => 'boolean',
     ];
 
+    public function getIsInUseAttribute(): bool
+    {
+        return $this->isInUse();
+    }
+
     public function isInUse(): bool
     {
-        return $this->moneyRequests()->exists() || $this->materialRequests()->exists();
+        return $this->moneyRequests()->exists() || $this->materialRequests()->exists() || $this->incomes()->exists();
     }
 
     public function typeOptions(bool $onlyActive = true): array
@@ -125,6 +135,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function materialRequests(): HasMany
     {
         return $this->hasMany(MaterialRequest::class);
+    }
+
+    public function incomes(): HasMany
+    {
+        return $this->hasMany(Income::class);
     }
 
     public function files(): HasMany

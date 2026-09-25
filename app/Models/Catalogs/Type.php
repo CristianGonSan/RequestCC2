@@ -2,6 +2,8 @@
 
 namespace App\Models\Catalogs;
 
+use App\Models\Incomes\Income;
+use App\Models\MaterialRequests\MaterialRequest;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\User;
 use App\Traits\Models\HasActiveState;
@@ -11,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -18,11 +22,16 @@ use Illuminate\Support\Facades\Auth;
  * @property string|null $description
  * @property string|null $key
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, MoneyRequest> $moneyRequests
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read bool $is_in_use
+ * @property-read Collection<int, Income> $incomes
+ * @property-read int|null $incomes_count
+ * @property-read Collection<int, MaterialRequest> $materialRequests
+ * @property-read int|null $material_requests_count
+ * @property-read Collection<int, MoneyRequest> $moneyRequests
  * @property-read int|null $money_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Type active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Type inactive()
@@ -53,9 +62,14 @@ class Type extends Model
         'is_active' => 'boolean',
     ];
 
+    public function getIsInUseAttribute(): bool
+    {
+        return $this->isInUse();
+    }
+
     public function isInUse(): bool
     {
-        return $this->moneyRequests()->exists();
+        return $this->moneyRequests()->exists() || $this->materialRequests()->exists() || $this->incomes()->exists();
     }
 
     public function users(): BelongsToMany
@@ -65,7 +79,17 @@ class Type extends Model
 
     public function moneyRequests(): HasMany
     {
-        return $this->hasMany(MoneyRequest::class, 'type_id');
+        return $this->hasMany(MoneyRequest::class);
+    }
+
+    public function materialRequests(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class);
+    }
+
+    public function incomes(): HasMany
+    {
+        return $this->hasMany(Income::class);
     }
 
     public static function options(bool $onlyActive = true): array
