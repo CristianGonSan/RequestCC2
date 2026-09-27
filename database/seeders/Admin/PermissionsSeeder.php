@@ -46,16 +46,5 @@ class PermissionsSeeder extends Seeder
         );
 
         $role->givePermissionTo(Permission::all());
-
-        $user = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
-            [
-                'name' => 'Administrador',
-                'email' => 'admin@gmail.com',
-                'password' => bcrypt('123456788'),
-            ]
-        );
-
-        $user->assignRole($role);
     }
 }

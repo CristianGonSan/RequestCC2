@@ -36,7 +36,7 @@ class PermissionNamesSeeder extends Seeder
 
         DB::transaction(function () use (&$updated, &$skipped, &$notFound) {
             foreach ($this->replacements as $oldName => $newName) {
-                $permission = Permission::where('name', $oldName)->first();
+                $permission = Permission::findByName($oldName);
 
                 if (! $permission) {
                     $notFound[] = $oldName;

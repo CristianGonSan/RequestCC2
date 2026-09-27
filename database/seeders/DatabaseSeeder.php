@@ -6,6 +6,7 @@ use App\Models\Catalogs\Material;
 use App\Models\Catalogs\Unit;
 use App\Models\Incomes\Income;
 use App\Models\MoneyRequests\MoneyRequest;
+use Database\Seeders\Admin\PermissionNamesSeeder;
 use Database\Seeders\Admin\PermissionsSeeder;
 use Database\Seeders\Catalogs\CostCentersSeeder;
 use Database\Seeders\Catalogs\TypeSeeder;
@@ -25,6 +26,12 @@ class DatabaseSeeder extends Seeder
         //MoneyRequest::factory()->count(1000)->create();
         //MoneyRequest::factory()->count(1000)->transfer()->create();
 
-        Material::factory()->count(50)->create();
+        //Material::factory()->count(50)->create();
+
+        $this->call([
+            UnitSeeder::class,
+            PermissionNamesSeeder::class,
+            PermissionsSeeder::class
+        ]);
     }
 }
