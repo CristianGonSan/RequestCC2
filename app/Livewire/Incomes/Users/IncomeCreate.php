@@ -112,7 +112,6 @@ class IncomeCreate extends Component
                 'type_id',
                 'payee',
                 'amount',
-                'is_transfer',
                 'bank',
                 'card',
                 'account',
