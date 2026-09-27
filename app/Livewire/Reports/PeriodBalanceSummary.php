@@ -32,7 +32,7 @@ class PeriodBalanceSummary extends Component
     public string $sortColumn = 'balance';
 
     #[Session]
-    public string $sortDirection = 'desc';
+    public string $sortDirection = 'asc';
 
     public float $totalExpense = 0;
 
@@ -122,7 +122,7 @@ class PeriodBalanceSummary extends Component
 
         $this->margin = $this->totalIncome > 0
             ? ($this->balance / $this->totalIncome) * 100
-            : 0;
+            : 100;
     }
 
     private function dispatchExpenseChart(): void
