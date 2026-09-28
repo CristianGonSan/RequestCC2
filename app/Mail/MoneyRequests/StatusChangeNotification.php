@@ -24,7 +24,7 @@ class StatusChangeNotification extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        $id = $this->moneyRequest->id;
+        $id     = $this->moneyRequest->id;
         $status = $this->moneyRequest->status->label();
 
         return new Envelope(
@@ -35,7 +35,7 @@ class StatusChangeNotification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mails.requests.status_change',
+            markdown: 'mails.money_requests.status_change',
             with: [
                 'request' => $this->moneyRequest,
             ],

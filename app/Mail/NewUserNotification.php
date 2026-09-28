@@ -32,7 +32,7 @@ class NewUserNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mails.requests.new_user',
+            markdown: 'mails.money_requests.new_user',
             with: ['user' => $this->user, 'password' => $this->password]
         );
     }

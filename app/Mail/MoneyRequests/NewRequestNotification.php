@@ -32,7 +32,7 @@ class NewRequestNotification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mails.requests.new_request',
+            markdown: 'mails.money_requests.new_request',
             with: [
                 'request' => $this->moneyRequest,
             ],
