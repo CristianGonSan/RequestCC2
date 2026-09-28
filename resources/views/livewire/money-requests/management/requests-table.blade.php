@@ -40,19 +40,19 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     @if ($status->canChangeTo(Status::Accepted))
-                                        <button class="dropdown-item" wire:click="acceptRequest"
+                                        <button class="dropdown-item" wire:click="acceptRequest({{ $moneyRequest->id }})"
                                             wire:swal-confirm="¿Está seguro de aceptar esta solicitud?">
                                             Aceptar
                                         </button>
                                     @endif
                                     @if ($status->canChangeTo(Status::Rejected))
-                                        <button class="dropdown-item" wire:click="rejectRequest"
+                                        <button class="dropdown-item" wire:click="rejectRequest({{ $moneyRequest->id }})"
                                             wire:swal-confirm="¿Está seguro de rechazar esta solicitud?">
                                             Rechazar
                                         </button>
                                     @endif
                                     @if ($status->canChangeTo(Status::Pending))
-                                        <button class="dropdown-item" wire:click="markAsPending"
+                                        <button class="dropdown-item" wire:click="markAsPending({{ $moneyRequest->id }})"
                                             wire:swal-confirm="¿Está seguro de pasar a pendiente esta solicitud?">
                                             Pendiente
                                         </button>
@@ -60,13 +60,13 @@
                                     @unless ($moneyRequest->is_transfer)
                                         <div class="dropdown-divider"></div>
                                         @if ($status->canChangeTo(Status::Paid))
-                                            <button class="dropdown-item" wire:click="markAsPaid"
+                                            <button class="dropdown-item" wire:click="markAsPaid({{ $moneyRequest->id }})"
                                                 wire:swal-confirm="¿Está seguro de pagar esta solicitud?">
                                                 Pagadar
                                             </button>
                                         @endif
                                         @if ($status->canChangeTo(Status::Cancelled))
-                                            <button class="dropdown-item" wire:click="cancelRequest"
+                                            <button class="dropdown-item" wire:click="cancelRequest({{ $moneyRequest->id }})"
                                                 wire:swal-confirm="¿Está seguro de cancelar esta solicitud?">
                                                 Cancelar
                                             </button>
