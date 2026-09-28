@@ -62,7 +62,7 @@
                                         @if ($status->canChangeTo(Status::Paid))
                                             <button class="dropdown-item" wire:click="markAsPaid({{ $moneyRequest->id }})"
                                                 wire:swal-confirm="¿Está seguro de pagar esta solicitud?">
-                                                Pagadar
+                                                Pagar
                                             </button>
                                         @endif
                                         @if ($status->canChangeTo(Status::Cancelled))
