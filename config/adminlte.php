@@ -202,13 +202,13 @@ return [
     'classes_brand'            => '',
     'classes_brand_text'       => '',
     'classes_content_wrapper'  => '',
-    'classes_content_header'   => 'container',
-    'classes_content'          => 'container',
+    'classes_content_header'   => 'container-fluid px-1 px-md-4 px-lg-5',
+    'classes_content'          => 'container-fluid px-1 px-md-4 px-lg-5',
     'classes_sidebar'          => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav'      => '',
     'classes_topnav'           => 'navbar-dark navbar-light',
     'classes_topnav_nav'       => 'navbar-expand',
-    'classes_topnav_container' => 'container',
+    'classes_topnav_container' => 'container-fluid px-1 px-md-4 px-lg-5',
 
     /*
     |--------------------------------------------------------------------------
