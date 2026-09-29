@@ -27,8 +27,8 @@
             <tr>
                 <th class="text-right w-25">Ingresos Totales</th>
                 <th class="text-right w-25">Gastos Totales</th>
-                <th class="text-right w-25">Balance {{ $balance >= 0 ? 'positivo' : 'negativo' }}"</th>
-                <th class="text-right w-25">Margen de {{ $balance >= 0 ? 'ganancias' : 'perdidas' }}"</th>
+                <th class="text-right w-25">Balance {{ $balance >= 0 ? 'positivo' : 'negativo' }}</th>
+                <th class="text-right w-25">Margen de {{ $balance >= 0 ? 'ganancias' : 'perdidas' }}</th>
             </tr>
         </thead>
         <tbody>
