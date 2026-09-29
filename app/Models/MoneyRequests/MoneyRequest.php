@@ -113,7 +113,7 @@ class MoneyRequest extends Model
         'amount'      => 'decimal:2',
         'status'      => MoneyRequestStatus::class,
         'is_transfer' => 'boolean',
-        'paid_at'     => 'date',
+        'paid_at'     => 'datetime',
     ];
 
     public function user(): BelongsTo
