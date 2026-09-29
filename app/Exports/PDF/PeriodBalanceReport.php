@@ -38,7 +38,7 @@ class PeriodBalanceReport
         $balance = $totalIncome - $totalExpense;
         $margin  = $totalIncome > 0
             ? ($balance / $totalIncome) * 100
-            : 0;
+            : 100;
 
         $logoPath   = public_path('img/logos/codias.png');
         $logoBase64 = 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath));
