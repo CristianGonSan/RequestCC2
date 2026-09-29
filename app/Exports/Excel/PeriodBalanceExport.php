@@ -59,7 +59,7 @@ class PeriodBalanceExport implements FromQuery, WithColumnFormatting, WithColumn
     public function columnWidths(): array
     {
         return [
-            'A' => 16,
+            'A' => 32,
             'B' => 16,
             'C' => 16,
             'D' => 16,

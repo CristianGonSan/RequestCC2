@@ -44,7 +44,7 @@ enum MoneyRequestStatus: string
             self::Rejected->value => [
                 self::Pending, self::Accepted,
             ],
-            self::Paid->value      => [self::Cancelled],
+            self::Paid->value      => [self::Pending, self::Cancelled],
             self::Cancelled->value => [],
         ];
 
