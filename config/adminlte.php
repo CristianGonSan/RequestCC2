@@ -327,7 +327,7 @@ return [
             'icon'    => 'fas fa-fw fa-square-plus',
             'submenu' => [
                 [
-                    'text'  => 'money',
+                    'text'  => 'resource',
                     'icon'  => 'fas fa-fw fa-money-bill-wave',
                     'route' => 'money-requests.create',
                 ],
@@ -347,7 +347,7 @@ return [
 
         ['header' => 'section_my_requests'],
         [
-            'text'  => 'money',
+            'text'  => 'resource',
             'icon'  => 'fas fa-fw fa-money-bill-wave',
             'route' => 'money-requests.index',
         ],
@@ -359,7 +359,7 @@ return [
 
         ['header' => 'section_requests_management'],
         [
-            'text'    => 'money',
+            'text'    => 'resource',
             'icon'    => 'fas fa-fw fa-money-bill-wave',
             'submenu' => [
                 [

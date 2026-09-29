@@ -54,6 +54,7 @@ return [
     'units'           => 'Unidades',
     'materials'       => 'Materiales',
     'money'           => 'Dinero',
+    'resource'        => 'Recurso',
     'material'        => 'Material',
     'request'         => 'Solicitar',
     'monetary'        => 'Monetarias',
