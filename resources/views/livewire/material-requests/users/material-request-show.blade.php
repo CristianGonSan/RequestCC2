@@ -7,6 +7,10 @@
     @include('partials.livewire.material-requests.show.card-show')
 
     <div class="my-3">
+        <x-livewire.loading-button label="{{ $hasFavorited ? 'Quitar favorito' : 'Añadir favorito' }}"
+            theme="outline-primary" class="mr-1" icon="star" icon-solid="{{ $hasFavorited }}"
+            wire:click="toggleFavorite" wire:target="toggleFavorite" />
+
         @if ($status->isPending())
             <a href="{{ route('material-requests.edit', $materialRequest->id) }}" class="btn btn-outline-primary mr-1">
                 <i class="fas fa-fw fa-edit mr-1"></i> Editar

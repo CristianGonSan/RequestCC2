@@ -6,6 +6,7 @@ use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -26,6 +27,7 @@ class MaterialRequestShow extends Component
     {
         return view('livewire.material-requests.management.material-request-show', [
             'materialRequest' => $this->materialRequest(),
+            'hasFavorited'    => Auth::user()->hasFavorited($this->materialRequest()),
         ]);
     }
 
@@ -68,6 +70,18 @@ class MaterialRequestShow extends Component
         $materialRequest->save();
 
         $this->toastSuccess("Solicitud marcada como {$status->label()}.");
+    }
+
+    public function toggleFavorite(): void
+    {
+        $model = $this->materialRequest();
+        $user  = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($model);
+
+        $user->toggleFavorite($model);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     private ?MaterialRequest $materialRequest = null;

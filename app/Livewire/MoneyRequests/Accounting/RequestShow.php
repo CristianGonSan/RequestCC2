@@ -7,6 +7,7 @@ use App\Services\Mails\MailManager;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -27,6 +28,7 @@ class RequestShow extends Component
     {
         return view('livewire.money-requests.accounting.request-show', [
             'moneyRequest' => $this->moneyRequest(),
+            'hasFavorited' => Auth::user()->hasFavorited($this->moneyRequest()),
         ]);
     }
 
@@ -55,6 +57,18 @@ class RequestShow extends Component
         MailManager::sendStatusChangeNotification($moneyRequest);
 
         $this->toastSuccess("Solicitud marcada como {$status->label()}.");
+    }
+
+    public function toggleFavorite(): void
+    {
+        $model = $this->moneyRequest();
+        $user  = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($model);
+
+        $user->toggleFavorite($model);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     private ?MoneyRequest $moneyRequest = null;

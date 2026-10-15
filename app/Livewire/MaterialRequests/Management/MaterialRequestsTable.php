@@ -6,17 +6,16 @@ use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\Catalogs\Type;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Support\DataBag;
+use App\Traits\Livewire\Tables\HasFavorites;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
-use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 
 class MaterialRequestsTable extends Component
 {
-    use HasLivewireTableBehavior, Toast;
+    use HasFavorites, HasLivewireTableBehavior;
 
     #[Session]
     public string $searchTerm = '';
@@ -44,16 +43,11 @@ class MaterialRequestsTable extends Component
         'onlyFavorites' => false,
     ];
 
-    public function mount(): void
-    {
-        $this->setPage($this->page);
-    }
-
     public function render(): View
     {
         $materialRequests = $this->getQuery()->paginate($this->perPage);
 
-        Auth::user()->attachFavoriteStatus($materialRequests);
+        $this->attachFavoriteStatus($materialRequests);
 
         return view('livewire.material-requests.management.material-requests-table', [
             'materialRequests' => $materialRequests,
@@ -62,22 +56,9 @@ class MaterialRequestsTable extends Component
         ]);
     }
 
-    public function toggleOnlyFavoritesFilter(): void
+    protected function favoritableModel(): string
     {
-        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
-        $this->setPage(1);
-    }
-
-    public function toggleFavorite(int $id): void
-    {
-        $moneyRequest = MaterialRequest::findOrFail($id);
-        $user         = Auth::user();
-
-        $wasFavorited = $user->hasFavorited($moneyRequest);
-
-        $user->toggleFavorite($moneyRequest);
-
-        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
+        return MaterialRequest::class;
     }
 
     private function getQuery(): Builder
@@ -104,11 +85,9 @@ class MaterialRequestsTable extends Component
         $query->when($filtersBag->filled('type'),
             fn () => $query->where('material_requests.type_id', $filtersBag->string('type'))
         )
-            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
-                $query->whereHas('favoriters', function ($q) {
-                    $q->where('user_id', Auth::id());
-                });
-            })
+            ->when($filtersBag->boolean('onlyFavorites'),
+                fn () => $this->applyFavoritesFilter($query)
+            )
             ->when($filtersBag->filled('status'),
                 fn () => $query->where('material_requests.status', $filtersBag->string('status'))
             )

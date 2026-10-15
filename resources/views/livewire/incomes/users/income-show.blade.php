@@ -6,6 +6,10 @@
     @include('partials.livewire.incomes.show.card-show')
 
     <div class="my-3">
+        <x-livewire.loading-button label="{{ $hasFavorited ? 'Quitar favorito' : 'Añadir favorito' }}"
+            theme="outline-primary" class="mr-1" icon="star" icon-solid="{{ $hasFavorited }}"
+            wire:click="toggleFavorite" wire:target="toggleFavorite" />
+
         <a href="{{ route('incomes.create', ['copy' => $income->id]) }}" class="btn btn-outline-info mr-1">
             <i class="fas fa-fw fa-copy mr-1"></i> Crear Copia
         </a>

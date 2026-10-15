@@ -10,6 +10,11 @@ trait HasLivewireTableBehavior
 {
     use WithoutUrlPagination, WithPagination, WithTableSorting;
 
+    public function mount(): void
+    {
+        $this->setPage($this->page);
+    }
+
     public function search(): void
     {
         $this->resetPage();

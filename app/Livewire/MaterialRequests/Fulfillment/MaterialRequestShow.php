@@ -8,6 +8,7 @@ use App\Models\MaterialRequests\MaterialRequestFulfillment;
 use App\Models\MaterialRequests\MaterialRequestItem;
 use App\Traits\SweetAlert2\FlashToast;
 use App\Traits\SweetAlert2\Livewire\Toast;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -35,6 +36,7 @@ class MaterialRequestShow extends Component
         return view('livewire.material-requests.fulfillment.material-request-show', [
             'materialRequest' => $this->materialRequest(),
             'fulfillingItem'  => $this->fulfillingItem(),
+            'hasFavorited'    => Auth::user()->hasFavorited($this->materialRequest()),
         ]);
     }
 
@@ -135,6 +137,18 @@ class MaterialRequestShow extends Component
         }
 
         return $this->materialRequest()->items()->findOrFail($this->fulfillingItemId);
+    }
+
+    public function toggleFavorite(): void
+    {
+        $model = $this->materialRequest();
+        $user  = Auth::user();
+
+        $wasFavorited = $user->hasFavorited($model);
+
+        $user->toggleFavorite($model);
+
+        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
     }
 
     private ?MaterialRequest $materialRequest = null;

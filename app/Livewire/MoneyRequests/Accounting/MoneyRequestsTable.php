@@ -7,11 +7,10 @@ use App\Exports\Excel\MoneyRequestsExport;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Catalogs\Type;
 use App\Support\DataBag;
+use App\Traits\Livewire\Tables\HasFavorites;
 use App\Traits\Livewire\Tables\HasLivewireTableBehavior;
-use App\Traits\SweetAlert2\Livewire\Toast;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,7 +18,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class MoneyRequestsTable extends Component
 {
-    use HasLivewireTableBehavior, Toast;
+    use HasFavorites, HasLivewireTableBehavior;
 
     #[Session]
     public string $searchTerm = '';
@@ -52,41 +51,22 @@ class MoneyRequestsTable extends Component
         MoneyRequestStatus::Pending, MoneyRequestStatus::Rejected,
     ];
 
-    public function mount(): void
-    {
-        $this->setPage($this->page);
-    }
-
     public function render(): View
     {
         $moneyRequests = $this->getQuery()->paginate($this->perPage);
 
-        Auth::user()->attachFavoriteStatus($moneyRequests);
+        $this->attachFavoriteStatus($moneyRequests);
 
         return view('livewire.money-requests.accounting.requests-table', [
             'moneyRequests' => $moneyRequests,
             'statusOptions' => MoneyRequestStatus::exclude(self::EXCLUDED),
             'typeOptions'   => Type::options(),
         ]);
-
     }
 
-    public function toggleOnlyFavoritesFilter(): void
+    protected function favoritableModel(): string
     {
-        $this->filters['onlyFavorites'] = ! $this->filters['onlyFavorites'];
-        $this->setPage(1);
-    }
-
-    public function toggleFavorite(int $id): void
-    {
-        $moneyRequest = MoneyRequest::findOrFail($id);
-        $user         = Auth::user();
-
-        $wasFavorited = $user->hasFavorited($moneyRequest);
-
-        $user->toggleFavorite($moneyRequest);
-
-        $this->toastSuccess($wasFavorited ? 'Favorito quitado' : 'Favorito añadido');
+        return MoneyRequest::class;
     }
 
     public function export(): ?BinaryFileResponse
@@ -126,11 +106,9 @@ class MoneyRequestsTable extends Component
         $query->when($filtersBag->filled('payMethod'),
             fn () => $query->where('money_requests.is_transfer', true)
         )
-            ->when($filtersBag->boolean('onlyFavorites'), function ($query) {
-                $query->whereHas('favoriters', function ($q) {
-                    $q->where('user_id', Auth::id());
-                });
-            })
+            ->when($filtersBag->boolean('onlyFavorites'),
+                fn () => $this->applyFavoritesFilter($query)
+            )
             ->when($filtersBag->filled('type'),
                 fn () => $query->where('money_requests.type_id', $filtersBag->string('type'))
             )
