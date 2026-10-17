@@ -30,7 +30,7 @@
                     </div>
                 @else
                     <div class="d-flex justify-content-start my-2" wire:key="message-{{ $message->id }}">
-                        <div class="bg-light rounded-lg p-2" style="max-width: 75%">
+                        <div class="bg-light rounded-lg border p-2" style="max-width: 75%">
                             <strong class="d-block text-primary">{{ $message->user->name }}</strong>
                             <div>{{ $message->message }}</div>
                             <small class="d-block text-right text-muted mt-1">
