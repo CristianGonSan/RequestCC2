@@ -20,9 +20,8 @@ class MaterialRequestPolicy
      */
     public function view(User $user, MaterialRequest $materialRequest): bool
     {
-        return $user->id === $materialRequest->user_id || $user->can([
-            'manage_material_requests', 'fulfill_material_requests',
-        ]);
+        return $user->id === $materialRequest->user_id
+            || $user->hasAnyPermission('manage_material_requests', 'fulfill_material_requests');
     }
 
     /**

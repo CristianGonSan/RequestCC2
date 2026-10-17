@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
         //Material::factory()->count(50)->create();
 
         $this->call([
-            UnitSeeder::class,
-            PermissionNamesSeeder::class,
+            //UnitSeeder::class,
+            //PermissionNamesSeeder::class,
             PermissionsSeeder::class
         ]);
     }

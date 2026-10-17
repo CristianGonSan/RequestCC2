@@ -18,4 +18,6 @@ return [
     'manage_units'          => 'Gestionar Unidades',
     'manage_materials'      => 'Gestionar Materiales',
     'manage_incomes'        => 'Gestionar Ingresos',
+    'manage_material_requests' => 'Gestionar Solicitudes de Materiales',
+    'fulfill_material_requests' => 'Suplir Solicitudes de Materiales',
 ];

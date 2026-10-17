@@ -71,11 +71,13 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::prefix('management')->name('management.')->group(function () {
         Route::resource('money-requests', ManagementMoneyRequestController::class)->except(['destroy'])->middleware('permission:manage_requests');
-        Route::resource('material-requests', ManagementMaterialRequestController::class)->only(['index', 'show']);
+        Route::resource('material-requests', ManagementMaterialRequestController::class)->only(['index', 'show'])->middleware('permission:manage_material_requests');
     });
 
     Route::prefix('fulfillment')->name('fulfillment.')->group(function () {
-        Route::resource('material-requests', FulfillmentMaterialRequestController::class)->only(['index', 'show']);
+        Route::resource('material-requests', FulfillmentMaterialRequestController::class)
+            ->only(['index', 'show'])
+            ->middleware('permission:fulfill_material_requests');
     });
 
     Route::prefix('accounting/money-requests')->name('accounting.money-requests.')->middleware('permission:manage_accounting')
