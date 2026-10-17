@@ -64,7 +64,7 @@
         </div>
 
         <div class="tab-pane fade" id="pills-messages" role="tabpanel" aria-labelledby="pills-messages-tab">
-            <livewire:MoneyRequests.ShowMessages :MoneyRequestId="$moneyRequest->id" lazy />
+            <livewire:Common.ShowMessages :modelClass="$moneyRequest::class" :modelId="$moneyRequest->id" lazy />
         </div>
     </div>
 @endsection

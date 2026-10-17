@@ -2,9 +2,11 @@
 
 namespace App\Models\MaterialRequests;
 
+use App\Contracts\Common\HasMessages;
 use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
+use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\TruncateText;
 use Auth;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use App\Traits\Models\CurrencyToWords;
@@ -46,6 +49,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read int|null $items_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
  * @property-read int|null $media_count
+ * @property-read Collection<int, Message> $messages
+ * @property-read int|null $messages_count
  * @property-read Type $type
  * @property-read User $user
  * @method static Builder<static>|MaterialRequest newModelQuery()
@@ -62,7 +67,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @method static Builder<static>|MaterialRequest whereUserId($value)
  * @mixin \Eloquent
  */
-class MaterialRequest extends Model implements HasMedia
+class MaterialRequest extends Model implements HasMedia, HasMessages
 {
     use CurrencyToWords, HasFactory , TruncateText, InteractsWithMedia, Favoriteable;
 
@@ -87,6 +92,21 @@ class MaterialRequest extends Model implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function messages(): MorphMany
+    {
+        return $this->morphMany(Message::class, 'messageable');
+    }
+
+    public function messageUrl(): string
+    {
+        return route('material-requests.show', $this);
+    }
+
+    public function messageLabel(): string
+    {
+        return 'Solicitud de material';
     }
 
     public function costCenter(): BelongsTo

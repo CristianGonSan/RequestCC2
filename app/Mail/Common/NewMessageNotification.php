@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Mail\MoneyRequests;
+namespace App\Mail\Common;
 
-use App\Models\Message;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Notifica un nuevo mensaje dentro de una solicitud.
+ * Notifica un nuevo mensaje asociado a un modelo.
  * Se envía en cola.
  */
 class NewMessageNotification extends Mailable implements ShouldQueue
@@ -19,7 +18,11 @@ class NewMessageNotification extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(
-        public readonly Message $messageModel,
+        public readonly string $message,
+        public readonly string $sender,
+        public readonly string $messageDate,
+        public readonly string $messageableUrl,
+        public readonly string $messageableLabel,
     ) {}
 
     public function envelope(): Envelope
@@ -32,9 +35,13 @@ class NewMessageNotification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mails.money_requests.new_message',
+            markdown: 'mails.common.new_message',
             with: [
-                'messageModel' => $this->messageModel,
+                'message'          => $this->message,
+                'sender'           => $this->sender,
+                'messageDate'      => $this->messageDate,
+                'messageableUrl'   => $this->messageableUrl,
+                'messageableLabel' => $this->messageableLabel,
             ],
         );
     }

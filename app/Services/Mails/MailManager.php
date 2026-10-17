@@ -3,11 +3,9 @@
 namespace App\Services\Mails;
 
 use App\Jobs\SendEmail;
-use App\Mail\MoneyRequests\NewMessageNotification;
 use App\Mail\MoneyRequests\NewRequestNotification;
 use App\Mail\MoneyRequests\StatusChangeNotification;
 use App\Mail\NewUserNotification;
-use App\Models\Message;
 use App\Models\MoneyRequests\MoneyRequest;
 use App\Models\Setting;
 use App\Models\User;
@@ -38,12 +36,5 @@ class MailManager
         $recipients = [$user->email];
 
         SendEmail::dispatch($recipients, new NewUserNotification($user, $password));
-    }
-
-    public static function sendNewMessageNotification(Message $messageModel): void
-    {
-        $recipients = [$messageModel->request->user->email];
-
-        SendEmail::dispatch($recipients, new NewMessageNotification($messageModel));
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Models\MoneyRequests;
 
+use App\Contracts\Common\HasMessages;
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
+use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
 use App\Traits\Models\TruncateText;
@@ -14,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Overtrue\LaravelFavorite\Traits\Favoriteable;
@@ -52,7 +55,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property-read string $payment_method
  * @property-read string $status_bs_color
  * @property-read string $status_label
- * @property-read Collection<int, \App\Models\MoneyRequests\Message> $messages
+ * @property-read Collection<int, Message> $messages
  * @property-read int|null $messages_count
  * @property-read Collection<int, \App\Models\MoneyRequests\MoneyRequestRecords> $records
  * @property-read int|null $records_count
@@ -86,7 +89,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @method static Builder<static>|MoneyRequest whereUserId($value)
  * @mixin \Eloquent
  */
-class MoneyRequest extends Model
+class MoneyRequest extends Model implements HasMessages
 {
     use CurrencyToWords, HasFactory, TruncateText, Favoriteable;
 
@@ -116,14 +119,31 @@ class MoneyRequest extends Model
         'paid_at'     => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $moneyRequest): void {
+            $moneyRequest->messages()->delete();
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function messages(): HasMany
+    public function messages(): MorphMany
     {
-        return $this->hasMany(Message::class, 'money_request_id');
+        return $this->morphMany(Message::class, 'messageable');
+    }
+
+    public function messageUrl(): string
+    {
+        return route('money-requests.show', $this);
+    }
+
+    public function messageLabel(): string
+    {
+        return 'Solicitud';
     }
 
     public function costCenter(): BelongsTo

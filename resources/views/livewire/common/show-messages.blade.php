@@ -1,4 +1,4 @@
-<div class="card mb-0" style="height: 70vh">
+<div class="card mb-0" style="height: 65vh">
     @php
         $userId = Auth::id();
     @endphp
