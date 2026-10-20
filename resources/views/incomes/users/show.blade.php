@@ -56,7 +56,8 @@
         </div>
 
         <div class="tab-pane fade" id="pills-messages" role="tabpanel" aria-labelledby="pills-messages-tab">
-            <livewire:Common.ShowMessages :modelClass="$income::class" :modelId="$income->id" lazy />
+            <livewire:Common.ShowMessages :modelClass="$income::class" :modelId="$income->id"
+                :buttonUrl="route('incomes.show', $income)" lazy />
         </div>
     </div>
 @endsection

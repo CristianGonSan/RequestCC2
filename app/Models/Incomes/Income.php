@@ -119,16 +119,6 @@ class Income extends Model implements HasMedia, HasMessages
         return $this->morphMany(ChangeLog::class, 'subject');
     }
 
-    public function messageUrl(): string
-    {
-        return route('incomes.show', $this);
-    }
-
-    public function messageLabel(): string
-    {
-        return 'Ingreso';
-    }
-
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class, 'cost_center_id');

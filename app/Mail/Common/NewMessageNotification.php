@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Notifica un nuevo mensaje asociado a un modelo.
+ * Notifica un nuevo mensaje.
  * Se envía en cola.
  */
 class NewMessageNotification extends Mailable implements ShouldQueue
@@ -18,11 +18,10 @@ class NewMessageNotification extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(
+        public readonly string $user,
+        public readonly string $dateTime,
         public readonly string $message,
-        public readonly string $sender,
-        public readonly string $messageDate,
-        public readonly string $messageableUrl,
-        public readonly string $messageableLabel,
+        public readonly ?string $buttonUrl = null,
     ) {}
 
     public function envelope(): Envelope
@@ -37,11 +36,10 @@ class NewMessageNotification extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'mails.common.new_message',
             with: [
-                'message'          => $this->message,
-                'sender'           => $this->sender,
-                'messageDate'      => $this->messageDate,
-                'messageableUrl'   => $this->messageableUrl,
-                'messageableLabel' => $this->messageableLabel,
+                'message'   => $this->message,
+                'user'      => $this->user,
+                'dateTime'  => $this->dateTime,
+                'buttonUrl' => $this->buttonUrl,
             ],
         );
     }

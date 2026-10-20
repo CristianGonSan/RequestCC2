@@ -144,16 +144,6 @@ class MoneyRequest extends Model implements HasMessages
         return $this->morphMany(ChangeLog::class, 'subject');
     }
 
-    public function messageUrl(): string
-    {
-        return route('money-requests.show', $this);
-    }
-
-    public function messageLabel(): string
-    {
-        return 'Solicitud';
-    }
-
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class, 'cost_center_id');

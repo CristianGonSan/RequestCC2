@@ -99,16 +99,6 @@ class MaterialRequest extends Model implements HasMedia, HasMessages
         return $this->morphMany(Message::class, 'messageable');
     }
 
-    public function messageUrl(): string
-    {
-        return route('material-requests.show', $this);
-    }
-
-    public function messageLabel(): string
-    {
-        return 'Solicitud de material';
-    }
-
     public function costCenter(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
