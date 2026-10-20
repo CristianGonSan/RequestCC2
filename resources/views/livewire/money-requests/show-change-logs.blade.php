@@ -65,8 +65,7 @@
                     </button>
                     <div class="collapse" id="money-request-change-log-details-{{ $changeLog->id }}">
                         @if ($details->has('legacy'))
-                            <div class="border rounded bg-light p-3" style="white-space: pre-line">
-                                {{ trim(strip_tags($details->string('legacy'))) }}</div>
+                            <div class="border rounded bg-light p-3" style="white-space: pre-line">{{ trim(strip_tags($details->string('legacy'))) }}</div>
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-bordered mb-0">
