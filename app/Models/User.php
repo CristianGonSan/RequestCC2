@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Catalogs\Company;
 use App\Models\Catalogs\Type;
+use App\Models\Common\ChangeLog;
 use App\Models\Incomes\Income;
 use App\Models\MaterialRequests\MaterialRequest;
 use App\Models\MoneyRequests\FileManagement;
@@ -39,6 +40,8 @@ use Overtrue\LaravelFavorite\Favorite;
  * @property Carbon|null $updated_at
  * @property bool $is_active
  * @property array<array-key, mixed>|null $allowed_types
+ * @property-read Collection<int, ChangeLog> $changeLogs
+ * @property-read int|null $change_logs_count
  * @property-read Collection<int, Company> $companies
  * @property-read int|null $companies_count
  * @property-read Collection<int, Favorite> $favorites
@@ -145,6 +148,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function files(): HasMany
     {
         return $this->hasMany(FileManagement::class);
+    }
+
+    public function changeLogs(): HasMany
+    {
+        return $this->hasMany(ChangeLog::class);
     }
 
     public function types(): BelongsToMany

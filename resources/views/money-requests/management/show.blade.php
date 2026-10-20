@@ -56,7 +56,7 @@
 
     <div class="tab-content mb-3" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-records" role="tabpanel" aria-labelledby="pills-records-tab">
-            <livewire:MoneyRequests.ShowRecords :MoneyRequestId="$moneyRequest->id" lazy />
+            <livewire:MoneyRequests.ShowChangeLogs :moneyRequestId="$moneyRequest->id" lazy />
         </div>
 
         <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">

@@ -23,8 +23,15 @@
     <div class="d-block mb-3">
         <ul class="nav nav-pills" id="pills-tab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab"
-                    aria-controls="pills-files" aria-selected="true">
+                <a class="nav-link active" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab"
+                    aria-controls="pills-history" aria-selected="true">
+                    <i class="fas fa-fw fa-clock-rotate-left"></i>
+                    <span class="d-none d-sm-inline ml-1">Historial</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab"
+                    aria-controls="pills-files" aria-selected="false">
                     <i class="fas fa-fw fa-paperclip"></i>
                     <span class="d-none d-sm-inline ml-1">Archivos</span>
                 </a>
@@ -40,8 +47,12 @@
     </div>
 
     <div class="tab-content mb-3" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
-            <livewire:Media.MediaBrowser :modelClass="$income::class" :modelId="$income->id" />
+        <div class="tab-pane fade show active" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+            <livewire:Incomes.ShowChangeLogs :incomeId="$income->id" lazy />
+        </div>
+
+        <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
+            <livewire:Media.MediaBrowser :modelClass="$income::class" :modelId="$income->id" lazy />
         </div>
 
         <div class="tab-pane fade" id="pills-messages" role="tabpanel" aria-labelledby="pills-messages-tab">

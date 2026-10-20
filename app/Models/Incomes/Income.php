@@ -5,6 +5,7 @@ namespace App\Models\Incomes;
 use App\Contracts\Common\HasMessages;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
+use App\Models\Common\ChangeLog;
 use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
@@ -37,6 +38,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $income_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ChangeLog> $changeLogs
+ * @property-read int|null $change_logs_count
  * @property-read CostCenter $costCenter
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $favoriters
  * @property-read int|null $favoriters_count
@@ -109,6 +112,11 @@ class Income extends Model implements HasMedia, HasMessages
     public function messages(): MorphMany
     {
         return $this->morphMany(Message::class, 'messageable');
+    }
+
+    public function changeLogs(): MorphMany
+    {
+        return $this->morphMany(ChangeLog::class, 'subject');
     }
 
     public function messageUrl(): string

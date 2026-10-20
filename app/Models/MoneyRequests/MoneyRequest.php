@@ -6,6 +6,7 @@ use App\Contracts\Common\HasMessages;
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
+use App\Models\Common\ChangeLog;
 use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
@@ -43,6 +44,8 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property Carbon|null $updated_at
  * @property bool $is_transfer
  * @property int $edit_count
+ * @property-read Collection<int, ChangeLog> $changeLogs
+ * @property-read int|null $change_logs_count
  * @property-read CostCenter|null $costCenter
  * @property-read Collection<int, User> $favoriters
  * @property-read int|null $favoriters_count
@@ -134,6 +137,11 @@ class MoneyRequest extends Model implements HasMessages
     public function messages(): MorphMany
     {
         return $this->morphMany(Message::class, 'messageable');
+    }
+
+    public function changeLogs(): MorphMany
+    {
+        return $this->morphMany(ChangeLog::class, 'subject');
     }
 
     public function messageUrl(): string
