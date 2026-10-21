@@ -1,6 +1,6 @@
 @use('App\Models\CustomMedia')
 
-<div class="card">
+<div class="card mb-0 d-flex flex-column" style="min-height: 65vh">
     <div class="card-header">
         <h2 class="card-title">Archivos</h2>
 
@@ -11,11 +11,11 @@
         </div>
     </div>
 
-    <div class="card-body p-0" style="overflow: hidden;">
+    <div class="card-body p-0 d-flex flex-column flex-grow-1" style="overflow: hidden;">
         @php
             $userId = Auth::id();
         @endphp
-        <div class="list-group list-group-flush overflow-auto" style="height: 45vh;">
+        <div class="list-group list-group-flush flex-grow-1 overflow-auto">
             @forelse ($media as $item)
                 @php
                     /** @var CustomMedia $item*/
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             @empty
-                <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5 h-100">
+                <div class="list-group-item d-flex flex-column align-items-center justify-content-center text-muted flex-grow-1">
                     <i class="fas fa-folder-open fa-2x mb-2"></i>
                     No hay archivos aún.
                 </div>
