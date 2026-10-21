@@ -15,6 +15,16 @@
 
 @section('content')
     <h1 class="h4">Detalles de mi ingreso</h1>
+    @php($editCount = $income->edited_change_logs_count)
+    @if ($editCount > 0)
+        <div wire:ignore class="alert alert-warning alert-dismissible shadow-sm">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>Atención:</strong> Este ingreso ha sido editado {{ $editCount }}
+            {{ $editCount === 1 ? 'vez' : 'veces' }}.
+        </div>
+    @endif
 
     <livewire:Incomes.Users.IncomeShow :IncomeId="$income->id" />
 

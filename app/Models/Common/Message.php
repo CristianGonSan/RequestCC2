@@ -20,7 +20,6 @@ use Illuminate\Support\Carbon;
  * @property string $messageable_type
  * @property-read Model|\Eloquent $messageable
  * @property-read User $user
- *
  * @method static Builder<static>|Message newModelQuery()
  * @method static Builder<static>|Message newQuery()
  * @method static Builder<static>|Message query()
@@ -31,7 +30,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Message whereMessageableType($value)
  * @method static Builder<static>|Message whereUpdatedAt($value)
  * @method static Builder<static>|Message whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class Message extends Model

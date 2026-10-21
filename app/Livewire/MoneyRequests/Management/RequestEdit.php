@@ -128,7 +128,7 @@ class RequestEdit extends Component
 
         $validated = $this->validate($rules);
 
-        $moneyRequest->updateWithRecord($validated);
+        $moneyRequest->update($validated);
 
         $this->toastSuccess('Información actualizada');
     }

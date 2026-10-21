@@ -8,6 +8,7 @@ use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
 use App\Models\Common\Message;
 use App\Models\User;
+use App\Traits\Models\HasChangeLogs;
 use App\Traits\Models\TruncateText;
 use Auth;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,6 +34,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property numeric $total_spent
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection<int, \App\Models\Common\ChangeLog> $changeLogs
+ * @property-read int|null $change_logs_count
  * @property-read CostCenter $costCenter
  * @property-read Collection<int, User> $favoriters
  * @property-read int|null $favoriters_count
@@ -40,6 +43,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read int|null $favorites_count
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
+ * @property-read int $edited_change_logs_count
  * @property-read bool $is_fulfilled
  * @property-read string $status_bs_color
  * @property-read string $status_label
@@ -69,7 +73,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class MaterialRequest extends Model implements HasMedia, HasMessages
 {
-    use CurrencyToWords, HasFactory , TruncateText, InteractsWithMedia, Favoriteable;
+    use CurrencyToWords, HasChangeLogs, HasFactory , TruncateText, InteractsWithMedia, Favoriteable;
 
     protected $fillable = [
         'user_id',

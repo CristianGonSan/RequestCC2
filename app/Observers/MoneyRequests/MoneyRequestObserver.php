@@ -83,9 +83,7 @@ class MoneyRequestObserver
             ? ChangeLogEvent::StatusChanged
             : ChangeLogEvent::Edited;
 
-        $editCount = $moneyRequest->changeLogs()
-            ->where('event', ChangeLogEvent::Edited)
-            ->count();
+        $editCount = $moneyRequest->edited_change_logs_count;
 
         if ($event === ChangeLogEvent::Edited) {
             $editCount++;

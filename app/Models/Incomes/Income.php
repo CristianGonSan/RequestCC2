@@ -5,10 +5,10 @@ namespace App\Models\Incomes;
 use App\Contracts\Common\HasMessages;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
-use App\Models\Common\ChangeLog;
 use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
+use App\Traits\Models\HasChangeLogs;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,7 +38,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $income_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ChangeLog> $changeLogs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Common\ChangeLog> $changeLogs
  * @property-read int|null $change_logs_count
  * @property-read CostCenter $costCenter
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $favoriters
@@ -47,6 +47,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read int|null $favorites_count
  * @property-read string $amount_formatted
  * @property-read string $amount_to_word
+ * @property-read int $edited_change_logs_count
  * @property-read string $payment_method
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
  * @property-read int|null $media_count
@@ -79,7 +80,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Income extends Model implements HasMedia, HasMessages
 {
-    use CurrencyToWords, HasFactory, TruncateText, InteractsWithMedia, Favoriteable;
+    use CurrencyToWords, HasChangeLogs, HasFactory, TruncateText, InteractsWithMedia, Favoriteable;
 
     protected $fillable = [
         'user_id',
@@ -112,11 +113,6 @@ class Income extends Model implements HasMedia, HasMessages
     public function messages(): MorphMany
     {
         return $this->morphMany(Message::class, 'messageable');
-    }
-
-    public function changeLogs(): MorphMany
-    {
-        return $this->morphMany(ChangeLog::class, 'subject');
     }
 
     public function costCenter(): BelongsTo

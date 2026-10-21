@@ -70,9 +70,7 @@ class IncomeObserver
             return;
         }
 
-        $editCount = $income->changeLogs()
-            ->where('event', ChangeLogEvent::Edited)
-            ->count() + 1;
+        $editCount = $income->edited_change_logs_count + 1;
 
         $income->changeLogs()->create([
             'user_id' => Auth::id(),

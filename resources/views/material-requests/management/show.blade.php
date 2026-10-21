@@ -16,6 +16,16 @@
 
 @section('content')
     <h1 class="h4">Detalles de solicitud de material</h1>
+    @php($editCount = $materialRequest->edited_change_logs_count)
+    @if ($editCount > 0)
+        <div wire:ignore class="alert alert-warning alert-dismissible shadow-sm">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>Atención:</strong> Este registro ha sido editado {{ $editCount }}
+            {{ $editCount === 1 ? 'vez' : 'veces' }}.
+        </div>
+    @endif
 
     <livewire:MaterialRequests.Management.MaterialRequestShow :materialRequestId="$materialRequest->id" />
 
@@ -24,15 +34,8 @@
     <div class="d-block mb-3">
         <ul class="nav nav-pills" id="pills-tab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab"
-                    aria-controls="pills-history" aria-selected="true">
-                    <i class="fas fa-fw fa-clock-rotate-left"></i>
-                    <span class="d-none d-sm-inline ml-1">Historial</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab"
-                    aria-controls="pills-files" aria-selected="false">
+                <a class="nav-link active" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab"
+                    aria-controls="pills-files" aria-selected="true">
                     <i class="fas fa-fw fa-paperclip"></i>
                     <span class="d-none d-sm-inline ml-1">Archivos</span>
                 </a>
@@ -48,11 +51,7 @@
     </div>
 
     <div class="tab-content mb-3" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
-            <livewire:Common.ShowChangeLogs :modelClass="$materialRequest::class" :modelId="$materialRequest->id" lazy />
-        </div>
-
-        <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
+        <div class="tab-pane fade show active" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
             <livewire:Media.MediaBrowser :modelClass="$materialRequest::class" :modelId="$materialRequest->id" lazy />
         </div>
 

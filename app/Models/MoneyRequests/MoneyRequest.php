@@ -6,10 +6,10 @@ use App\Contracts\Common\HasMessages;
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Models\Catalogs\CostCenter;
 use App\Models\Catalogs\Type;
-use App\Models\Common\ChangeLog;
 use App\Models\Common\Message;
 use App\Models\User;
 use App\Traits\Models\CurrencyToWords;
+use App\Traits\Models\HasChangeLogs;
 use App\Traits\Models\TruncateText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -44,7 +44,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property Carbon|null $updated_at
  * @property bool $is_transfer
  * @property int $edit_count
- * @property-read Collection<int, ChangeLog> $changeLogs
+ * @property-read Collection<int, \App\Models\Common\ChangeLog> $changeLogs
  * @property-read int|null $change_logs_count
  * @property-read CostCenter|null $costCenter
  * @property-read Collection<int, User> $favoriters
@@ -55,6 +55,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property-read int|null $files_count
  * @property-read string $amount_formatted
  * @property-read string $amount_to_word
+ * @property-read int $edited_change_logs_count
  * @property-read string $payment_method
  * @property-read string $status_bs_color
  * @property-read string $status_label
@@ -94,7 +95,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  */
 class MoneyRequest extends Model implements HasMessages
 {
-    use CurrencyToWords, HasFactory, TruncateText, Favoriteable;
+    use CurrencyToWords, HasChangeLogs, HasFactory, TruncateText, Favoriteable;
 
     protected $fillable = [
         'user_id',
@@ -111,7 +112,6 @@ class MoneyRequest extends Model implements HasMessages
         'covenant',
         'status',
         'is_transfer',
-        'edit_count',
         'paid_at',
     ];
 
@@ -137,11 +137,6 @@ class MoneyRequest extends Model implements HasMessages
     public function messages(): MorphMany
     {
         return $this->morphMany(Message::class, 'messageable');
-    }
-
-    public function changeLogs(): MorphMany
-    {
-        return $this->morphMany(ChangeLog::class, 'subject');
     }
 
     public function costCenter(): BelongsTo
@@ -189,28 +184,10 @@ class MoneyRequest extends Model implements HasMessages
         return $this->hasMany(MoneyRequestRecords::class, 'money_request_id');
     }
 
-    public function addEditCount(): int
+    public function changeStatus(MoneyRequestStatus $status): void
     {
-        return $this->edit_count += 1;
-    }
-
-    public function changeStatusWithRecord(MoneyRequestStatus $status, ?User $user = null): void
-    {
-        $oldStatus    = $this->status->label();
         $this->status = $status;
-        $newStatus    = $this->status->label();
         $this->save();
-
-        MoneyRequestRecords::changeStatus($user ?? Auth::user(), $this->id, $oldStatus, $newStatus);
-    }
-
-    public function updateWithRecord(array $validated, ?User $user = null): void
-    {
-        $oldData = $this->toArray();
-        $this->addEditCount();
-        $this->update($validated);
-
-        MoneyRequestRecords::edited($user ?? Auth::user(), $this, $oldData);
     }
 
     public function formattedAmount(): string

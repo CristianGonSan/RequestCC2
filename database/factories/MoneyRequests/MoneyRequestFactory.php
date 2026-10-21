@@ -37,7 +37,6 @@ class MoneyRequestFactory extends Factory
             'amount'         => $this->faker->randomFloat(2, 100, 50000),
             'status'         => MoneyRequestStatus::Paid,
             'is_transfer'    => false,
-            'edit_count'     => 0,
             'bank'           => null,
             'card'           => null,
             'account'        => null,

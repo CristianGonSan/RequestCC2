@@ -68,7 +68,7 @@
                     </div>
                 </div>
             @empty
-                <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5">
+                <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5 h-100">
                     <i class="fas fa-folder-open fa-2x mb-2"></i>
                     No hay archivos aún.
                 </div>

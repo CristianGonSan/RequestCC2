@@ -52,7 +52,7 @@ class RequestShow extends Component
             return;
         }
 
-        $moneyRequest->changeStatusWithRecord($status);
+        $moneyRequest->changeStatus($status);
 
         MailManager::sendStatusChangeNotification($moneyRequest);
 

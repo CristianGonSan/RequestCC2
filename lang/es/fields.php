@@ -18,7 +18,6 @@ return [
         'income_date'    => 'Fecha del ingreso',
         'status'         => 'Estatus',
         'paid_at'        => 'Fecha de pago',
-        'edit_count'     => 'Número de ediciones',
         'created_at'     => 'Fecha de creación',
         'updated_at'     => 'Fecha de actualización',
     ],

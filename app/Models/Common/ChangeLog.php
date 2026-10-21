@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @property-read string $event_label
  * @property-read Model|\Eloquent $subject
  * @property-read User|null $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog query()
@@ -36,7 +35,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog whereSubjectType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ChangeLog whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class ChangeLog extends Model

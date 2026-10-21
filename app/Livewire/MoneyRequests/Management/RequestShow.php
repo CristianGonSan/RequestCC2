@@ -73,7 +73,7 @@ class RequestShow extends Component
             return;
         }
 
-        $moneyRequest->changeStatusWithRecord($status);
+        $moneyRequest->changeStatus($status);
 
         if ($moneyRequest->is_transfer) {
             MailManager::sendStatusChangeNotification($moneyRequest);

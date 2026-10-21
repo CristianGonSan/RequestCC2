@@ -2,7 +2,6 @@
 
 namespace App\Models\MoneyRequests;
 
-use App\Models\Catalogs\Type;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -81,88 +80,5 @@ class MoneyRequestRecords extends Model
     public function getActionBSClass(): string
     {
         return self::ACTION_BS_CLASS[$this->action] ?? 'secondary';
-    }
-
-    public static function changeStatus(User $user, int $requestId, string $oldStatus, string $newStatus, $registered_at = null)
-    {
-        $record = new MoneyRequestRecords;
-
-        $record->money_request_id = $requestId;
-        $record->user_id          = $user->id;
-        $record->action           = self::CHANGE_STATUS;
-
-        $name  = $user->name;
-        $email = $user->email;
-
-        $record->details       = "$name - ($email) Cambió el estatus de <strong>$oldStatus</strong> a <strong>$newStatus</strong>";
-        $record->registered_at = $registered_at ?? now();
-        $record->save();
-
-        return $record;
-    }
-
-    public static function edited(User $user, MoneyRequest $updateMoneyRequest, array $oldData, $registered_at = null)
-    {
-        $labels = [
-            'concept'     => 'Concepto',
-            'cost_center' => 'Centro de costos',
-            'payee'       => 'Beneficiario',
-            'amount'      => 'Monto',
-            'type'        => 'Tipo',
-            'bank'        => 'Banco',
-            'card'        => 'Tarjeta',
-            'account'     => 'Cuenta',
-            'branch'      => 'Sucursal',
-            'reference'   => 'Referencia',
-            'covenant'    => 'Convenio',
-        ];
-
-        $record = new MoneyRequestRecords;
-
-        $record->money_request_id = $updateMoneyRequest->id;
-        $record->user_id          = $user->id;
-        $record->action           = self::EDITED;
-
-        $name  = $user->name;
-        $email = $user->email;
-
-        $details = "$name - ($email) Editó la solicitud, edición número $updateMoneyRequest->edit_count: ";
-
-        $updatedCount = 0;
-
-        foreach ($updateMoneyRequest->toArray() as $key => $newValue) {
-            $oldValue = $oldData[$key];
-
-            if ($oldValue != $newValue) {
-
-                if ($label = $labels[$key] ?? false) {
-                    $updatedCount++;
-                    if ($key === 'amount') {
-                        $oldValue = '$'.number_format($oldValue, 2);
-                        $newValue = '$'.number_format($newValue, 2);
-                    } elseif ($key === 'type') {
-                        $oldValue = Type::getName($oldValue);
-                        $newValue = Type::getName($newValue);
-                    }
-
-                    $oldValue = empty($oldValue) ? 'N/D' : $oldValue;
-                    $newValue = empty($newValue) ? 'N/D' : $newValue;
-
-                    $text = "\n- $label: $oldValue → $newValue";
-
-                    $details .= $text;
-                }
-            }
-        }
-
-        if ($updatedCount == 0) {
-            $details .= "\n- No se hicieron cambios.";
-        }
-
-        $record->details       = trim($details);
-        $record->registered_at = $registered_at ?? now();
-        $record->save();
-
-        return $record;
     }
 }
