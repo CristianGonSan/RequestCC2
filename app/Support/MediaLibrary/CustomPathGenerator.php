@@ -30,12 +30,6 @@ class CustomPathGenerator implements PathGenerator
             ->plural()
             ->toString();
 
-        return \sprintf(
-            'media/%s/%s/%s/%s/',
-            $modelType,
-            $media->created_at->format('Y_m'),
-            $media->model_id,
-            $media->getKey()
-        );
+        return "media/{$modelType}/{$media->model_id}/{$media->getKey()}/";
     }
 }
