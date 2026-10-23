@@ -21,6 +21,17 @@ enum MoneyRequestStatus: string
         };
     }
 
+    public function description(): string
+    {
+        return match ($this) {
+            self::Pending   => 'En espera de revisión o atención.',
+            self::Accepted  => 'Autorizada para continuar con el proceso de pago.',
+            self::Rejected  => 'La solicitud fue rechazada.',
+            self::Cancelled => 'La solicitud se cerró mediante cancelación.',
+            self::Paid      => 'El pago de la solicitud quedó registrado.',
+        };
+    }
+
     public function bootstrapColorClass(): string
     {
         return match ($this) {

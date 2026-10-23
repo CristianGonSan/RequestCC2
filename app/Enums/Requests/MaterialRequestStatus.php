@@ -23,6 +23,18 @@ enum MaterialRequestStatus: string
         };
     }
 
+    public function description(): string
+    {
+        return match ($this) {
+            self::Pending   => 'En espera de revisión.',
+            self::Accepted  => 'Autorizada para iniciar la preparación o entrega.',
+            self::Rejected  => 'La solicitud fue rechazada.',
+            self::InProcess => 'El área responsable está registrando el cumplimiento de los artículos.',
+            self::Completed => 'Se registró el cumplimiento de las cantidades solicitadas.',
+            self::Cancelled => 'La solicitud se cerró mediante cancelación.',
+        };
+    }
+
     public function bootstrapColorClass(): string
     {
         return match ($this) {
