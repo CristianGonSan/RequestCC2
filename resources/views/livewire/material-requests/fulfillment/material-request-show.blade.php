@@ -8,13 +8,13 @@
 <div>
     @include('partials.livewire.material-requests.show.card-show')
 
-    <div class="my-3">
+    <div class="button-toolbar-wrap my-3">
         <x-livewire.loading-button label="{{ $hasFavorited ? 'Quitar favorito' : 'Añadir favorito' }}"
-            theme="outline-primary" class="mr-1" icon="star" icon-solid="{{ $hasFavorited }}"
+            theme="outline-primary" icon="star" icon-solid="{{ $hasFavorited }}"
             wire:click="toggleFavorite" wire:target="toggleFavorite" />
 
         @unless ($status->isCancelled())
-            <button type="button" class="btn btn-outline-primary dropdown-toggle mr-1" data-toggle="dropdown">
+            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown">
                 <i class="fas fa-fw fa-ellipsis-vertical mr-1"></i> Acciones
             </button>
             <div class="dropdown-menu">
@@ -39,7 +39,7 @@
             </div>
         @endunless
 
-        <a href="{{ route('fulfillment.material-requests.index') }}" class="btn btn-outline-secondary mr-1">
+        <a href="{{ route('fulfillment.material-requests.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-fw fa-chevron-left mr-1"></i> Volver
         </a>
     </div>

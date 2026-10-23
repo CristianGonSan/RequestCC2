@@ -14,16 +14,16 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <a href="{{ route('companies.edit', $company->id) }}" class="btn btn-outline-primary mr-1">
+        <div class="button-toolbar-wrap mb-3">
+            <a href="{{ route('companies.edit', $company->id) }}" class="btn btn-outline-primary">
                 <i class="fas fa-edit mr-1"></i> Editar
             </a>
 
-            <x-livewire.loading-button label="Eliminar" theme="outline-danger" class="mr-1" icon="trash"
+            <x-livewire.loading-button label="Eliminar" theme="outline-danger" icon="trash"
                 wire:click="delete" wire:target="delete" wire:swal-delete="¿Eliminar esta empresa?" :disabled="$isInUse"
                 :title="$isInUse ? 'No se puede eliminar: la empresa está en uso' : ''" />
 
-            <a href="{{ route('companies.index') }}" class="btn btn-outline-secondary mr-1">
+            <a href="{{ route('companies.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-fw fa-chevron-left mr-1"></i> Volver
             </a>
         </div>
