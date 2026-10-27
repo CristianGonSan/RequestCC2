@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Overtrue\LaravelFavorite\Traits\Favoriteable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -43,7 +45,6 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property bool $is_transfer
- * @property int $edit_count
  * @property-read Collection<int, \App\Models\Common\ChangeLog> $changeLogs
  * @property-read int|null $change_logs_count
  * @property-read CostCenter|null $costCenter
@@ -51,14 +52,14 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @property-read int|null $favoriters_count
  * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
  * @property-read int|null $favorites_count
- * @property-read Collection<int, \App\Models\MoneyRequests\FileManagement> $files
- * @property-read int|null $files_count
  * @property-read string $amount_formatted
  * @property-read string $amount_to_word
  * @property-read int $edited_change_logs_count
  * @property-read string $payment_method
  * @property-read string $status_bs_color
  * @property-read string $status_label
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
+ * @property-read int|null $media_count
  * @property-read Collection<int, Message> $messages
  * @property-read int|null $messages_count
  * @property-read Collection<int, \App\Models\MoneyRequests\MoneyRequestRecords> $records
@@ -80,7 +81,6 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @method static Builder<static>|MoneyRequest whereCostCenterName($value)
  * @method static Builder<static>|MoneyRequest whereCovenant($value)
  * @method static Builder<static>|MoneyRequest whereCreatedAt($value)
- * @method static Builder<static>|MoneyRequest whereEditCount($value)
  * @method static Builder<static>|MoneyRequest whereId($value)
  * @method static Builder<static>|MoneyRequest whereIsTransfer($value)
  * @method static Builder<static>|MoneyRequest wherePaidAt($value)
@@ -93,9 +93,9 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
  * @method static Builder<static>|MoneyRequest whereUserId($value)
  * @mixin \Eloquent
  */
-class MoneyRequest extends Model implements HasMessages
+class MoneyRequest extends Model implements HasMedia, HasMessages
 {
-    use CurrencyToWords, HasChangeLogs, HasFactory, TruncateText, Favoriteable;
+    use CurrencyToWords, HasChangeLogs, HasFactory, InteractsWithMedia, TruncateText, Favoriteable;
 
     protected $fillable = [
         'user_id',
@@ -172,11 +172,6 @@ class MoneyRequest extends Model implements HasMessages
     public function getStatusBsColorAttribute(): string
     {
         return $this->status->bootstrapColorClass();
-    }
-
-    public function files(): HasMany
-    {
-        return $this->hasMany(FileManagement::class, 'money_request_id');
     }
 
     public function records(): HasMany

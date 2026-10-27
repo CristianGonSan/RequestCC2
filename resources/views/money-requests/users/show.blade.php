@@ -25,8 +25,6 @@
             {{ $editCount === 1 ? 'vez' : 'veces' }}.
         </div>
     @endif
-    <livewire:MoneyRequests.Users.RequestShow :MoneyRequestId="$moneyRequest->id" />
-
     <hr class="mt-1">
 
     <div class="d-block mb-3">
@@ -61,7 +59,7 @@
         </div>
 
         <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
-            <livewire:MoneyRequests.ShowFiles :MoneyRequestId="$moneyRequest->id" lazy />
+            <livewire:Media.MediaBrowser :modelClass="$moneyRequest::class" :modelId="$moneyRequest->id" lazy />
         </div>
 
         <div class="tab-pane fade" id="pills-messages" role="tabpanel" aria-labelledby="pills-messages-tab">
