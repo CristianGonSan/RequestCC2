@@ -407,7 +407,7 @@ return [
             'icon'    => 'fas fa-fw fa-file-export',
             'submenu' => [
                 [
-                    'text'  => 'money_requests',
+                    'text'  => 'source_requests',
                     'icon'  => 'fas fa-fw fa-money-bill-wave',
                     'route' => 'export.money-requests.index',
                     'can'   => 'export',
