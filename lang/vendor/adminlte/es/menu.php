@@ -47,6 +47,7 @@ return [
     'companies'       => 'Empresas',
     'cost_centers'    => 'Centros de Costos',
     'notifications'   => 'Notificaciones',
+    'media'           => 'Archivos',
     'direct_creation' => 'Creación Directa',
     'catalogs'        => 'Catálogos',
     'access'          => 'Acceso',

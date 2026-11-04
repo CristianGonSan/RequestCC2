@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Media;
 
 use App\Models\CustomMedia;
 use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 
 use function readfile;
 
@@ -19,6 +20,11 @@ class MediaController extends Controller
         'manage_material_requests',
         'fulfill_material_requests',
     ];
+
+    public function index(): View
+    {
+        return view('media.index');
+    }
 
     public function show(int $id): StreamedResponse
     {

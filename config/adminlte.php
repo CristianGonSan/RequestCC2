@@ -479,6 +479,11 @@ return [
             ],
         ],
         [
+            'text'  => 'media',
+            'icon'  => 'fas fa-fw fa-images',
+            'route' => 'media.index',
+        ],
+        [
             'text'    => 'config',
             'icon'    => 'fas fa-fw fa-cog',
             'submenu' => [

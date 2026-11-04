@@ -142,7 +142,7 @@ class MoneyRequestsTable extends Component
             if ($id = $this->getIdFromSearchTerm()) {
                 $query->where('money_requests.id', $id);
             } else {
-                $query->where(function (Builder $query) use ($term): void {
+                $query->where(function ($query) use ($term): void {
                     $query->whereAny([
                         'cost_centers.name',
                         'companies.name',

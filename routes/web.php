@@ -132,6 +132,10 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware('auth')->group(function (): void {
+        Route::get('/media', [MediaController::class, 'index'])
+
+            ->name('media.index');
+
         Route::get('/media/{id}/{filename}', [MediaController::class, 'show'])
             ->where('id', '[0-9]+')
             ->name('media.show');

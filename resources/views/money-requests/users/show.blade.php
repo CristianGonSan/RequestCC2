@@ -25,6 +25,8 @@
             {{ $editCount === 1 ? 'vez' : 'veces' }}.
         </div>
     @endif
+    <livewire:MoneyRequests.Users.RequestShow :moneyRequestId="$moneyRequest->id" />
+
     <hr class="mt-1">
 
     <div class="d-block mb-3">

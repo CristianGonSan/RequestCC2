@@ -70,4 +70,4 @@
             wire:target='resetFilters' label="Restablecer Filtros" icon="rotate-left" />
     </div>
 </div>
-<hr class="my-2">
+<hr class="my-3">
