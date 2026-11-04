@@ -482,6 +482,7 @@ return [
             'text'  => 'media',
             'icon'  => 'fas fa-fw fa-images',
             'route' => 'media.index',
+            'can'   => 'view_media',
         ],
         [
             'text'    => 'config',

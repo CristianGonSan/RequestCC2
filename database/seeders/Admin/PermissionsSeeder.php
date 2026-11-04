@@ -33,6 +33,7 @@ class PermissionsSeeder extends Seeder
             'manage_incomes',
             'manage_material_requests',
             'fulfill_material_requests',
+            'view_media',
         ];
 
         foreach ($permissions as $permission) {

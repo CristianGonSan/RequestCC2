@@ -133,7 +133,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::middleware('auth')->group(function (): void {
         Route::get('/media', [MediaController::class, 'index'])
-
+            ->middleware('permission:view_media')
             ->name('media.index');
 
         Route::get('/media/{id}/{filename}', [MediaController::class, 'show'])
