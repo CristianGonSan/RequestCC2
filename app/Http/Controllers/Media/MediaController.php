@@ -19,6 +19,7 @@ class MediaController extends Controller
         'manage_incomes',
         'manage_material_requests',
         'fulfill_material_requests',
+        'view_media',
     ];
 
     public function index(): View

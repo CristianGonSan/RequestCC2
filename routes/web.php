@@ -128,7 +128,6 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('profile', [AccountController::class, 'profile'])->name('account.profile');
     });
 
-    Route::get('file/{id}/preview', [ShowFileController::class, 'previewFile'])->name('file.preview');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware('auth')->group(function (): void {
