@@ -91,6 +91,7 @@ class MaterialRequestShow extends Component
         return $this->materialRequest ??= MaterialRequest::with([
             'costCenter:id,name,description,company_id',
             'costCenter.company:id,name',
+            'customer:id,name',
             'type:id,name',
             'user:id,name',
             'items.material',

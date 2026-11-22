@@ -28,9 +28,5 @@ class MaterialRequestFulfillmentObserver
 
         $item->quantity_fulfilled = $item->fulfillments()->sum('quantity');
         $item->save();
-
-        $materialRequest = $item->materialRequest;
-        $materialRequest->total_spent = $materialRequest->fulfillments()->sum('cost');
-        $materialRequest->save();
     }
 }

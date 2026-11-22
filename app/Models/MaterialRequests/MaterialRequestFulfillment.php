@@ -3,8 +3,6 @@
 namespace App\Models\MaterialRequests;
 
 use App\Models\User;
-use App\Observers\MaterialRequests\MaterialRequestFulfillmentObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +13,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $material_request_item_id
  * @property int $user_id
  * @property numeric $quantity
- * @property numeric $cost
+ * @property \Illuminate\Support\Carbon $fulfilled_on
+ * @property string|null $notes
+ * @property string $destination
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\MaterialRequests\MaterialRequest $materialRequest
@@ -24,11 +24,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereDestination($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereFulfilledOn($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereMaterialRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereMaterialRequestItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestFulfillment whereUserId($value)
@@ -43,12 +45,14 @@ class MaterialRequestFulfillment extends Model
         'material_request_item_id',
         'user_id',
         'quantity',
-        'cost',
+        'fulfilled_on',
+        'notes',
+        'destination',
     ];
 
     protected $casts = [
-        'quantity'  => 'decimal:3',
-        'cost'      => 'decimal:2',
+        'quantity'     => 'decimal:3',
+        'fulfilled_on' => 'date',
     ];
 
     public function materialRequest(): BelongsTo

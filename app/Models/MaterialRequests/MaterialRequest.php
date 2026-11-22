@@ -3,8 +3,10 @@
 namespace App\Models\MaterialRequests;
 
 use App\Contracts\Common\HasMessages;
+use App\Enums\Requests\ChargeType;
 use App\Enums\Requests\MaterialRequestStatus;
 use App\Models\Catalogs\CostCenter;
+use App\Models\Catalogs\Customer;
 use App\Models\Catalogs\Type;
 use App\Models\Common\Message;
 use App\Models\User;
@@ -28,15 +30,21 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $id
  * @property int $user_id
  * @property int $cost_center_id
+ * @property int $customer_id
  * @property int $type_id
- * @property string|null $concept
+ * @property string|null $notes
  * @property MaterialRequestStatus $status
- * @property numeric $total_spent
+ * @property numeric $total
+ * @property ChargeType $charge_type
+ * @property numeric $charge_rate
+ * @property numeric $subtotal
+ * @property numeric $charge_amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, \App\Models\Common\ChangeLog> $changeLogs
  * @property-read int|null $change_logs_count
  * @property-read CostCenter $costCenter
+ * @property-read Customer $customer
  * @property-read Collection<int, User> $favoriters
  * @property-read int|null $favoriters_count
  * @property-read Collection<int, \Overtrue\LaravelFavorite\Favorite> $favorites
@@ -47,8 +55,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read bool $is_fulfilled
  * @property-read string $status_bs_color
  * @property-read string $status_label
+ * @property-read string $total_formatted
+ * @property-read string|null $total_spent
  * @property-read string $total_spent_formatted
  * @property-read string $total_spent_to_words
+ * @property-read string $total_to_words
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestItem> $items
  * @property-read int|null $items_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \App\Models\CustomMedia> $media
@@ -60,12 +71,17 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @method static Builder<static>|MaterialRequest newModelQuery()
  * @method static Builder<static>|MaterialRequest newQuery()
  * @method static Builder<static>|MaterialRequest query()
- * @method static Builder<static>|MaterialRequest whereConcept($value)
+ * @method static Builder<static>|MaterialRequest whereChargeAmount($value)
+ * @method static Builder<static>|MaterialRequest whereChargeRate($value)
+ * @method static Builder<static>|MaterialRequest whereChargeType($value)
  * @method static Builder<static>|MaterialRequest whereCostCenterId($value)
  * @method static Builder<static>|MaterialRequest whereCreatedAt($value)
+ * @method static Builder<static>|MaterialRequest whereCustomerId($value)
  * @method static Builder<static>|MaterialRequest whereId($value)
+ * @method static Builder<static>|MaterialRequest whereNotes($value)
  * @method static Builder<static>|MaterialRequest whereStatus($value)
- * @method static Builder<static>|MaterialRequest whereTotalSpent($value)
+ * @method static Builder<static>|MaterialRequest whereSubtotal($value)
+ * @method static Builder<static>|MaterialRequest whereTotal($value)
  * @method static Builder<static>|MaterialRequest whereTypeId($value)
  * @method static Builder<static>|MaterialRequest whereUpdatedAt($value)
  * @method static Builder<static>|MaterialRequest whereUserId($value)
@@ -78,14 +94,24 @@ class MaterialRequest extends Model implements HasMedia, HasMessages
     protected $fillable = [
         'user_id',
         'cost_center_id',
+        'customer_id',
         'type_id',
-        'concept',
+        'notes',
         'status',
+        'total',
+        'charge_type',
+        'charge_rate',
+        'subtotal',
+        'charge_amount',
     ];
 
     protected $casts = [
-        'status'      => MaterialRequestStatus::class,
-        'total_spent' => 'decimal:2',
+        'status'        => MaterialRequestStatus::class,
+        'charge_type'   => ChargeType::class,
+        'charge_rate'   => 'decimal:4',
+        'subtotal'      => 'decimal:2',
+        'charge_amount' => 'decimal:2',
+        'total'         => 'decimal:2',
     ];
 
     public function canDelete(): bool
@@ -108,19 +134,39 @@ class MaterialRequest extends Model implements HasMedia, HasMessages
         return $this->belongsTo(CostCenter::class);
     }
 
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
     }
 
+    public function getTotalFormattedAttribute(): string
+    {
+        return '$'.number_format_decimal($this->total, 2);
+    }
+
+    public function getTotalToWordsAttribute(): string
+    {
+        return $this->toCurrencyWords('total');
+    }
+
+    public function getTotalSpentAttribute(): ?string
+    {
+        return $this->total;
+    }
+
     public function getTotalSpentFormattedAttribute(): string
     {
-        return '$'.number_format($this->total_spent, 2);
+        return $this->total_formatted;
     }
 
     public function getTotalSpentToWordsAttribute(): string
     {
-        return $this->toCurrencyWords('total_spent');
+        return $this->total_to_words;
     }
 
     public function getIsFulfilledAttribute(): bool

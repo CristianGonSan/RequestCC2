@@ -456,6 +456,12 @@ return [
                     'route' => 'materials.index',
                     'can'   => 'manage_materials',
                 ],
+                [
+                    'text'  => 'customers',
+                    'icon'  => 'fas fa-fw fa-user-tie',
+                    'route' => 'customers.index',
+                    'can'   => 'manage_customers',
+                ],
             ],
         ],
 

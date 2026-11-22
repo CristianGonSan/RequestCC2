@@ -33,8 +33,16 @@
                             label="Cantidad ({{ $fulfillingItem->unit->symbol }}) *" placeholder="0.000"
                             type="number" step="0.001" max="{{ $fulfillingItem->remaining_quantity }}" wire:model="fulfillQuantity" required />
 
-                        <x-adminlte-input fgroup-class="col-md-6" name="fulfillCost" label="Costo ($) *"
-                            placeholder="0.00" type="number" step="0.01" wire:model="fulfillCost" required />
+                        <x-adminlte-input fgroup-class="col-md-6" name="fulfillDate" label="Fecha de envío *"
+                            type="date" wire:model="fulfillDate" required />
+
+                        <x-adminlte-textarea fgroup-class="col-md-12" name="fulfillDestination"
+                            label="Destino *" rows="2" placeholder="Destino del material"
+                            wire:model="fulfillDestination" maxlength="255" required />
+
+                        <x-adminlte-textarea fgroup-class="col-md-12" name="fulfillNotes"
+                            label="Notas" rows="2" placeholder="Notas del envío"
+                            wire:model="fulfillNotes" maxlength="255" />
                     </div>
 
                     <div class="modal-footer">

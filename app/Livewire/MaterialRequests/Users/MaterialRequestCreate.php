@@ -2,7 +2,9 @@
 
 namespace App\Livewire\MaterialRequests\Users;
 
+use App\Enums\Requests\ChargeType;
 use App\Enums\Requests\MaterialRequestStatus;
+use App\Livewire\MaterialRequests\Users\Concerns\CalculatesMaterialRequestTotals;
 use App\Models\Catalogs\Material;
 use App\Models\Catalogs\Type;
 use App\Models\Catalogs\Unit;
@@ -17,19 +19,25 @@ use Livewire\Component;
 
 class MaterialRequestCreate extends Component
 {
-    use FlashToast, Toast;
+    use FlashToast, Toast, CalculatesMaterialRequestTotals;
 
-    public string $concept = '';
+    public ?string $notes = null;
 
     public int $cost_center_id;
 
     public ?string $costCenterText = null;
+
+    public int $customer_id;
+
+    public ?string $customerText = null;
 
     public int $type_id;
 
     public ?string $typeText = null;
 
     public ?int $material_id = null;
+
+    public string $charge_type = 'iva';
 
     /**
      * @var array<string, array{material_id: int, material_name: string, unit_id: int|null, quantity_requested: string}>
@@ -39,8 +47,10 @@ class MaterialRequestCreate extends Component
     public function render(): View
     {
         return view('livewire.material-requests.users.material-request-create', [
-            'typeOptions' => Type::optionsByAuth(),
-            'unitOptions' => Unit::options(),
+            'typeOptions'   => Type::optionsByAuth(),
+            'unitOptions'   => Unit::options(),
+            'chargeDetails' => ChargeType::details(),
+            'totals'        => $this->calculateTotals($this->items, $this->charge_type),
         ]);
     }
 
@@ -53,22 +63,43 @@ class MaterialRequestCreate extends Component
         }
 
         $validated = $this->validate([
-            'concept'                    => ['required', 'string', 'max:255'],
+            'notes'                      => ['nullable', 'string', 'max:255'],
             'cost_center_id'             => ['required', 'integer', Rule::exists('cost_centers', 'id')->where('is_active', true)],
+            'customer_id'                => ['required', 'integer', Rule::exists('customers', 'id')->where('is_active', true)],
             'type_id'                    => ['required', 'integer', Rule::exists('types', 'id')->where('is_active', true)],
+            'charge_type'                => ['required', Rule::enum(ChargeType::class)],
             'items'                      => ['required', 'array', 'min:1'],
             'items.*.material_id'        => ['required', 'integer', Rule::exists('materials', 'id')->where('is_active', true)],
             'items.*.unit_id'            => ['required', 'integer', Rule::exists('units', 'id')->where('is_active', true)],
-            'items.*.quantity_requested' => ['required', 'numeric', 'min:0.001', 'max:999999999.999'],
+            'items.*.quantity_requested' => ['required', 'decimal:0,3', 'min:0.001', 'max:999999999.999'],
+            'items.*.unit_cost'          => ['required', 'decimal:0,2', 'min:0', 'max:999999999999.99'],
+            'items.*.notes'              => ['nullable', 'string', 'max:255'],
         ]);
 
         $materialRequest = DB::transaction(function () use ($validated): MaterialRequest {
+            $subtotal = '0';
+
+            foreach ($validated['items'] as $item) {
+                $lineTotal = bcmul((string) $item['quantity_requested'], (string) $item['unit_cost'], 2);
+                $subtotal  = bcadd($subtotal, $lineTotal, 2);
+            }
+
+            $chargeType   = ChargeType::from($validated['charge_type']);
+            $chargeAmount = $chargeType->chargeAmount($subtotal);
+            $total        = bcadd($subtotal, $chargeAmount, 2);
+
             $materialRequest = MaterialRequest::create([
                 'user_id'        => auth()->id(),
                 'cost_center_id' => $validated['cost_center_id'],
+                'customer_id'    => $validated['customer_id'],
                 'type_id'        => $validated['type_id'],
-                'concept'        => $validated['concept'],
+                'notes'          => $validated['notes'] ?? null,
                 'status'         => MaterialRequestStatus::Pending,
+                'total'          => $total,
+                'charge_type'    => $chargeType,
+                'charge_rate'    => $chargeType->chargeRate(),
+                'subtotal'       => $subtotal,
+                'charge_amount'  => $chargeAmount,
             ]);
 
             $materialRequest->items()->createMany(
@@ -77,6 +108,8 @@ class MaterialRequestCreate extends Component
                         'material_id'        => $item['material_id'],
                         'unit_id'            => $item['unit_id'],
                         'quantity_requested' => $item['quantity_requested'],
+                        'unit_cost'          => $item['unit_cost'],
+                        'notes'              => $item['notes'] ?? null,
                     ],
                     $validated['items'],
                 ),
@@ -115,6 +148,8 @@ class MaterialRequestCreate extends Component
             'material_name'      => $material->name,
             'unit_id'            => $material->base_unit_id,
             'quantity_requested' => '',
+            'unit_cost'          => '',
+            'notes'              => '',
         ];
     }
 

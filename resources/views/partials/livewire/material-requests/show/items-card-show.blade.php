@@ -54,7 +54,16 @@
                     </div>
 
                     <div class="mt-1">
-                        <span class="text-muted">Gastado: {{ $item->total_spent_formatted }}</span>
+                        <span class="text-muted">
+                            Costo unitario: ${{ number_format_decimal($item->unit_cost, 2) }}
+                        </span>
+                        <span class="text-muted ml-2">
+                            Solicitado:
+                            ${{ number_format_decimal(bcmul((string) $item->quantity_requested, (string) $item->unit_cost, 2), 2) }}
+                        </span>
+                        @if ($item->notes)
+                            <span class="d-block text-muted mt-1">{{ $item->notes }}</span>
+                        @endif
                     </div>
                 </li>
             @empty

@@ -8,7 +8,7 @@
 
 <div class="card-body py-2">
     <div class="d-flex justify-content-between align-items-center">
-        <strong class="text-truncate">{{ $materialRequest->total_spent_formatted }}</strong>
+        <strong class="text-truncate">{{ $materialRequest->total_formatted }}</strong>
     </div>
 
     <hr class="my-2">
@@ -32,8 +32,8 @@
 
     <hr class="my-1">
 
-    <div class="mb-0 text-muted" title="{{ $materialRequest->concept }}"
+    <div class="mb-0 text-muted" title="{{ $materialRequest->notes }}"
         style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-        {{ $materialRequest->longText('concept') }}
+        {{ $materialRequest->longText('notes') }}
     </div>
 </div>

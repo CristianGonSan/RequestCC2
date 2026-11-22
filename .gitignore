@@ -1,5 +1,11 @@
 /.phpunit.cache
 /tests/
+!/tests/
+/tests/*
+!/tests/Unit/
+/tests/Unit/*
+!/tests/Unit/MaterialRequestTotalsTest.php
+!/tests/Unit/NumberFormatDecimalTest.php
 /node_modules
 /public/build
 /public/vendor

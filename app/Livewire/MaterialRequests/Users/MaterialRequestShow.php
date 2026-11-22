@@ -40,8 +40,9 @@ class MaterialRequestShow extends Component
             return;
         }
 
+        $materialRequest->changeLogs()->delete();
         $materialRequest->delete();
-        $this->flashToastSuccess('Solicitud eliminada');
+        $this->flashToastSuccess('Solicitud de materiales eliminada');
         redirect()->route('material-requests.index');
     }
 
@@ -64,6 +65,7 @@ class MaterialRequestShow extends Component
         return $this->materialRequest ??= MaterialRequest::with([
             'costCenter:id,name,description,company_id',
             'costCenter.company:id,name',
+            'customer:id,name',
             'type:id,name',
             'user:id,name',
             'items.material',

@@ -24,7 +24,11 @@ class MaterialRequestShow extends Component
 
     public ?string $fulfillQuantity = null;
 
-    public ?string $fulfillCost = null;
+    public ?string $fulfillDate = null;
+
+    public ?string $fulfillDestination = null;
+
+    public ?string $fulfillNotes = null;
 
     public function mount(int $materialRequestId): void
     {
@@ -74,14 +78,15 @@ class MaterialRequestShow extends Component
     public function fulfillItem(int $itemId): void
     {
         $this->fulfillingItemId = $itemId;
-        $this->reset(['fulfillQuantity', 'fulfillCost']);
+        $this->reset(['fulfillQuantity', 'fulfillDate', 'fulfillDestination', 'fulfillNotes']);
+        $this->fulfillDate = now()->toDateString();
         $this->resetValidation();
         $this->dispatch('showModalFulfillItem');
     }
 
     public function closeFulfillModal(): void
     {
-        $this->reset(['fulfillingItemId', 'fulfillQuantity', 'fulfillCost']);
+        $this->reset(['fulfillingItemId', 'fulfillQuantity', 'fulfillDate', 'fulfillDestination', 'fulfillNotes']);
         $this->resetValidation();
         $this->dispatch('hideModalFulfillItem');
     }
@@ -98,7 +103,9 @@ class MaterialRequestShow extends Component
 
         $this->validate([
             'fulfillQuantity' => ['required', 'numeric', 'min:0', "max:{$item->remaining_quantity}"],
-            'fulfillCost'     => ['required', 'numeric', 'gt:0'],
+            'fulfillDate'        => ['required', 'date'],
+            'fulfillDestination' => ['required', 'string', 'max:255'],
+            'fulfillNotes'       => ['nullable', 'string', 'max:255'],
         ]);
 
         MaterialRequestFulfillment::create([
@@ -106,11 +113,13 @@ class MaterialRequestShow extends Component
             'material_request_item_id' => $item->id,
             'user_id'                  => auth()->id(),
             'quantity'                 => $this->fulfillQuantity,
-            'cost'                     => $this->fulfillCost,
+            'fulfilled_on'             => $this->fulfillDate,
+            'destination'              => $this->fulfillDestination,
+            'notes'                    => $this->fulfillNotes,
         ]);
 
         $this->materialRequest = null;
-        $this->reset(['fulfillingItemId', 'fulfillQuantity', 'fulfillCost']);
+        $this->reset(['fulfillingItemId', 'fulfillQuantity', 'fulfillDate', 'fulfillDestination', 'fulfillNotes']);
         $this->toastSuccess('Material suplido correctamente.');
         $this->closeFulfillModal();
     }
@@ -158,6 +167,7 @@ class MaterialRequestShow extends Component
         return $this->materialRequest ??= MaterialRequest::with([
             'costCenter:id,name,description,company_id',
             'costCenter.company:id,name',
+            'customer:id,name',
             'type:id,name',
             'user:id,name',
             'items.material',

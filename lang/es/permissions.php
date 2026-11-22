@@ -11,8 +11,7 @@ return [
     'manage_types'              => 'Gestionar Tipos',
     'manage_companies'          => 'Gestionar Empresas',
     'manage_cost_centers'       => 'Gestionar Centro de Costos',
-    'export'                    => 'Exportar',
-    'view_summary'              => 'Ver Resumen',
+    'manage_customers'          => 'Gestionar Clientes',
     'manage_configurations'     => 'Gestionar Configuraciones',
     'manage_development'        => 'Gestionar Desarrollo',
     'manage_units'              => 'Gestionar Unidades',
@@ -21,4 +20,6 @@ return [
     'manage_material_requests'  => 'Gestionar Solicitudes de Materiales',
     'fulfill_material_requests' => 'Suplir Solicitudes de Materiales',
     'view_media'                => 'Ver Archivos',
+    'export'                    => 'Exportar',
+    'view_summary'              => 'Ver Resumen',
 ];

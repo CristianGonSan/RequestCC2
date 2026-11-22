@@ -13,112 +13,90 @@ class LivewireSelect2Builder {
 
         this.internal = {
             $wire: wireInstance,
+            selector: null,
+            wireModel: null,
             live: false,
-            wireEventName: 'reset'
+            wireEventName: 'reset',
+            minExplicit: false,
         };
-
-        this.valueOption = {
-            id: null,
-            text: null
-        }
+        this.valueOption = { id: null, text: null };
     }
 
-    wire(wireInstance) {
-        this.internal.$wire = wireInstance;
-        return this;
-    }
+    wire($wire)            { this.internal.$wire = $wire; return this; }
+    selector(selector)     { this.internal.selector = selector; return this; }
+    wireModel(model)       { this.internal.wireModel = model; return this; }
+    live(live = true)      { this.internal.live = live; return this; }
+    wireReset(eventName)   { this.internal.wireEventName = eventName; return this; }
+    value(id, text)        { this.valueOption = { id, text }; return this; }
+    placeholder(text)      { this.select2Config.placeholder = text; return this; }
+    appendConfig(config)   { Object.assign(this.select2Config, config); return this; }
+    allowClear()           { this.select2Config.allowClear = true; return this; }
+    noAllowClear()         { this.select2Config.allowClear = false; return this; }
 
-    selector(selector) {
-        this.internal.selector = selector;
-        return this;
-    }
-
-    wireModel(model) {
-        this.internal.wireModel = model;
-        return this;
-    }
-
-    live(live = true) {
-        this.internal.live = live;
-        return this;
-    }
-
-    value(id, text) {
-        this.valueOption.id = id;
-        this.valueOption.text = text;
-        return this;
-    }
-
-    placeholder(placeholder) {
-        this.select2Config.placeholder = placeholder;
-        return this;
-    }
-
-    appendConfig(config) {
-        Object.assign(this.select2Config, config);
-        return this;
-    }
-
-    wireReset(wireEventName) {
-        this.internal.wireEventName = wireEventName;
-        return this;
-    }
-
-    minInpLength(minimumInputLength = 1) {
-        this.select2Config.minimumInputLength = minimumInputLength;
+    minInpLength(n = 1) {
+        this.select2Config.minimumInputLength = n;
+        this.internal.minExplicit = true;
         return this;
     }
 
     noMinInpLength() {
         this.select2Config.minimumInputLength = 0;
-        return this;
-    }
-
-    allowClear() {
-        this.select2Config.allowClear = true;
-        return this;
-    }
-
-    noAllowClear() {
-        this.select2Config.allowClear = false;
+        this.internal.minExplicit = true;
         return this;
     }
 
     build() {
-        const { $wire, selector, wireModel, live, wireEventName } = this.internal;
+        const { $wire, selector, wireModel, live, wireEventName, minExplicit } = this.internal;
         const { id, text } = this.valueOption;
 
         if (!$wire || !selector) {
             throw new Error('LivewireSelect2Builder: configuración incompleta');
         }
 
-        if (this.select2Config.minimumInputLength == 0) {
-            if (this.select2Config.ajax != undefined) {
-                this.select2Config.minimumInputLength = 1;
-            }
+        const $el = $(selector);
+        if (!$el.length) {
+            throw new Error(`LivewireSelect2Builder: no existe "${selector}"`);
         }
 
-        const select2 = $(selector).select2(this.select2Config);
+        // Solo forzar mínimo 1 con ajax si no se definió explícitamente
+        const config = { ...this.select2Config };
+        if (config.ajax && !minExplicit && config.minimumInputLength === 0) {
+            config.minimumInputLength = 1;
+        }
 
-        if (id && text) {
-            select2.append(new Option(text, id, true, true)).trigger('change');
-            this.valueOption.id = null;
-            this.valueOption.text = null;
+        // Evitar doble inicialización y listeners duplicados
+        LivewireSelect2Builder.destroy($el);
+
+        $el.select2(config);
+
+        // Valor inicial sin disparar nuestro handler
+        if (id != null && text != null) {
+            $el.append(new Option(text, id, true, true)).trigger('change.select2');
         }
 
         if (wireModel) {
-            select2.on('change', function () {
+            $el.on('change.lwSelect2', function () {
                 $wire.set(wireModel, $(this).val(), live);
             });
         }
 
         if (wireEventName) {
-            Livewire.on(wireEventName, () => {
-                select2.val(null).trigger('change');
+            const off = Livewire.on(wireEventName, () => {
+                $el.val(null).trigger('change.select2'); // solo refresca la UI
             });
+            $el.data('lwSelect2Off', off);
         }
 
-        return select2;
+        return $el;
     }
 
+    static destroy($el) {
+        $el = $($el);
+        const off = $el.data('lwSelect2Off');
+        if (typeof off === 'function') off();
+        $el.removeData('lwSelect2Off').off('.lwSelect2');
+        if ($el.hasClass('select2-hidden-accessible')) {
+            $el.select2('destroy');
+        }
+    }
 }

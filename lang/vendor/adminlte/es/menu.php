@@ -60,6 +60,7 @@ return [
     'request'         => 'Solicitar',
     'monetary'        => 'Monetarias',
     'fulfillment'     => 'Abastecimiento',
+    'customers'       => 'Clientres',
 
     'incomes'         => 'Ingresos',
     'money_requests'  => 'Solicitudes de Dinero',

@@ -4,6 +4,7 @@
     $costCenter = $materialRequest->costCenter;
     $company = $costCenter->company;
     $type = $materialRequest->type;
+    $customer = $materialRequest->customer;
 @endphp
 
 <div class="card">
@@ -27,14 +28,33 @@
                 </dl>
             </div>
 
+
+            <div class="col-md-6 order-4">
+                <dl class="row mb-2">
+                    <dt class="col-md-4 text-muted">Subtotal</dt>
+                    <dd class="col-md-8 mb-0">${{ number_format_decimal($materialRequest->subtotal, 2) }}</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-6 order-4">
+                <dl class="row mb-2">
+                    <dt class="col-md-4 text-muted">Cargo</dt>
+                    <dd class="col-md-8 mb-0">
+                        {{ $materialRequest->charge_type->label() }}
+                        ({{ rtrim(rtrim(number_format_decimal($materialRequest->charge_rate, 2), '0'), '.') }}%):
+                        ${{ number_format_decimal($materialRequest->charge_amount, 2) }}
+                    </dd>
+                </dl>
+            </div>
+
             <div class="col-12 order-4 order-md-4">
                 <dl class="row mb-2">
-                    <dt class="col-md-2 text-muted">Total gastado</dt>
+                    <dt class="col-md-2 text-muted">Total</dt>
                     <dd class="col-md-10 mb-0">
                         <span class="h3 font-weight-bold text-success d-block mb-0">
-                            {{ $materialRequest->total_spent_formatted }}
+                            {{ $materialRequest->total_formatted }}
                         </span>
-                        <em class="text-muted">{{ ucfirst($materialRequest->total_spent_to_words) }}</em>
+                        <em class="text-muted">{{ ucfirst($materialRequest->total_to_words) }}</em>
                     </dd>
                 </dl>
             </div>
@@ -52,10 +72,19 @@
 
             <div class="col-12 order-4 order-md-4">
                 <dl class="row mb-2">
-                    <dt class="col-md-2 text-muted">Concepto</dt>
-                    <dd class="col-md-10 mb-0">{{ $materialRequest->concept }}</dd>
+                    <dt class="col-md-2 text-muted">Cliente</dt>
+                    <dd class="col-md-10 mb-0">{{ $customer->name }}</dd>
                 </dl>
             </div>
+
+            @if ($materialRequest->notes)
+                <div class="col-12 order-4 order-md-4">
+                    <dl class="row mb-2">
+                        <dt class="col-md-2 text-muted">Notas</dt>
+                        <dd class="col-md-10 mb-0">{{ $materialRequest->notes }}</dd>
+                    </dl>
+                </div>
+            @endif
         </div>
 
         <hr class="mt-2">

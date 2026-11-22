@@ -18,6 +18,8 @@ use Illuminate\Support\Carbon;
  * @property int $unit_id
  * @property numeric $quantity_requested
  * @property numeric $quantity_fulfilled
+ * @property numeric $unit_cost
+ * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
@@ -25,7 +27,7 @@ use Illuminate\Support\Carbon;
  * @property-read bool $is_fully_fulfilled
  * @property-read float $percentage_fulfilled
  * @property-read float $remaining_quantity
- * @property-read float $total_spent
+ * @property-read string $total_spent
  * @property-read string $total_spent_formatted
  * @property-read Material $material
  * @property-read \App\Models\MaterialRequests\MaterialRequest $materialRequest
@@ -37,8 +39,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereMaterialId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereMaterialRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantityFulfilled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantityRequested($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUnitCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUnitId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -52,11 +56,15 @@ class MaterialRequestItem extends Model
         'material_id',
         'unit_id',
         'quantity_requested',
+        'quantity_fulfilled',
+        'unit_cost',
+        'notes',
     ];
 
     protected $casts = [
         'quantity_requested' => 'decimal:3',
         'quantity_fulfilled' => 'decimal:3',
+        'unit_cost'           => 'decimal:2',
     ];
 
     public function materialRequest(): BelongsTo
@@ -98,9 +106,13 @@ class MaterialRequestItem extends Model
         return ($this->quantity_fulfilled / $this->quantity_requested) * 100;
     }
 
-    public function getTotalSpentAttribute(): float
+    public function getTotalSpentAttribute(): string
     {
-        return $this->fulfillments()->sum('cost');
+        return bcmul(
+            (string) $this->quantity_fulfilled,
+            (string) $this->unit_cost,
+            2
+        );
     }
 
     public function getIsFullyFulfilledAttribute(): bool
@@ -110,6 +122,6 @@ class MaterialRequestItem extends Model
 
     public function getTotalSpentFormattedAttribute(): string
     {
-        return '$'.number_format($this->total_spent, 2);
+        return '$'.number_format_decimal($this->total_spent, 2);
     }
 }

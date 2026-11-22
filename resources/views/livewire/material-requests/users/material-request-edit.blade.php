@@ -7,9 +7,6 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-row">
-                    <x-adminlte-textarea fgroup-class="col-md-12" name="concept" label="Concepto *" rows="3"
-                        placeholder="Inserte el concepto..." wire:model="concept" maxlength="255" required />
-
                     <x-form.select-wire-ignore fgroup-class="col-md-6" name="cost_center_id" label="Centro de Costos *"
                         required>
                     </x-form.select-wire-ignore>
@@ -18,6 +15,13 @@
                         label="Tipo de movimiento *" required>
                         <x-adminlte-options :options="$typeOptions" empty-option="Selecciona el tipo..." />
                     </x-form.select-wire-ignore>
+
+                    <x-form.select-wire-ignore fgroup-class="col-md-6" id="customer_id" name="customer_id"
+                        label="Cliente *" required>
+                    </x-form.select-wire-ignore>
+
+                    <x-adminlte-textarea fgroup-class="col-md-12" name="notes" label="Notas" rows="3"
+                        placeholder="Inserte las notas..." wire:model="notes" maxlength="255" />
                 </div>
             </div>
         </div>
@@ -82,8 +86,23 @@
                     }
                 }).build();
 
+            const customerSelect = select2Builder.selector('#customer_id').wireModel('customer_id')
+                .value(@json($customer_id), @json($customerText))
+                .placeholder('Selecciona el cliente')
+                .appendConfig({
+                    ajax: {
+                        url: "{{ route('lookups.customers.select2') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        cache: true,
+                        data: function (params) {
+                            return { term: params.term, active: true };
+                        },
+                    }
+                }).build();
 
             const materialSelect = select2Builder.selector('#material_id').wireModel('material_id')
+                .value(null, null)
                 .placeholder('Seleccionar material')
                 .appendConfig({
                     ajax: {

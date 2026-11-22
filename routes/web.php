@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Balance\BalanceController;
+use App\Http\Controllers\Catalogs\CustomerController;
 use App\Http\Controllers\Exports\ExportIncomesController;
 use App\Http\Controllers\Exports\ExportMoneyRequestsController;
 use App\Http\Controllers\Incomes\UserIncomeController;
 use App\Http\Controllers\Lookups\CompanyLookup;
+use App\Http\Controllers\Lookups\CustomerLookup;
 use App\Http\Controllers\Lookups\MaterialLookup;
 use App\Http\Controllers\MaterialRequests\FulfillmentMaterialRequestController;
 use App\Http\Controllers\MaterialRequests\ManagementMaterialRequestController;
@@ -28,7 +30,6 @@ use App\Http\Controllers\Catalogs\CostCenterController;
 use App\Http\Controllers\Catalogs\MaterialController;
 use App\Http\Controllers\Catalogs\TypeController;
 use App\Http\Controllers\Catalogs\UnitController;
-use App\Http\Controllers\Common\ShowFileController;
 use App\Http\Controllers\Configurations\EmailNotificationsController;
 use App\Http\Controllers\Lookups\CostCenterLookup;
 use App\Http\Controllers\Lookups\TypeLookup;
@@ -94,6 +95,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::resource('cost-centers', CostCenterController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_cost_centers');
     Route::resource('units', UnitController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_units');
     Route::resource('materials', MaterialController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_materials');
+    Route::resource('customers', CustomerController::class)->only(['index', 'create', 'show', 'edit'])->middleware('permission:manage_customers');
 
     Route::prefix('export')->middleware('permission:export')->name('export.')->group(function () {
         Route::get('money-requests', [ExportMoneyRequestsController::class, 'index'])->name('money-requests.index');
@@ -169,5 +171,8 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::get('materials/select2', [MaterialLookup::class, 'select2'])
             ->name('materials.select2');
+
+        Route::get('customers/select2', [CustomerLookup::class, 'select2'])
+            ->name('customers.select2');
     });
 });

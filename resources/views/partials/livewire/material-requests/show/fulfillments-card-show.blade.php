@@ -30,15 +30,21 @@
                             <div class="mt-1">
                                 <span>{{ number_format((float) $fulfillment->quantity, 3) }}
                                     {{ $fulfillment->materialRequestItem->unit->symbol }}</span>
-                                <span class="text-muted">&mdash; ${{ number_format((float) $fulfillment->cost, 2) }}</span>
+                                <span class="text-muted">&mdash; {{ $fulfillment->destination }}</span>
                             </div>
 
                             <div class="mt-1">
                                 <small class="text-muted">
-                                    {{ $fulfillment->created_at->format('d/m/Y h:i A') }}
+                                    {{ $fulfillment->fulfilled_on->format('d/m/Y') }}
                                     &middot; {{ $fulfillment->user->name }}
                                 </small>
                             </div>
+
+                            @if ($fulfillment->notes)
+                                <div class="mt-1">
+                                    <small>Notas:</small> <small class="text-muted">{{ $fulfillment->notes }}</small>
+                                </div>
+                            @endif
                         </div>
 
                         @unless ($readonly)

@@ -92,10 +92,10 @@ class MaterialRequestsTable extends Component
                 fn () => $query->where('material_requests.status', $filtersBag->string('status'))
             )
             ->when($filtersBag->filled('minTotalSpent'),
-                fn () => $query->where('material_requests.total_spent', '>=', $filtersBag->float('minTotalSpent'))
+                fn () => $query->where('material_requests.total', '>=', $filtersBag->float('minTotalSpent'))
             )
             ->when($filtersBag->filled('maxTotalSpent'),
-                fn () => $query->where('material_requests.total_spent', '<=', $filtersBag->float('maxTotalSpent'))
+                fn () => $query->where('material_requests.total', '<=', $filtersBag->float('maxTotalSpent'))
             )
             ->when($filtersBag->filled('minDate'),
                 fn () => $query->where('material_requests.created_at', '>=', $filtersBag->string('minDate'))
@@ -115,7 +115,7 @@ class MaterialRequestsTable extends Component
                         'companies.name',
                         'cost_centers.description',
                         'types.name',
-                        'material_requests.concept',
+                        'material_requests.notes',
                     ], 'like', "%$term%");
                 });
             }
@@ -135,7 +135,7 @@ class MaterialRequestsTable extends Component
             'created_at'  => 'material_requests.created_at',
             'id'          => 'material_requests.id',
             'cost_center' => 'cost_centers.name',
-            'total_spent' => 'material_requests.total_spent',
+            'total_spent' => 'material_requests.total',
             'type'        => 'types.name',
         ];
 
