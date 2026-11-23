@@ -108,7 +108,7 @@ class MaterialRequestsTable extends Component
             if ($id = $this->getIdFromSearchTerm()) {
                 $query->where('material_requests.id', $id);
             } else {
-                $query->where(function (Builder $query) use ($term): void {
+                $query->where(function ($query) use ($term): void {
                     $query->whereAny([
                         'users.name',
                         'cost_centers.name',

@@ -32,7 +32,7 @@
             <div class="col-md-6 order-4">
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Subtotal</dt>
-                    <dd class="col-md-8 mb-0">${{ number_format_decimal($materialRequest->subtotal, 2) }}</dd>
+                    <dd class="col-md-8 mb-0">{{ $materialRequest->sub_total_formatted }}</dd>
                 </dl>
             </div>
 
@@ -40,9 +40,8 @@
                 <dl class="row mb-2">
                     <dt class="col-md-4 text-muted">Cargo</dt>
                     <dd class="col-md-8 mb-0">
-                        {{ $materialRequest->charge_type->label() }}
-                        ({{ rtrim(rtrim(number_format_decimal($materialRequest->charge_rate, 2), '0'), '.') }}%):
-                        ${{ number_format_decimal($materialRequest->charge_amount, 2) }}
+                        {{ $materialRequest->charge_type->labelWithPercentage() }}
+                        {{ $materialRequest->charge_amount_formatted }}
                     </dd>
                 </dl>
             </div>

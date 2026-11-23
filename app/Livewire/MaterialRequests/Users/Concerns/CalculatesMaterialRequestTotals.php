@@ -10,7 +10,7 @@ trait CalculatesMaterialRequestTotals
      * @param  array<string|int, array<string, mixed>>  $items
      * @return array{lineTotals: array<string|int, string>, subtotal: string, chargeAmount: string, total: string}
      */
-    private function calculateTotals(array $items, string $chargeTypeValue): array
+    private function calculateTotals(array $items, ChargeType $chargeType): array
     {
         $subtotal  = '0.00';
         $lineTotals = [];
@@ -23,19 +23,32 @@ trait CalculatesMaterialRequestTotals
                 ? '0.00'
                 : bcmul($quantity, $unitCost, 2);
 
-            $lineTotals[$key] = '$'.number_format_decimal($lineTotal, 2);
+            $lineTotals[$key] = $lineTotal;
             $subtotal = bcadd($subtotal, $lineTotal, 2);
         }
 
-        $chargeType   = ChargeType::tryFrom($chargeTypeValue);
-        $chargeAmount = $chargeType?->chargeAmount($subtotal) ?? '0.00';
-        $total        = bcadd($subtotal, $chargeAmount, 2);
+        $chargeTotals = $this->calculateChargeTotals($subtotal, $chargeType);
 
         return [
-            'lineTotals'  => $lineTotals,
-            'subtotal'     => '$'.number_format_decimal($subtotal, 2),
-            'chargeAmount' => '$'.number_format_decimal($chargeAmount, 2),
-            'total'        => '$'.number_format_decimal($total, 2),
+            'lineTotals'   => $lineTotals,
+            'subtotal'     => $subtotal,
+            'chargeAmount' => $chargeTotals['chargeAmount'],
+            'total'        => $chargeTotals['total'],
+        ];
+    }
+
+    /**
+     * @return array{chargeAmount: string, total: string}
+     */
+    private function calculateChargeTotals(string $subtotal, ?ChargeType $chargeType): array
+    {
+        $chargeAmount = $chargeType === null
+            ? '0.00'
+            : bcmul($subtotal, bcdiv((string) $chargeType->percentage(), '100', 2), 2);
+
+        return [
+            'chargeAmount' => $chargeAmount,
+            'total'        => bcadd($subtotal, $chargeAmount, 2),
         ];
     }
 
@@ -67,5 +80,4 @@ trait CalculatesMaterialRequestTotals
 
         return $value;
     }
-
 }

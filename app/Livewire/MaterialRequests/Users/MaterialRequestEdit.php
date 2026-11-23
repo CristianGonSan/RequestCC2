@@ -40,7 +40,7 @@ class MaterialRequestEdit extends Component
 
     public ?int $material_id = null;
 
-    public string $charge_type = 'iva';
+    public ChargeType $charge_type = ChargeType::Iva;
 
     /**
      * @var array<string, array{material_id: int, material_name: string, unit_id: int|null, quantity_requested: string}>
@@ -64,12 +64,13 @@ class MaterialRequestEdit extends Component
         $this->customerText   = $customer->name;
         $this->type_id        = $type->id;
         $this->typeText       = $type->name;
-        $this->charge_type    = $materialRequest->charge_type->value;
+        $this->charge_type    = $materialRequest->charge_type;
 
         foreach ($materialRequest->items as $item) {
             $this->items[(string) $item->id] = [
                 'material_id'        => $item->material_id,
                 'material_name'      => $item->material->name,
+                'material_code'      => $item->material->code,
                 'unit_id'            => $item->unit_id,
                 'quantity_requested' => (string) $item->quantity_requested,
                 'unit_cost'          => (string) $item->unit_cost,
@@ -148,27 +149,19 @@ class MaterialRequestEdit extends Component
         }
 
         DB::transaction(function () use ($materialRequest, $validated): void {
-            $subtotal = '0';
-
-            foreach ($validated['items'] as $item) {
-                $lineTotal = bcmul((string) $item['quantity_requested'], (string) $item['unit_cost'], 2);
-                $subtotal  = bcadd($subtotal, $lineTotal, 2);
-            }
-
-            $chargeType   = ChargeType::from($validated['charge_type']);
-            $chargeAmount = $chargeType->chargeAmount($subtotal);
-            $total        = bcadd($subtotal, $chargeAmount, 2);
+            $chargeType   = $this->charge_type;
+            $totals       = $this->calculateTotals($validated['items'], $chargeType);
 
             $materialRequest->update([
                 'notes'          => $validated['notes'] ?? null,
                 'cost_center_id' => $validated['cost_center_id'] ?? $materialRequest->cost_center_id,
                 'customer_id'    => $validated['customer_id'] ?? $materialRequest->customer_id,
                 'type_id'        => $validated['type_id'] ?? $materialRequest->type_id,
-                'total'          => $total,
+                'total'          => $totals['total'],
                 'charge_type'    => $chargeType,
-                'charge_rate'    => $chargeType->chargeRate(),
-                'subtotal'       => $subtotal,
-                'charge_amount'  => $chargeAmount,
+                'charge_rate'    => $chargeType->percentage(),
+                'subtotal'       => $totals['subtotal'],
+                'charge_amount'  => $totals['chargeAmount'],
             ]);
 
             $this->syncItems($materialRequest, $validated['items']);
@@ -201,6 +194,7 @@ class MaterialRequestEdit extends Component
         $this->items[$key] = [
             'material_id'        => $material->id,
             'material_name'      => $material->name,
+            'material_code'      => $material->code,
             'unit_id'            => $material->base_unit_id,
             'quantity_requested' => '',
             'unit_cost'          => '',
@@ -286,7 +280,7 @@ class MaterialRequestEdit extends Component
         $this->customerText   = $materialRequest->customer->name;
         $this->type_id        = $materialRequest->type_id;
         $this->typeText       = $materialRequest->type->name;
-        $this->charge_type    = $materialRequest->charge_type->value;
+        $this->charge_type    = $materialRequest->charge_type;
 
         $this->items = [];
 
@@ -294,6 +288,7 @@ class MaterialRequestEdit extends Component
             $this->items[(string) $item->id] = [
                 'material_id'        => $item->material_id,
                 'material_name'      => $item->material->name,
+                'material_code'      => $item->material->code,
                 'unit_id'            => $item->unit_id,
                 'quantity_requested' => (string) $item->quantity_requested,
                 'unit_cost'          => (string) $item->unit_cost,

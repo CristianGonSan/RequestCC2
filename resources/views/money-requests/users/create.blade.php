@@ -1,6 +1,5 @@
 @extends('adminlte::page')
 
-@section('plugins.InputMask', true)
 @section('plugins.Select2', true)
 
 @section('title_prefix', 'Nueva Solicitud |')
@@ -16,6 +15,6 @@
 @endsection
 
 @section('content')
-    <h1 class="h4">Nueva solicitud</h1>
+    <h1 class="h4">Nueva solicitud de materiales</h1>
     <livewire:MoneyRequests.Users.RequestCreate :copyFromId="$copyFromId" />
 @endsection

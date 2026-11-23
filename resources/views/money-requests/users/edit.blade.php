@@ -1,6 +1,5 @@
 @extends('adminlte::page')
 
-@section('plugins.InputMask', true)
 @section('plugins.Select2', true)
 
 @section('title_prefix', "Editar Mi Solicitud #{$moneyRequest->id} |")
@@ -18,6 +17,6 @@
 @endsection
 
 @section('content')
-    <h1 class="h4">Editar mi solicitud</h1>
+    <h1 class="h4">Editar mi solicitud de materiales</h1>
     <livewire:MoneyRequests.Users.RequestEdit :MoneyRequestId="$moneyRequest->id" />
 @endsection

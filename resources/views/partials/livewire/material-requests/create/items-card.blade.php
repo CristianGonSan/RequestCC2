@@ -12,95 +12,97 @@
     </div>
 
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="text-nowrap border-top-0">
-                    <tr>
-                        <th style="min-width: 220px">Material</th>
-                        <th style="min-width: 260px">Cantidad/Unidad *</th>
-                        <th style="min-width: 160px; width: 160px;">Costo unitario *</th>
-                        <th style="min-width: 160px">Total</th>
-                        <th class="text-center" style="width: 1%">Quitar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($items as $key => $item)
-                        <tr wire:key="item-{{ $key }}">
-                            <td class="align-middle">
-                                {{ $item['material_name'] }}
-                            </td>
-                            <td class="align-middle p-2">
-                                <div class="input-group input-group-sm">
-                                    <input type="number" class="form-control" name="items.{{ $key }}.quantity_requested"
-                                        placeholder="0" step="0.001" min="0.001" max="999999999.999"
-                                        wire:model.live.debounce.300ms="items.{{ $key }}.quantity_requested" required>
+        <ul class="list-group list-group-flush">
+            @forelse ($items as $key => $item)
+                <li class="list-group-item p-3" wire:key="item-{{ $key }}">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <div>
+                            <strong>{{ $item['material_name'] }}</strong>@if ($item['material_code'] ?? null)
+                                <strong class="text-muted"> ({{ $item['material_code'] }})</strong>
+                            @endif
+                        </div>
+                        @if ($item['can_delete'] ?? true)
+                            <x-livewire.loading-button theme="outline-danger" class="btn-sm ml-2" icon="trash-alt"
+                                title="Quitar material" wire:click="removeItem('{{ $key }}')"
+                                wire:target="removeItem('{{ $key }}')" />
+                        @else
+                            <i class="fas fa-ban text-muted ml-2" title="Ya tiene cantidades suministradas"></i>
+                        @endif
+                    </div>
 
-                                    <select class="form-control custom-select" name="items.{{ $key }}.unit_id"
-                                        wire:model="items.{{ $key }}.unit_id" required>
-                                        @foreach ($unitOptions as $unitId => $unitName)
-                                            <option value="{{ $unitId }}">{{ $unitName }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </td>
-                            <td class="align-middle p-2">
-                                <x-adminlte-input type="number" name="items.{{ $key }}.unit_cost" placeholder="0.00"
-                                    step="0.01" min="0" max="999999999999.99"
-                                    wire:model.live.debounce.300ms="items.{{ $key }}.unit_cost" igroup-size="sm"
-                                    fgroup-class="mb-0" required />
-                            </td>
-                            <td class="align-middle text-nowrap">{{ $totals['lineTotals'][$key] }}</td>
-                            <td class="align-middle text-center">
-                                @if ($item['can_delete'] ?? true)
-                                    <x-livewire.loading-button theme="outline-danger" class="btn-sm" icon="trash-alt"
-                                        title="Quitar material" wire:click="removeItem('{{ $key }}')"
-                                        wire:target="removeItem('{{ $key }}')" />
-                                @else
-                                    <i class="fas fa-ban text-muted" title="Ya tiene cantidades suministradas"></i>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-5">
-                                <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
-                                Agregue un material para comenzar
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr class="font-weight-bold">
-                        <td colspan="2"></td>
-                        <td class="text-right">Subtotal</td>
-                        <td class="text-nowrap">{{ $totals['subtotal'] }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td class="text-right">
-                            <div class="input-group input-group-sm ml-auto">
-                                <select class="form-control custom-select" id="charge_type" name="charge_type"
-                                    aria-label="Tipo de cargo aplicado" wire:model.change="charge_type" required>
-                                    @foreach ($chargeDetails as $value => $chargeDetail)
-                                        <option value="{{ $value }}">
-                                            {{ $chargeDetail['label'] }} ({{ $chargeDetail['percentage'] }}%)
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </td>
-                        <td class="text-nowrap">{{ $totals['chargeAmount'] }}</td>
-                        <td></td>
-                    </tr>
-                    <tr class="font-weight-bold">
-                        <td colspan="2"></td>
-                        <td class="text-right">Total</td>
-                        <td class="text-nowrap">{{ $totals['total'] }}</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
+                    <div class="form-row align-items-end">
+                        <div class="form-group col-md-3 mb-2">
+                            <label class="text-muted mb-0" for="item-quantity-{{ $key }}">Cantidad *</label>
+                            <input id="item-quantity-{{ $key }}" type="number" class="form-control "
+                                name="items.{{ $key }}.quantity_requested" placeholder="0" step="0.001" min="0.001"
+                                max="999999999.999" wire:model.live.debounce.300ms="items.{{ $key }}.quantity_requested"
+                                required>
+                        </div>
+                        <div class="form-group col-md-2 mb-2">
+                            <label class="text-muted mb-0" for="item-unit-{{ $key }}">Unidad *</label>
+                            <select id="item-unit-{{ $key }}" class="form-control custom-select "
+                                name="items.{{ $key }}.unit_id" wire:model="items.{{ $key }}.unit_id" required>
+                                @foreach ($unitOptions as $unitId => $unitName)
+                                    <option value="{{ $unitId }}">{{ $unitName }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3 mb-2">
+                            <label class="text-muted mb-0" for="item-cost-{{ $key }}">Costo unitario *</label>
+                            <input id="item-cost-{{ $key }}" type="number" class="form-control "
+                                name="items.{{ $key }}.unit_cost" placeholder="0.00" step="0.01" min="0"
+                                max="999999999999.99" wire:model.live.debounce.300ms="items.{{ $key }}.unit_cost" required>
+                        </div>
+                        <div class="form-group col-md-4 mb-2">
+                            <label class="text-muted mb-0" for="item-total-{{ $key }}">Total del material</label>
+                            <input id="item-total-{{ $key }}" type="text" class="form-control "
+                                value="${{ number_format_decimal($totals['lineTotals'][$key], 2) }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-1 mb-0">
+                        <label class="text-muted mb-0" for="item-notes-{{ $key }}">Notas</label>
+                        <textarea id="item-notes-{{ $key }}" class="form-control" name="items.{{ $key }}.notes" rows="1"
+                            placeholder="Especifique detalles para este material..." maxlength="255"
+                            wire:model="items.{{ $key }}.notes"></textarea>
+                    </div>
+                </li>
+            @empty
+                <li class="list-group-item text-center text-muted py-5">
+                    <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
+                    Agregue un material para comenzar
+                </li>
+            @endforelse
+        </ul>
+    </div>
+
+    <div class="card-footer">
+        <div class="row align-items-center">
+            <div class="form-group col-md-4 mb-2 mb-md-0">
+                <label class="text-muted mb-1" for="request-subtotal">Subtotal</label>
+                <input id="request-subtotal" type="text" class="form-control"
+                    value="${{ number_format_decimal($totals['subtotal'], 2) }}" readonly>
+            </div>
+            <div class="form-group col-md-4 mb-2 mb-md-0">
+                <label class="text-muted mb-1" for="request-charge-amount">Cargo</label>
+                <div class="input-group">
+                    <select class="custom-select" id="charge_type" name="charge_type"
+                        aria-label="Tipo de cargo aplicado" wire:model.change="charge_type" required>
+                        @foreach ($chargeDetails as $value => $chargeDetail)
+                            <option value="{{ $value }}">
+                                {{ $chargeDetail['label'] }} ({{ $chargeDetail['percentage'] }}%)
+                            </option>
+                        @endforeach
+                    </select>
+                    <input id="request-charge-amount" type="text" class="form-control"
+                        value="${{ number_format_decimal($totals['chargeAmount'], 2) }}" readonly>
+                </div>
+            </div>
+            <div class="form-group col-md-4 mb-0 font-weight-bold">
+                <label class="text-muted mb-1" for="request-total">Total</label>
+                <input id="request-total" type="text" class="form-control"
+                    value="${{ number_format_decimal($totals['total'], 2) }}" readonly>
+            </div>
         </div>
     </div>
 </div>

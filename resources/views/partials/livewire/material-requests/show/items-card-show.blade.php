@@ -16,7 +16,7 @@
 
     <div class="card-body p-0">
         <ul class="list-group list-group-flush">
-            @forelse ($materialRequest->items()->orderByDesc('created_at')->get() as $item)
+            @forelse ($materialRequest->items()->orderBy('id')->get() as $item)
                 <li class="list-group-item" wire:key='item-{{ $item->id }}'>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>

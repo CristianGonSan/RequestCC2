@@ -24,7 +24,7 @@ class MaterialRequestFulfillmentObserver
 
     private function recalculate(MaterialRequestFulfillment $fulfillment): void
     {
-        $item = MaterialRequestItem::findOrFail($fulfillment->material_request_item_id);
+        $item = $fulfillment->materialRequestItem;
 
         $item->quantity_fulfilled = $item->fulfillments()->sum('quantity');
         $item->save();

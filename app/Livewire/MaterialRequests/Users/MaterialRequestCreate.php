@@ -37,7 +37,7 @@ class MaterialRequestCreate extends Component
 
     public ?int $material_id = null;
 
-    public string $charge_type = 'iva';
+    public ChargeType $charge_type = ChargeType::Iva;
 
     /**
      * @var array<string, array{material_id: int, material_name: string, unit_id: int|null, quantity_requested: string}>
@@ -77,16 +77,8 @@ class MaterialRequestCreate extends Component
         ]);
 
         $materialRequest = DB::transaction(function () use ($validated): MaterialRequest {
-            $subtotal = '0';
-
-            foreach ($validated['items'] as $item) {
-                $lineTotal = bcmul((string) $item['quantity_requested'], (string) $item['unit_cost'], 2);
-                $subtotal  = bcadd($subtotal, $lineTotal, 2);
-            }
-
-            $chargeType   = ChargeType::from($validated['charge_type']);
-            $chargeAmount = $chargeType->chargeAmount($subtotal);
-            $total        = bcadd($subtotal, $chargeAmount, 2);
+            $chargeType   = $this->charge_type;
+            $totals       = $this->calculateTotals($validated['items'], $chargeType);
 
             $materialRequest = MaterialRequest::create([
                 'user_id'        => auth()->id(),
@@ -95,11 +87,11 @@ class MaterialRequestCreate extends Component
                 'type_id'        => $validated['type_id'],
                 'notes'          => $validated['notes'] ?? null,
                 'status'         => MaterialRequestStatus::Pending,
-                'total'          => $total,
+                'total'          => $totals['total'],
                 'charge_type'    => $chargeType,
-                'charge_rate'    => $chargeType->chargeRate(),
-                'subtotal'       => $subtotal,
-                'charge_amount'  => $chargeAmount,
+                'charge_rate'    => $chargeType->percentage(),
+                'subtotal'       => $totals['subtotal'],
+                'charge_amount'  => $totals['chargeAmount'],
             ]);
 
             $materialRequest->items()->createMany(
@@ -146,6 +138,7 @@ class MaterialRequestCreate extends Component
         $this->items[$key] = [
             'material_id'        => $material->id,
             'material_name'      => $material->name,
+            'material_code'      => $material->code,
             'unit_id'            => $material->base_unit_id,
             'quantity_requested' => '',
             'unit_cost'          => '',

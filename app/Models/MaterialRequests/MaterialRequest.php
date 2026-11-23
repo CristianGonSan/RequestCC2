@@ -51,14 +51,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read int|null $favorites_count
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestFulfillment> $fulfillments
  * @property-read int|null $fulfillments_count
+ * @property-read string $charge_amount_formatted
  * @property-read int $edited_change_logs_count
  * @property-read bool $is_fulfilled
  * @property-read string $status_bs_color
  * @property-read string $status_label
+ * @property-read string $sub_total_formatted
  * @property-read string $total_formatted
- * @property-read string|null $total_spent
- * @property-read string $total_spent_formatted
- * @property-read string $total_spent_to_words
  * @property-read string $total_to_words
  * @property-read Collection<int, \App\Models\MaterialRequests\MaterialRequestItem> $items
  * @property-read int|null $items_count
@@ -149,24 +148,19 @@ class MaterialRequest extends Model implements HasMedia, HasMessages
         return '$'.number_format_decimal($this->total, 2);
     }
 
+    public function getSubTotalFormattedAttribute(): string
+    {
+        return '$'.number_format_decimal($this->subtotal, 2);
+    }
+
+    public function getChargeAmountFormattedAttribute(): string
+    {
+        return '$'.number_format_decimal($this->charge_amount, 2);
+    }
+
     public function getTotalToWordsAttribute(): string
     {
         return $this->toCurrencyWords('total');
-    }
-
-    public function getTotalSpentAttribute(): ?string
-    {
-        return $this->total;
-    }
-
-    public function getTotalSpentFormattedAttribute(): string
-    {
-        return $this->total_formatted;
-    }
-
-    public function getTotalSpentToWordsAttribute(): string
-    {
-        return $this->total_to_words;
     }
 
     public function getIsFulfilledAttribute(): bool

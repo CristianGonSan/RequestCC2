@@ -15,11 +15,6 @@ enum ChargeType: string
         };
     }
 
-    public function labelWithRate(): string
-    {
-        return "{$this->label()} ({$this->chargeRate()}%)";
-    }
-
     public function labelWithPercentage(): string
     {
         return "{$this->label()} ({$this->percentage()}%)";
@@ -31,26 +26,6 @@ enum ChargeType: string
             self::Iva        => 16,
             self::Commission => 8,
         };
-    }
-
-    public function chargeRate(): string
-    {
-        return number_format($this->percentage(), 4, '.', '');
-    }
-
-    public function chargeValue(): string
-    {
-        return bcdiv((string) $this->percentage(), '100', 6);
-    }
-
-    public function chargeAmount(string $subtotal): string
-    {
-        return bcmul($subtotal, $this->chargeValue(), 2);
-    }
-
-    public function applyTo(string $subtotal): string
-    {
-        return bcadd($subtotal, $this->chargeAmount($subtotal), 2);
     }
 
     public function bootstrapColorClass(): string
