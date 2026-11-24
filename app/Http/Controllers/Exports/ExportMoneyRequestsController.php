@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Exports;
 use App\Enums\Requests\MoneyRequestStatus;
 use App\Exports\Excel\MoneyRequestsExport;
 use App\Http\Controllers\Controller;
-use App\Models\MoneyRequests\MoneyRequest;
-use Illuminate\Contracts\Database\Query\Builder;
 use App\Models\Catalogs\Type;
+use App\Models\MoneyRequests\MoneyRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,6 +36,7 @@ class ExportMoneyRequestsController extends Controller
 
     public function getQuery(Request $request): Builder|MoneyRequest
     {
+        /** @var Builder<MoneyRequest> $query */
         $query = MoneyRequest::with(['user', 'type', 'costCenter']);
 
         $query

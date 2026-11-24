@@ -115,7 +115,7 @@
                             </x-adminlte-select2>
 
                             <!-- Método de Pago -->
-                            <x-adminlte-select fgroup-class="col-12" class="custom-select" name="is_transfer"
+                            <x-adminlte-select fgroup-class="col-12" class="custom-select" name="payment_method"
                                 label="Método de pago">
                                 <option value="">Sin método especifico</option>
                                 <option value="cash">Efectivo</option>

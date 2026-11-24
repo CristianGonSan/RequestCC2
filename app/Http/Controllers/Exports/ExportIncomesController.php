@@ -6,7 +6,7 @@ use App\Exports\Excel\IncomesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Catalogs\Type;
 use App\Models\Incomes\Income;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -34,6 +34,7 @@ class ExportIncomesController extends Controller
 
     public function getQuery(Request $request): Builder|Income
     {
+        /** @var Builder<Income> $query */
         $query = Income::with(['user', 'type', 'costCenter']);
 
         $query
